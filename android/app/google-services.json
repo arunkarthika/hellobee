@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "868775370370",
+    "firebase_url": "https://hellobee-4c121.firebaseio.com",
+    "project_id": "hellobee-4c121",
+    "storage_bucket": "hellobee-4c121.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868775370370:android:b78bc2411f0130e0895e9b",
+        "android_client_info": {
+          "package_name": "com.sjh.hellobee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "868775370370-s0r4b3fhccne2rg4tc42k5qod6fl2gto.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sjh.hellobee",
+            "certificate_hash": "aa8851febb6340e48004e59e23f749e312cd29c0"
+          }
+        },
+        {
+          "client_id": "868775370370-s1knvee3bil0jclvqdvsk48dbmbrsc8g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcjL2rkTSS5O8OsRKVbaeGweCKoOwEzeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "868775370370-s1knvee3bil0jclvqdvsk48dbmbrsc8g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
