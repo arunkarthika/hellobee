@@ -27,7 +27,7 @@ class Story extends StatelessWidget {
 
   static Widget storyAdd() {
     return Padding(
-      padding: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.all(5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -55,7 +55,7 @@ class Story extends StatelessWidget {
 
   static Widget storyOnline(String img) {
     return Padding(
-      padding: const EdgeInsets.only(right: 15),
+      padding: const EdgeInsets.all(5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -100,7 +100,7 @@ class Story extends StatelessWidget {
 
   static Widget storyOffline(String img) {
     return Padding(
-      padding: const EdgeInsets.only(right: 15),
+      padding: const EdgeInsets.all(5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

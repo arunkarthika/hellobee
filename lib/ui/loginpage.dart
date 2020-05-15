@@ -7,6 +7,7 @@ import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:honeybee/Constant/common.dart';
 import 'package:honeybee/Constant/http.dart';
 import 'package:honeybee/ui/adminblock.dart';
+import 'package:honeybee/ui/dashNew.dart';
 import 'package:honeybee/ui/dashboard.dart';
 import 'package:honeybee/ui/newuser.dart';
 
@@ -29,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => Dashboard(),
+        builder: (context) => DashboardNew(),
       ),
           (Route<dynamic> route) => false,
     );

@@ -9,6 +9,7 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/ui/audio.dart';
+import 'package:honeybee/ui/dashNew.dart';
 import 'package:honeybee/ui/deviceid.dart';
 import 'package:honeybee/ui/editprofile.dart';
 import 'package:honeybee/ui/message.dart';
@@ -48,6 +49,7 @@ class DashboardView extends StatefulWidget {
 }
 
 class HomePage extends State<DashboardView> with TickerProviderStateMixin {
+  String api = 'https://blive.s3.ap-south-1.amazonaws.com';
   TabController controller, bottomController;
 
   /*List banner = [
@@ -248,7 +250,7 @@ class HomePage extends State<DashboardView> with TickerProviderStateMixin {
               body: TabBarView(
                 children: <Widget>[
                   Center(child: Container(
-                  padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(10.0),
                     child: Column(
                       children: <Widget>[
                         Story(),
@@ -470,7 +472,7 @@ class HomePage extends State<DashboardView> with TickerProviderStateMixin {
             ),
             Center(child: EditProfile()),
             Center(child: ChatHome()),
-            Center(child: Profile()),
+            Center(child: DashboardNew()),
           ],
           controller: bottomController,
         ),

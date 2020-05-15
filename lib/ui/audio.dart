@@ -100,6 +100,12 @@ class MyAudioCall extends State<AudioCall> with
   void initState() {
       super.initState();
       Wakelock.enable();
+
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.dark,
+      ));
+
       String sname = BliveConfig.instance.name;
       CommonFun().saveShare('broadcasterId', broadcasterId);
       CommonFun().saveShare('broadcastUsername', broadcastUsername);

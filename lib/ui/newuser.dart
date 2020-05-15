@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
+import 'package:honeybee/ui/dashNew.dart';
 import 'package:honeybee/ui/dashboard.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:device_id/device_id.dart';
@@ -354,7 +355,7 @@ class _MyAppState extends State<NewUser> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => Dashboard(),
+            builder: (context) => DashboardNew(),
           ),
               (Route<dynamic> route) => false,
         );
