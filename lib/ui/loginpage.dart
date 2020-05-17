@@ -296,13 +296,18 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: EdgeInsets.only(top: 20.0, right: 10.0),
                     child: GestureDetector(
-                      onTap: () =>  Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NewUser(),
-                        ),
-                            (Route<dynamic> route) => false,
-                      ),
+                      onTap: () {
+                        FirebaseAuthUi.instance().launchAuth([
+                          AuthProvider.phone(),
+                        ]).then((firebaseUser) {
+                          dataProccessor(
+                              firebaseUser.displayName,
+                              firebaseUser.email,
+                              firebaseUser.phoneNumber,
+                              firebaseUser.photoUri,
+                              "mobile");
+                        });
+                      },
                       child: Container(
                           child: Image(
                             width: 40.0,

@@ -14,9 +14,10 @@ import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/constant/permision.dart';
 import 'package:honeybee/model/gift.dart';
 import 'package:honeybee/ui/audio.dart';
+import 'package:honeybee/ui/editprofile.dart';
+import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
 import 'package:honeybee/ui/story.dart';
-import 'package:honeybee/ui/webView.dart';
 import 'package:honeybee/utils/string.dart';
 import 'dart:async';
 import 'package:zego_express_engine/zego_express_engine.dart';
@@ -106,12 +107,12 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
 
   //Gift Download Prosess Start
   Future<void> _downloadAssets(String name) async {
-    toast(name, Colors.red);
+
     if (!await _hasToDownloadAssets(name, _appDocsDir)) {
-      toast(_appDocsDir, Colors.amber);
+//      toast(_appDocsDir, Colors.amber);
       return;
     }
-    toast('$api/$name.zip', Colors.amber);
+//    toast('$api/$name.zip', Colors.amber);
     var zippedFile =
     await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
 
@@ -123,7 +124,7 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
       if (file.isFile) {
         var outFile = File(filename);
         print('File Extract Here:: ' + outFile.path);
-        toast("Un Zipping....WOW..!!!!!", Colors.yellow);
+//        toast("Un Zipping....WOW..!!!!!", Colors.yellow);
         outFile = await outFile.create(recursive: true);
         await outFile.writeAsBytes(file.content);
       }
@@ -134,7 +135,7 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
       String url, String filename, String _appDocsDir) async {
     var req = await http.Client().get(Uri.parse(url));
     var file = File('$_appDocsDir/$filename');
-    toast("File Started to Download..", Colors.green);
+//    toast("File Started to Download..", Colors.green);
     return file.writeAsBytes(req.bodyBytes);
   }
 
@@ -341,7 +342,7 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
         Timer(Duration(milliseconds: 500), () {
            dataSlider();
           Timer(Duration(milliseconds: 500), () {
-            toast(giftVersion, Colors.red);
+//            toast(giftVersion, Colors.red);
             if (d2['body']['giftVersion'] != giftVersion) {
               CommonFun().saveShare('giftVersion', d2['body']['giftVersion']);
               giftVersion = d2['body']['giftVersion'];
@@ -462,6 +463,10 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -700,15 +705,11 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
                   ),
                 ),
                 Center(
-                  child: Webview(
-                    text: 'https://phalcon.sjhinfotech.com/tooper/index.html',
-                    webViewTitle: 'TopperPage',
-                  ),
-                ),
+                  child: ChatHome()),
                 Center(
-//                  child: TopperStart(),
-                ),
-                Center(child: Profile()),
+                  child: EditProfile()),
+                Center(
+                    child: Profile()),
               ],
               controller: bottomController,
             ),

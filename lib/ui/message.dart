@@ -71,7 +71,7 @@ class ChatHome extends StatelessWidget {
                               width: 3,
                             ),
                             shape: BoxShape.circle,
-                            color: Colors.green,
+                            color: Colors.orange,
                           ),
                         ),
                       )

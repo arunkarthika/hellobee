@@ -1,12 +1,16 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/ui/listusers.dart';
 import 'package:honeybee/ui/listview.dart';
 import 'package:honeybee/ui/mepage.dart';
+import 'package:honeybee/ui/message.dart';
+import 'package:honeybee/ui/profilecontainer.dart';
 import 'package:honeybee/ui/settings.dart';
 import 'package:honeybee/ui/webView.dart';
+import 'package:honeybee/widget/circularbutton.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -42,6 +46,10 @@ class Profilepage extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -72,252 +80,78 @@ class Profilepage extends State<Profile> {
         children: <Widget>[
           Container(
             height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/profile/ProfileBG.png"),
-                    fit: BoxFit.cover,
-                  ),
-                ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 25.0, left: 15.0, right: 15.0),
-            height: 160,
-                child: Stack(
-                  children: [
-                    Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  (profilePic),),
-                              ),
-                              title:  profileName == null
-                                  ? Text("Name")
-                                  : Text(
-                                profileName,
-                                style: TextStyle(
-                                  fontSize: 22.0,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: referenceId == null
-                                  ? Text("ID :0000")
-                                  : Text(
-                                "ID: " + referenceId,
-                                textAlign: TextAlign.start,
-                                style:
-                                Theme.of(context).textTheme.subtitle.copyWith(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                ),
-                              ),
-                               trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => MEpage(
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
-                          ],
-                        )),
-                    Positioned(
-                      top: 80,
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                           child: GestureDetector(
-                            child: Column(
-                              children: <Widget>[
-                                Text(" Friends",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(" 580k",
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                             onTap: (){
-                               Navigator.of(context)
-                                   .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                 return new ListUser(type: "friends",title: "Friends");
-                               }));
-                             },
-                            )
-                          ),
-                          SizedBox(
-                            width: 50,
-                          ),
-                          Container(
-                            child: GestureDetector(
-                              child: Column(
-                              children: <Widget>[
-                                Text(" Followings",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      " 260k",
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                            onTap: (){
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                return new ListUser(type: "followers",title: "Followings");
-                              }));
-                            },
-                          )
-                          ),
-                          SizedBox(
-                            width: 50,
-                          ),
-                          Container(
-                            child: GestureDetector(
-                             child: Column(
-                              children: <Widget>[
-                                Text("Fans",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                      Text(" 950k",
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                             onTap: (){
-                               Navigator.of(context)
-                                   .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                 return new ListUser(type: "fans",title: "Fans");
-                               }));
-                            },
-                          )
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+            margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+            height: 190,
+            child: ProfileContainer(),
           ),
           Positioned(
-            top: 170,
+            top: 215,
             left: 0,
             right: 0,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Image(
-                            image: AssetImage(
-                              "assets/profile/Bgold.png",
-                            ),
-                            width: 15,
-                            height: 15,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            '230k',
-                          ),
-                        ],
+                CircularButton(
+                  number: 11,
+                  title: "Message",
+                  icon: Icons.message,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatHome(
+                        ),
                       ),
-                      Text("B-Gold"),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-                SizedBox(
-                  width: 50,
+                CircularButton(
+                  title: "Wallet",
+                  icon: Icons.account_balance_wallet,
+                  onTap: () {
+                    String textToSend =
+                        "https://phalcon.sjhinfotech.com/BliveWeb/purchase/wallet07.php?user_id=100001" ;
+                    Navigator.of(context).push(
+                        MaterialPageRoute<Null>(
+                            builder: (BuildContext context) {
+                              return new Webview(text: textToSend, webViewTitle: "Wallet",);
+                            }));
+                  },
                 ),
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Image(
-                            image: AssetImage(
-                              "assets/profile/diamond.png",
-                            ),
-                            width: 15,
-                            height: 15,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            '500',
-                          ),
-                        ],
-                      ),
-                      Text("Diamond"),
-                    ],
-                  ),
-                )
+                CircularButton(
+                  title: "Level",
+                  icon: Icons.send,
+                  onTap: () {
+                    String textToSend =
+                        "https://phalcon.sjhinfotech.com/BliveWeb/Terms/V1/level.php?userID=100001" ;
+                    Navigator.of(context).push(
+                        MaterialPageRoute<Null>(
+                            builder: (BuildContext context) {
+                              return new Webview(text: textToSend, webViewTitle: "Level",);
+                            }));
+                  },
+                ),
+
+                CircularButton(
+                  title: "History",
+                  icon: Icons.attach_money,
+                  onTap: () {
+                    String textToSend =
+                        "https://phalcon.sjhinfotech.com/BliveWeb/myProgress/myProgress.php?user_id=100001" ;
+                    Navigator.of(context).push(
+                        MaterialPageRoute<Null>(
+                            builder: (BuildContext context) {
+                              return new Webview(text: textToSend, webViewTitle: "History",);
+                            }));
+                  },
+                ),
               ],
             ),
           ),
           Positioned(
-            top: 230,
+            top: 310,
             left: 0,
             right: 0,
             child: new Stack(
@@ -328,147 +162,148 @@ class Profilepage extends State<Profile> {
                 ),
                 new Center(
                   child: new Container(
-                    height: 500.0,
+                    height: 480.0,
                     child: Container(
-                      height:250.0,
-                      child: new Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        color: Colors.white,
-                        elevation: 6.0,
+                      height:150.0,
                         margin: EdgeInsets.only(right: 15.0, left: 15.0),
                         child: new Wrap(
                           children: <Widget>[
                             new ListTile(
-                              leading: SvgPicture.asset(wallet,
-                                  width: 30.0,
-                                  height: 30.0,
-                                  fit: BoxFit.fill,
+                              onTap: () {},
+                              leading: Container(
+                                padding: EdgeInsets.all(9.0),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.orange, Colors.deepOrangeAccent],
+                                    ),
+                                    color: Color(0xff8d7bef),
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.location_on,color: Colors.white),
                               ),
-                              title: Text("Wallet"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                String textToSend =
-                                    "https://stg.sjhinfotech.com/BliveWeb/purchase/wallet07.php?user_id=100001";
-                                Navigator.of(context).push(
-                                    MaterialPageRoute<Null>(
-                                        builder: (BuildContext context) {
-                                          return new Webview(
-                                            text: textToSend,
-                                            webViewTitle: "Wallet",
-                                          );
-                                        }));
-                              },
+                              title: Text("My Assets"),
+                              trailing: IconButton(
+                                icon: Icon(Icons.chevron_right),
+                                onPressed: () {},
+                              ),
                             ),
                             new ListTile(
-                              leading: SvgPicture.asset(golds,
-                              width: 30.0,
-                              height: 30.0,
-                              fit: BoxFit.fill,
-                              ),
-                              title: Text("Earn Golds"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                  return new Settings();
-                                }));
-                              },
-                            ),
-                            new ListTile(
-                              leading: SvgPicture.asset(aristocracy,
-                                width: 30.0,
-                                height: 30.0,
-                                fit: BoxFit.fill,
-                              ),
-                              title: Text("Aristocracy"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                  return new Settings();
-                                }));
-                              },
-                            ),
-                            new ListTile(
-                              leading: SvgPicture.asset(store,
-                                width: 30.0,
-                                height: 30.0,
-                                fit: BoxFit.fill,
+                              onTap: () {},
+                              leading: Container(
+                                padding: EdgeInsets.all(9.0),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.orange, Colors.deepOrangeAccent],
+                                    ),
+                                    color: Color(0xff8d7bef),
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.store,color: Colors.white),
                               ),
                               title: Text("Store"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                  return new Settings();
-                                }));
-                              },
+                              trailing: IconButton(
+                                icon: Icon(Icons.chevron_right),
+                                onPressed: () {},
+                              ),
                             ),
                             new ListTile(
-                              leading: SvgPicture.asset(medal,
-                                width: 30.0,
-                                height: 30.0,
-                                fit: BoxFit.fill,
+                              onTap: () {},
+                              leading: Container(
+                                padding: EdgeInsets.all(9.0),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.orange, Colors.deepOrangeAccent],
+                                    ),
+                                    color: Color(0xff8d7bef),
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.location_on,color: Colors.white),
+                              ),
+                              title: Text("Aristocracy"),
+                              trailing: IconButton(
+                                icon: Icon(Icons.chevron_right),
+                                onPressed: () {},
+                              ),
+                            ),
+                            new ListTile(
+                              onTap: () {},
+                              leading: Container(
+                                padding: EdgeInsets.all(9.0),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.orange, Colors.deepOrangeAccent],
+                                    ),
+                                    color: Color(0xff8d7bef),
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.location_on,color: Colors.white),
                               ),
                               title: Text("Medal"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                  return new Settings();
-                                }));
-                              },
+                              trailing: IconButton(
+                                icon: Icon(Icons.chevron_right),
+                                onPressed: () {},
+                              ),
                             ),
                             new ListTile(
-                              leading: SvgPicture.asset(guild,
-                                width: 30.0,
-                                height: 30.0,
-                                fit: BoxFit.fill,
+                              onTap: () {},
+                              leading: Container(
+                                padding: EdgeInsets.all(9.0),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.orange, Colors.deepOrangeAccent],
+                                    ),
+                                    color: Color(0xff8d7bef),
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.location_on,color: Colors.white),
                               ),
                               title: Text("Guild"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                  return new Settings();
-                                }));
-                              },
+                              trailing: IconButton(
+                                icon: Icon(Icons.chevron_right),
+                                onPressed: () {},
+                              ),
                             ),
                             new ListTile(
-                              leading: SvgPicture.asset(feedback,
-                                width: 30.0,
-                                height: 30.0,
-                                fit: BoxFit.fill,
+                              onTap: () {},
+                              leading: Container(
+                                padding: EdgeInsets.all(9.0),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.orange, Colors.deepOrangeAccent],
+                                    ),
+                                    color: Color(0xff8d7bef),
+                                    shape: BoxShape.circle
+
+                                ),
+                                child: Icon(Icons.feedback,color: Colors.white),
                               ),
                               title: Text("Feedback"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                  return new Settings();
-                                }));
-                              },
+                              trailing: IconButton(
+                                icon: Icon(Icons.chevron_right),
+                                onPressed: () {},
+                              ),
                             ),
                             new ListTile(
-                              leading: SvgPicture.asset(settings,
-                                width: 30.0,
-                                height: 30.0,
-                                fit: BoxFit.fill,
+                              onTap: () {},
+                              leading: Container(
+                                padding: EdgeInsets.all(9.0),
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Colors.orange, Colors.deepOrangeAccent],
+                                    ),
+                                    color: Color(0xff8d7bef),
+                                    shape: BoxShape.circle
+                                ),
+                                child: Icon(Icons.settings,color: Colors.white),
                               ),
                               title: Text("Settings"),
-                              trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: (){
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                                  return new Settings();
-                                }));
-                              },
+                              trailing: IconButton(
+                                icon: Icon(Icons.chevron_right),
+                                onPressed: () {},
+                              ),
                             ),
                           ],
                         ),
-                      ),
                     ),
                     padding: EdgeInsets.only(bottom: 30),
                   ),

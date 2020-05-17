@@ -78,6 +78,7 @@ flutter:
     - assets/login/Twitter.png
     - assets/broadcast/AudioBG.jpg
     - assets/broadcast/menu.png
+    - assets/broadcast/chair.png
     - assets/broadcast/mic.png
     - assets/broadcast/tropy.png
     - assets/broadcast/audiocall.png

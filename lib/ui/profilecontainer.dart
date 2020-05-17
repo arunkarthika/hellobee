@@ -9,7 +9,7 @@ class ProfileContainer extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),
         gradient: LinearGradient(
-          colors: [Colors.blue, Colors.lightBlue],
+          colors: [Colors.orange, Colors.deepOrangeAccent],
         ),
         boxShadow: [
           BoxShadow(
@@ -29,7 +29,7 @@ class ProfileContainer extends StatelessWidget {
                 child: CircleAvatar(
                   maxRadius: 35.0,
                   backgroundImage: NetworkImage(
-                    "https://cdn.pixabay.com/photo/2016/10/09/18/03/smile-1726471_960_720.jpg",
+                    "https://images.pexels.com/photos/1580274/pexels-photo-1580274.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
                   ),
                 ),
               ),
@@ -41,25 +41,25 @@ class ProfileContainer extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Text(
-                          "user_name",
+                          "Robert William 🌝 ",
                           style: Theme.of(context)
                               .textTheme
                               .title
                               .apply(fontWeightDelta: 2, color: Colors.white),
                         ),
                         SizedBox(width: 15.0),
-                        GestureDetector(
+                        /*GestureDetector(
                           child: Icon(
                             Icons.edit,
                             color: Colors.white,
                           ),
                           onTap: () {},
-                        )
+                        )*/
                       ],
                     ),
                     SizedBox(height: 5.0),
                     Text(
-                      "bio",
+                      "ID 100250",
                       style: Theme.of(context)
                           .textTheme
                           .subtitle
@@ -85,7 +85,7 @@ class ProfileContainer extends StatelessWidget {
                   ),
                   SizedBox(height: 3.0),
                   Text(
-                    "collect",
+                    "Friends",
                     style: TextStyle(color: Colors.grey[300]),
                   ),
                 ],
@@ -101,7 +101,7 @@ class ProfileContainer extends StatelessWidget {
                   ),
                   SizedBox(height: 3.0),
                   Text(
-                    "attention",
+                    "Followers",
                     style: TextStyle(color: Colors.grey[300]),
                   ),
                 ],
@@ -117,7 +117,7 @@ class ProfileContainer extends StatelessWidget {
                   ),
                   SizedBox(height: 3.0),
                   Text(
-                    "track",
+                    "Fans",
                     style: TextStyle(color: Colors.grey[300]),
                   ),
                 ],
@@ -133,7 +133,7 @@ class ProfileContainer extends StatelessWidget {
                   ),
                   SizedBox(height: 3.0),
                   Text(
-                    "coupons",
+                    "B-Gold",
                     style: TextStyle(color: Colors.grey[300]),
                   ),
                 ],

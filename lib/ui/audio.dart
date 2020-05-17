@@ -19,7 +19,6 @@ import 'package:honeybee/model/sharedPreference.dart';
 import 'package:honeybee/music/main_1.dart';
 import 'package:honeybee/ui/audio/commonFun.dart';
 import 'package:honeybee/ui/audio/footer.dart';
-import 'package:honeybee/ui/audio/header.dart';
 import 'package:honeybee/ui/broadcastEnd.dart';
 import 'package:honeybee/ui/editprofile.dart';
 import 'package:honeybee/utils/global.dart';
@@ -248,7 +247,7 @@ class MyAudioCall extends State<AudioCall> with
                 child: Container(
                   width: 250,
                   height: 45,
-                  child: audienceListView(common),
+                  child: _audienceListView(common),
                 ),
               ),
             ),
@@ -302,7 +301,7 @@ class MyAudioCall extends State<AudioCall> with
                                   Container(
                                     alignment: Alignment.centerLeft,
                                     padding: const EdgeInsets.only(left: 3),
-                                    child: SvgPicture.asset(heart,
+                         `           child: SvgPicture.asset(heart,
                                       width: 10.0,
                                       height: 10.0,
                                       fit: BoxFit.fill,
@@ -351,7 +350,7 @@ class MyAudioCall extends State<AudioCall> with
                                 BorderRadius.all(Radius.circular(50))),
                             child: Image(
                               image: AssetImage(
-                                "assets/broadcast/audiocall.png",
+                                "assets/broadcast/chair.png",
                               ),
                               fit: BoxFit.fill,
                             ),
@@ -1448,13 +1447,16 @@ class MyAudioCall extends State<AudioCall> with
       template: TemplateGreenRocket,
     );
     popup.show(
-      title: 'String or Widget',
-      content: 'String or Widget',
+      title: 'Dummy Text',
+      content: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. '
+          'Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus '
+          'et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, '
+          'ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.',
       actions: [
-        popup.button(
-          label: 'Close',
-          onPressed: Navigator.of(context).pop,
-        ),
+//        popup.button(
+//          label: 'Close',
+//          onPressed: Navigator.of(context).pop,
+//        ),
       ],
       // bool barrierDismissible = false,
       // Widget close,
@@ -2436,38 +2438,39 @@ class MyAudioCall extends State<AudioCall> with
         });
   }
 
-//  Widget audienceListView(common) {
-//    return ListView.builder(
-//      scrollDirection: Axis.horizontal,
-//      controller: common.scrollController,
-//      itemCount: common.audiencelist.length,
-//      itemBuilder: (context, index) {
-//        return GestureDetector(
-//          onTap: () =>
-//              profileview1(common.audiencelist[index].userId, context, common),
-//          child: Container(
-//            padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-//            width: 45,
-//            height: 45,
-//            decoration: BoxDecoration(
-//              color: Colors.transparent,
-//              borderRadius: BorderRadius.all(Radius.circular(50)),
-//              border: Border.all(
-//                color: Colors.red,
-//                width: 1.0,
-//              ),
-//              image: DecorationImage(
-//                image: NetworkImage(
-//                  common.audiencelist[index].profilePic,
-//                ),
-//                fit: BoxFit.fill,
-//              ),
-//            ),
-//          ),
-//        );
-//      },
-//    );
-//  }
+  Widget _audienceListView(common) {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      controller: common.scrollController,
+      itemCount: common.audiencelist.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () =>
+              Fluttertoast.showToast(msg: exit_warning),
+              /*profileview1(common.audiencelist[index].userId, context, common)*/
+          child: Container(
+            padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.all(Radius.circular(50)),
+              border: Border.all(
+                color: Colors.red,
+                width: 1.0,
+              ),
+              image: DecorationImage(
+                image: NetworkImage(
+                  common.audiencelist[index].profilePic,
+                ),
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   void chatEnable(context, setState, common) {
     showModalBottomSheet(

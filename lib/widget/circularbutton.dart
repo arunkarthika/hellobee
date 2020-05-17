@@ -42,7 +42,7 @@ class CircularButton extends StatelessWidget {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.blue,
+                            color: Colors.deepOrange,
                           ),
                           child: FittedBox(
                             child: Text(
