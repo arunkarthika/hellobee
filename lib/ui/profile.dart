@@ -8,6 +8,7 @@ import 'package:honeybee/ui/listview.dart';
 import 'package:honeybee/ui/mepage.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profilecontainer.dart';
+import 'package:honeybee/ui/settingnew.dart';
 import 'package:honeybee/ui/settings.dart';
 import 'package:honeybee/ui/webView.dart';
 import 'package:honeybee/widget/circularbutton.dart';
@@ -284,7 +285,15 @@ class Profilepage extends State<Profile> {
                               ),
                             ),
                             new ListTile(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SettingsScreen(
+                                    ),
+                                  ),
+                                );
+                              },
                               leading: Container(
                                 padding: EdgeInsets.all(9.0),
                                 decoration: BoxDecoration(
@@ -299,7 +308,15 @@ class Profilepage extends State<Profile> {
                               title: Text("Settings"),
                               trailing: IconButton(
                                 icon: Icon(Icons.chevron_right),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SettingsScreen(
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],

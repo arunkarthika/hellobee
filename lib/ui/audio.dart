@@ -2400,7 +2400,6 @@ class MyAudioCall extends State<AudioCall> with
                             label: Text('Follow',
                               style: TextStyle(color: Colors.white),),
                             icon: Icon(Icons.add, color:Colors.white,size: 18,),
-
                             onPressed: ()  {
 
                             },
@@ -2445,8 +2444,9 @@ class MyAudioCall extends State<AudioCall> with
       itemCount: common.audiencelist.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () =>
-              Fluttertoast.showToast(msg: exit_warning),
+          onTap: (){
+            Fluttertoast.showToast(msg: exit_warning);
+          },
               /*profileview1(common.audiencelist[index].userId, context, common)*/
           child: Container(
             padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
@@ -2898,6 +2898,661 @@ class MyAudioCall extends State<AudioCall> with
       width: double.infinity,
       height: double.infinity,
       child: SVGAImage(common.animationController),
+    );
+  }
+
+  void giftShow(context, common) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              height: 200,
+              color: const Color.fromRGBO(0, 0, 0, 0.5),
+              child: Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      (common.broadcastType != "solo" &&
+                          common.broadcastType != "pk")
+                          ? Expanded(
+                        child: multiGuestGift(context, common, setState),
+                        flex: 2,
+                      )
+                          : Container(),
+                      // SizedBox(
+                      //   height: 5,
+                      // ),
+                      Expanded(
+                        child: Container(
+                          child: TabBar(
+                            tabs: [
+                              Tab(
+                                child: Text(
+                                  "Animation GIFTS",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle
+                                      .copyWith(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              Tab(
+                                child: Text(
+                                  "Sticker GIFTS",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle
+                                      .copyWith(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                            controller: common.giftController,
+                            onTap: (indexs) {
+                              var data;
+                              int currectIndex = 0;
+                              var message = "animation";
+                              if (indexs == 0) {
+                                currectIndex = common.animationSelect;
+                                data = common.animationGift;
+                              } else {
+                                message = "normal";
+                                currectIndex = common.normalSelect;
+                                data = common.normalGift;
+                              }
+                              setState(() {
+                                int flag =
+                                int.parse(data[currectIndex]['comboFlag']);
+                                if (flag != 0) {
+                                  common.comboFlag = false;
+                                  var list = data[currectIndex]['comboPacks']
+                                      .split("!")[flag];
+                                  common.comboList = list.split(",");
+                                  print('comboList');
+                                  print(common.comboList);
+                                  common.giftCountTemp =
+                                      int.parse(common.comboList[0]);
+                                  print('giftCountTemp2');
+                                  print(common.giftCountTemp);
+                                } else {
+                                  common.giftCountTemp = 1;
+                                  common.comboFlag = true;
+                                  common.comboList = [];
+                                }
+                              });
+                              common.giftCount = common.giftCountTemp;
+                              common.giftNames = data[currectIndex]['name'];
+                              common.giftMessage = message;
+                              common.giftValue =
+                                  int.parse(data[currectIndex]['price']);
+                            },
+                          ),
+                        ),
+                        flex: 1,
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          children: <Widget>[
+                            Container(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                itemCount: common.animationGift.length,
+                                gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (BuildContext context, int index) {
+                                  var data = common.animationGift[index];
+                                  return Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          common.animationSelect = index;
+                                          int flag = int.tryParse(common
+                                              .animationGift[index]['comboFlag']);
+                                          common.currentIndex = index;
+                                          print("flag");
+                                          print(flag);
+                                          if (flag != 0) {
+                                            common.comboFlag = false;
+                                            var list = common.animationGift[index]
+                                            ['comboPacks']
+                                                .split("!")[flag];
+                                            common.comboList = list.split(",");
+                                            print('comboList');
+                                            print(common.comboList);
+                                            common.giftCountTemp =
+                                                int.parse(common.comboList[0]);
+                                            print('giftCountTemp2');
+                                            print(common.giftCountTemp);
+                                          } else {
+                                            common.giftCountTemp = 1;
+                                            common.comboFlag = true;
+                                            common.comboList = [];
+                                          }
+                                        });
+                                        common.giftCount = common.giftCountTemp;
+                                        common.giftNames = data['name'];
+                                        common.giftMessage = "animation";
+                                        common.giftValue =
+                                            int.tryParse(data['price']);
+                                        print("giftValue");
+                                        print(common.giftValue);
+                                      },
+                                      child: Container(
+                                        margin:
+                                        EdgeInsets.only(left: 15, right: 15),
+                                        decoration: common.animationSelect ==
+                                            index
+                                            ? BoxDecoration(
+                                          color: const Color.fromRGBO(
+                                              0, 0, 0, 0.5),
+                                          border: Border.all(
+                                              color: Colors.orange),
+                                          borderRadius:
+                                          BorderRadius.circular(10.0),
+                                        )
+                                            : BoxDecoration(
+                                          color: Colors.transparent,
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              color: Colors.transparent,
+                                              child: Image(
+                                                image: common.displayanimaionIcon[
+                                                common.animationGift[
+                                                index]['name']] !=
+                                                    ""
+                                                    ? MemoryImage(
+                                                  base64Decode(common
+                                                      .displayanimaionIcon[
+                                                  common.animationGift[
+                                                  index]['name']]),
+                                                )
+                                                    : NetworkImage(common
+                                                    .animationGift[index]
+                                                ['icon']),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              data['name'],
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle
+                                                  .copyWith(
+                                                  color: Colors.amber,
+                                                  fontSize: 12),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              // crossAxisAlignment:CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Image(
+                                                  image: AssetImage(
+                                                    "assets/images/audience/Diamond.png",
+                                                  ),
+                                                  width: 8,
+                                                  height: 8,
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  data['price'],
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .subtitle
+                                                      .copyWith(
+                                                      color: const Color(
+                                                          0xFF00DFAB),
+                                                      fontSize: 12),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            Container(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                itemCount: common.normalGift.length,
+                                gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (BuildContext context, int index) {
+                                  var data = common.normalGift[index];
+                                  return Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          common.normalSelect = index;
+                                          common.currentIndex = index;
+                                          int flag = int.parse(common
+                                              .normalGift[index]['comboFlag']);
+                                          if (flag != 0) {
+                                            common.comboFlag = false;
+                                            var list = common.normalGift[index]
+                                            ['comboPacks']
+                                                .split("!")[flag];
+                                            common.comboList = list.split(",");
+                                            print('comboList');
+                                            print(common.comboList);
+                                            common.giftCountTemp =
+                                                int.tryParse(common.comboList[0]);
+                                            print('giftCountTemp2');
+                                            print(common.giftCountTemp);
+                                          } else {
+                                            common.giftCountTemp = 1;
+                                            common.comboFlag = true;
+                                            common.comboList = [];
+                                          }
+                                        });
+                                        print(data['name']);
+                                        print(common.giftCountTemp);
+                                        common.giftCount = common.giftCountTemp;
+                                        common.giftNames = data['name'];
+                                        common.giftMessage = "normal";
+                                        common.giftValue =
+                                            int.tryParse(data['price']);
+                                        print("giftValue");
+                                        print(common.giftValue);
+                                      },
+                                      child: Container(
+                                        margin:
+                                        EdgeInsets.only(left: 15, right: 15),
+                                        decoration: common.normalSelect == index
+                                            ? BoxDecoration(
+                                          color: const Color.fromRGBO(
+                                              0, 0, 0, 0.5),
+                                          border: Border.all(
+                                              color: Colors.orange),
+                                          borderRadius:
+                                          BorderRadius.circular(10.0),
+                                        )
+                                            : BoxDecoration(
+                                          color: Colors.transparent,
+                                        ),
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              color: Colors.transparent,
+                                              child: Image(
+                                                image: common.displaynormalIcon[
+                                                common.normalGift[
+                                                index]['name']] !=
+                                                    ""
+                                                    ? MemoryImage(
+                                                  base64Decode(common
+                                                      .displaynormalIcon[
+                                                  common.normalGift[
+                                                  index]['name']]),
+                                                )
+                                                    : NetworkImage(
+                                                    common.normalGift[index]
+                                                    ['icon']),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              data['name'],
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle
+                                                  .copyWith(color: Colors.amber),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Image(
+                                                  image: AssetImage(
+                                                    "assets/images/audience/Diamond.png",
+                                                  ),
+                                                  width: 10,
+                                                  height: 10,
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  data['price'],
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .subtitle
+                                                      .copyWith(
+                                                    color: const Color(
+                                                        0xFF00DFAB),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                          controller: common.giftController,
+                        ),
+                        flex: 8,
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.fromLTRB(10, 1, 10, 1),
+                                // width: 50,
+                                height: 25,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  border: Border.all(color: Colors.orange),
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      // width: 25,
+                                      alignment: Alignment.center,
+                                      child: Image(
+                                        image: AssetImage(
+                                          "assets/images/audience/Diamond.png",
+                                        ),
+                                        width: 15,
+                                        height: 15,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        common.diamond.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle
+                                            .copyWith(
+                                          color: const Color(0xFF00DFAB),
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: 25,
+                                child: Row(
+                                  children: <Widget>[
+                                    common.comboList.length > 0
+                                        ? Container(
+                                      padding: EdgeInsets.only(
+                                          left: 5, right: 5),
+                                      // padding: EdgeInsets.symmetric(
+                                      //     horizontal: 10, vertical: 5),
+                                      decoration: BoxDecoration(
+                                          color: Colors.orange,
+                                          borderRadius:
+                                          BorderRadius.circular(10)),
+                                      child: Theme(
+                                        data: Theme.of(context).copyWith(
+                                            canvasColor: Colors.orange),
+                                        child: DropdownButton(
+                                          items: common.comboList.map<
+                                              DropdownMenuItem<String>>(
+                                                  (value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Text(value),
+                                                );
+                                              }).toList(),
+                                          underline: SizedBox(),
+                                          iconEnabledColor: Colors.white,
+                                          onChanged: (String newValue) {
+                                            setState(() {
+                                              common.giftCount =
+                                                  int.parse(newValue);
+                                              print('giftCount3');
+                                              print(common.giftCount);
+                                            });
+                                          },
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle
+                                              .copyWith(
+                                              color: Colors.white),
+                                          value:
+                                          common.giftCount.toString(),
+                                        ),
+                                      ),
+                                    )
+                                        : Container(),
+                                    GestureDetector(
+                                      onTap: () {
+                                        print('giftCount');
+                                        print(common.giftCount);
+                                        print(common.giftMessage);
+                                        sendGift(
+                                            common.giftNames,
+                                            common.giftMessage,
+                                            common.giftValue,
+                                            common.giftCount,
+                                            setState,
+                                            context,
+                                            common);
+                                      },
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          color:
+                                          const Color.fromRGBO(0, 0, 0, 0.5),
+                                          border:
+                                          Border.all(color: Colors.orange),
+                                          borderRadius:
+                                          BorderRadius.circular(30.0),
+                                        ),
+                                        child: Container(
+                                          padding:
+                                          EdgeInsets.fromLTRB(10, 1, 10, 1),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "SEND",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subtitle
+                                                .copyWith(
+                                                color: Colors.white,
+                                                fontSize: 14),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        flex: 1,
+                      ),
+                    ],
+                  )),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget multiGuestGift(context, common, setState) {
+    return Container(
+      height: 80,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Container(
+              width: 51,
+              child: Column(
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          common.giftUserId = common.broadcasterId;
+                        });
+                      },
+                      child: Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(50)),
+                            border: Border.all(
+                                width: 3.0,
+                                color: common.giftUserId == common.broadcasterId
+                                    ? Colors.orangeAccent
+                                    : Colors.transparent),
+                          ),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(50)),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  common.broadprofilePic,
+                                ),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ))),
+                  Text(
+                    common.broadcasterProfileName,
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle
+                        .copyWith(color: Colors.white, fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 10,
+            child: ListView.builder(
+                itemCount: common.guestData.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  print(common.guestData.length);
+                  if (common.guestData.length != 0)
+                    return Container(
+                      width: 51,
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  common.giftUserId =
+                                      common.guestData[index].userId;
+                                });
+                              },
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                                  border: Border.all(
+                                      width: 3.0,
+                                      color: common.giftUserId ==
+                                          common.guestData[index].userId
+                                          ? Colors.orangeAccent
+                                          : Colors.transparent),
+                                ),
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        common.guestData[index].image,
+                                      ),
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                ),
+                              )),
+                          Text(
+                            common.guestData[index].name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle
+                                .copyWith(color: Colors.white, fontSize: 12),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    );
+                  else
+                    return Container(
+
+                    );
+                }),
+          ),
+        ],
+      ),
     );
   }
 
