@@ -19,14 +19,14 @@ class Profile extends StatefulWidget {
 
 class Profilepage extends State<Profile> {
   final color = Colors.pink;
-  var profileName;
-  var level;
-  var referenceId;
-  var userid;
-  var profilePic;
-  var diamond;
-  var bGold;
-  var friends;
+  var profileName="";
+  var level="";
+  var referenceId="";
+  var userid="";
+  var profilePic="";
+  var diamond="";
+  var bGold="";
+  var friends="";
   bool loader = false;
 
   @override

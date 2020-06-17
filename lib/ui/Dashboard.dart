@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:honeybee/bubble_tabMenu.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/database_hepler.dart';
 import 'package:honeybee/constant/http.dart';
@@ -97,7 +98,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
     }
 //    toast('$api/$name.zip', Colors.amber);
     var zippedFile =
-    await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
+        await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
 
     var bytes = zippedFile.readAsBytesSync();
     var archive = ZipDecoder().decodeBytes(bytes);
@@ -114,8 +115,8 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
     }
   }
 
-  Future<File> _downloadFile(String url, String filename,
-      String _appDocsDir) async {
+  Future<File> _downloadFile(
+      String url, String filename, String _appDocsDir) async {
     var req = await http.Client().get(Uri.parse(url));
     var file = File('$_appDocsDir/$filename');
 //    toast("File Started to Download..", Colors.green);
@@ -157,7 +158,6 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
     controller = TabController(length: 3, vsync: this);
     bottomController = TabController(length: 4, vsync: this);
     bottomController.addListener(_handleTabSelection);
-
 
     activescrollController.addListener(() {
       if (activescrollController.position.pixels ==
@@ -222,7 +222,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               CommonFun().saveShare('giftVersion', d2['body']['giftVersion']);
               giftVersion = d2['body']['giftVersion'];
               makeGetRequest("user/List",
-                  "user_id=" + "100001" + "&action=giftList", 0, context)
+                      "user_id=" + "100001" + "&action=giftList", 0, context)
                   .then((response) {
                 var data = jsonDecode(response);
                 giftData = data['body']['giftList']['gift_list']['all'];
@@ -322,9 +322,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         primaryColor: Colors.orangeAccent,
         accentColor: Colors.deepOrangeAccent,
         textTheme: GoogleFonts.firaSansCondensedTextTheme(
-          Theme
-              .of(context)
-              .textTheme,
+          Theme.of(context).textTheme,
         ),
       ),
       routes: <String, WidgetBuilder>{'/dashboard': (context) => Dashboard()},
@@ -345,13 +343,12 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          LiveRoom(
-                              userId1: userId,
-                              broadcasterId1: userId,
-                              username1: userName,
-                              userType1: "broad",
-                              broadcastType1: "audio"),
+                      builder: (context) => LiveRoom(
+                          userId1: userId,
+                          broadcasterId1: userId,
+                          username1: userName,
+                          userType1: "broad",
+                          broadcastType1: "audio"),
                     ),
                   );
                 } else {
@@ -360,7 +357,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               },
             ),
             floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked,
+                FloatingActionButtonLocation.centerDocked,
             body: TabBarView(
               children: <Widget>[
                 Scaffold(
@@ -389,8 +386,6 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                       ),
                     ],*/
                     title: new TabBar(
-
-
                       isScrollable: true,
                       unselectedLabelColor: Colors.grey,
                       labelColor: Colors.white,
@@ -433,7 +428,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
+                                        BorderRadius.all(Radius.circular(10)),
                                     image: DecorationImage(
                                       image: NetworkImage(
                                         banner[i]['image'],
@@ -494,45 +489,88 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               controller: bottomController,
             ),
             bottomNavigationBar: BottomAppBar(
-              shape: CircularNotchedRectangle(),
+//              color: Colors.orangeAccent[100],
+              elevation: 40.0,
+//              shape: CircularNotchedRectangle(),
               child: TabBar(
                 tabs: [
                   Tab(
-                    child: Image(
-                      image: bottomController.index == 0
-                          ? AssetImage('assets/dashboard/HomeSelected.png')
-                          : AssetImage('assets/dashboard/Home.png'),
-                      width: 25,
-                      height: 25,
+                    child: Container(
+                      child: bottomController.index == 0
+                          ? Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundImage: AssetImage('assets/dashboard/Home.png'),
+
+                        ),
+                        )
+                          : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('assets/dashboard/Home.png'),
+                      ),
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),                  Tab(
+                    child: Container(
+                      child: bottomController.index == 1
+                          ? Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundImage: AssetImage('assets/dashboard/Toppers.png'),
+
+                        ),
+                        )
+                          : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('assets/dashboard/Toppers.png'),
+                      ),
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),                  Tab(
+                    child: Container(
+                      child: bottomController.index == 2
+                          ? Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundImage: AssetImage('assets/dashboard/Toppers.png'),
+
+                        ),
+                        )
+                          : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('assets/dashboard/Toppers.png'),
+                      ),
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),                  Tab(
+                    child: Container(
+                      child: bottomController.index == 3
+                          ? Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundImage: AssetImage('assets/dashboard/Profile.png'),
+
+                        ),
+                        )
+                          : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('assets/dashboard/Profile.png'),
+                      ),
+                      width: 40,
+                      height: 40,
                     ),
                   ),
-                  Tab(
-                    child: Image(
-                      image: bottomController.index == 1
-                          ? AssetImage('assets/dashboard/ToppersSelected.png')
-                          : AssetImage('assets/dashboard/Toppers.png'),
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                  Tab(
-                    child: Image(
-                      image: bottomController.index == 2
-                          ? AssetImage('assets/dashboard/ToppersSelected.png')
-                          : AssetImage('assets/dashboard/Toppers.png'),
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                  Tab(
-                    child: Image(
-                      image: bottomController.index == 3
-                          ? AssetImage('assets/dashboard/ProfileSelected.png')
-                          : AssetImage('assets/dashboard/Profile.png'),
-                      width: 25,
-                      height: 25,
-                    ),
-                  )
                 ],
                 controller: bottomController,
                 onTap: (indexs) {
@@ -541,9 +579,9 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     pageIndex = indexs;
                   });
                 },
-                indicatorColor: Colors.grey,
+                indicatorColor: Colors.transparent,
                 labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
+                unselectedLabelColor: Colors.transparent,
               ),
             ),
           ),
@@ -552,156 +590,155 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-
   Widget dispyActive(list, viewController) {
     return list.length != 0
         ? Container(
-      width: double.infinity,
-      height: double.infinity,
-      child: GridView.count(
-        controller: viewController,
-        padding: const EdgeInsets.all(2),
-        primary: false,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        crossAxisCount: 2,
-        children: List.generate(
-          list.length,
-              (index) {
-            var live = 'Live';
-            var data = list[index];
-            if (data['status'] == 0) {
-              live = 'offline';
-            }
-            return Container(
-              margin:
-              EdgeInsets.only(top: 1, bottom: 1, left: 1, right: 1),
-              width: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                image: DecorationImage(
-                  image: NetworkImage(data['profile_pic']),
-                  fit: BoxFit.cover,
-                ),
-                gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    stops: [
-                      0.3,
-                      0.9
-                    ],
-                    colors: [
-                      Colors.black,
-                      Colors.orangeAccent,
-                    ]),
-              ),
-              child: Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () async {
-                      var camstatus =
-                      await PermissionFun().cameraPermision();
-                      var micstatus =
-                      await PermissionFun().micPermision();
-                      if (camstatus.toString() ==
-                          "PermissionStatus.granted" &&
-                          micstatus.toString() ==
-                              "PermissionStatus.granted") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                LiveRoom(
-                                  userId1: userId,
-                                  broadcasterId1: data["user_id"].toString(),
-                                  username1: data["username"],
-                                  userType1: "audience",
-                                  broadcastType1: "none",
+            width: double.infinity,
+            height: double.infinity,
+            child: GridView.count(
+              controller: viewController,
+              padding: const EdgeInsets.all(2),
+              primary: false,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              crossAxisCount: 2,
+              children: List.generate(
+                list.length,
+                (index) {
+                  var live = 'Live';
+                  var data = list[index];
+                  if (data['status'] == 0) {
+                    live = 'offline';
+                  }
+                  return Container(
+                    margin:
+                        EdgeInsets.only(top: 1, bottom: 1, left: 1, right: 1),
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      image: DecorationImage(
+                        image: NetworkImage(data['profile_pic']),
+                        fit: BoxFit.cover,
+                      ),
+                      gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          stops: [
+                            0.3,
+                            0.9
+                          ],
+                          colors: [
+                            Colors.black,
+                            Colors.orangeAccent,
+                          ]),
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () async {
+                            var camstatus =
+                                await PermissionFun().cameraPermision();
+                            var micstatus =
+                                await PermissionFun().micPermision();
+                            if (camstatus.toString() ==
+                                    "PermissionStatus.granted" &&
+                                micstatus.toString() ==
+                                    "PermissionStatus.granted") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LiveRoom(
+                                    userId1: userId,
+                                    broadcasterId1: data["user_id"].toString(),
+                                    username1: data["username"],
+                                    userType1: "audience",
+                                    broadcastType1: "none",
+                                  ),
                                 ),
+                              );
+                            }
+                          },
+                        ),
+                        Positioned(
+                          left: 1,
+                          bottom: -2,
+                          right: 1,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    stops: [
+                                      0.1,
+                                      0.9
+                                    ],
+                                    colors: [
+                                      Colors.black,
+                                      Colors.transparent,
+                                    ])),
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(5, 10, 2, 10),
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                data['profileName'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle
+                                    .copyWith(
+                                        color: Colors.white, fontSize: 14),
+                              ),
+                            ),
                           ),
-                        );
-                      }
-                    },
-                  ),
-                  Positioned(
-                    left: 1,
-                    bottom: -2,
-                    right: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              stops: [
-                                0.1,
-                                0.9
-                              ],
-                              colors: [
-                                Colors.black,
-                                Colors.transparent,
-                              ])),
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(5, 10, 2, 10),
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          data['profileName'],
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle
-                              .copyWith(
-                              color: Colors.white, fontSize: 14),
                         ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 2,
-                    left: 5,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent[100],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Container(
-                        width: 30,
-                        alignment: Alignment.center,
-                        child: Text(
-                          live,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle
-                              .copyWith(
-                              color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold),
+                        Positioned(
+                          top: 2,
+                          left: 5,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent[100],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              width: 30,
+                              alignment: Alignment.center,
+                              child: Text(
+                                live,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 2,
-                    right: 10,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent[100],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Container(
-                        width: 30,
-                        alignment: Alignment.center,
-                        child: Text(
-                          data['viewer_count'],
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle
-                              .copyWith(
-                              color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold),
+                        Positioned(
+                          top: 2,
+                          right: 10,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent[100],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              width: 30,
+                              alignment: Alignment.center,
+                              child: Text(
+                                data['viewer_count'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
 
 //                  Positioned(
 //                    top: 2,
@@ -742,13 +779,13 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
 //                      ),
 //                    ),
 //                  ),
-                ],
+                      ],
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
-    )
+            ),
+          )
         : Container();
   }
 
