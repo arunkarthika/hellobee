@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "868775370370-9pifjapt0d6h4vt4706j399v73p3f6tl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sjh.hellobee",
+            "certificate_hash": "5096f507cfe4f7be3ad8f6508b7a6bd9eac93eb4"
+          }
+        },
+        {
           "client_id": "868775370370-s0r4b3fhccne2rg4tc42k5qod6fl2gto.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

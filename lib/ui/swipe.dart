@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:honeybee/ui/Dashboard.dart';
 import 'package:honeybee/ui/profile.dart';
-import 'package:honeybee/ui/settings.dart';
 import 'package:swipedetector/swipedetector.dart';
 
 void main() => runApp(new SwipeDetect());
@@ -61,7 +61,7 @@ class _MyHomePageState extends State<Swipe> {
                     setState(() {
                       Navigator.of(context)
                           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                        return new Settings();
+                        return new Dashboard();
                       }));
                     });
                   },
@@ -69,7 +69,7 @@ class _MyHomePageState extends State<Swipe> {
                     setState(() {
                       Navigator.of(context)
                           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                        return new Settings();
+                        return new Dashboard();
                       }));
                     });
                   },
@@ -77,7 +77,7 @@ class _MyHomePageState extends State<Swipe> {
                     setState(() {
                       Navigator.of(context)
                           .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
-                        return new Settings();
+                        return new Dashboard();
                       }));
                     });
                   },

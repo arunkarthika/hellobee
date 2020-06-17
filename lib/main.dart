@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:core';
-import 'package:honeybee/SplashScreen.dart';
 import 'package:honeybee/constant/common.dart';
-import 'package:honeybee/ui/dashNew.dart';
-import 'package:honeybee/ui/dashboard.dart';
+import 'package:honeybee/ui/Dashboard.dart';
 import 'package:honeybee/ui/loginpage.dart';
 
 void main() => runApp(
@@ -18,7 +16,7 @@ void main() => runApp(
         home: SplashScreen(),
         routes: <String, WidgetBuilder>{
           '/check': (BuildContext context) => LoginPage(),
-          '/dashboard': (BuildContext context) => DashboardNew()
+          '/dashboard': (BuildContext context) => Dashboard()
         }
     )
 );

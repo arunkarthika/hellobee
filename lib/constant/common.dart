@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +25,7 @@ class CommonFun {
     String basicAuth =
         'Basic ' + base64Encode(utf8.encode('$username:$password'));
     String url =
-        'https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/$endPoint?$params';
+        'https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/$endPoint?$params';
     var response;
     print('url');
     print(url);
@@ -40,7 +42,7 @@ class CommonFun {
     if (response.statusCode == 401 && woutauth == 0) {
       var json = jsonEncode({'device': 'android'});
       var urlData =
-          "https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/system/auth";
+          "https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/system/auth";
       var session = await http.post(Uri.encodeFull(urlData),
           body: jsonDecode(json),
           headers: {"Authorization": "Bearer $username"});
@@ -56,6 +58,15 @@ class CommonFun {
     print('response.body');
     print(response.body);
     return response.body;
+  }
+
+  Future<bool> hasToDownloadAssets(String name) async {
+    print("==========name================");
+    print(name);
+    var file = File(name);
+    print("==========file================");
+    print(file.exists());
+    return file.exists();
   }
 
   saveShare(String key, dynamic value) async {

@@ -4,11 +4,10 @@ import 'package:firebase_auth_ui/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:honeybee/Constant/common.dart';
-import 'package:honeybee/Constant/http.dart';
+import 'package:honeybee/constant/common.dart';
+import 'package:honeybee/constant/http.dart';
+import 'package:honeybee/ui/Dashboard.dart';
 import 'package:honeybee/ui/adminblock.dart';
-import 'package:honeybee/ui/dashNew.dart';
-import 'package:honeybee/ui/dashboard.dart';
 import 'package:honeybee/ui/newuser.dart';
 
 class LoginPage extends StatefulWidget {
@@ -30,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => DashboardNew(),
+        builder: (context) => Dashboard(),
       ),
           (Route<dynamic> route) => false,
     );
@@ -202,12 +201,12 @@ class _LoginPageState extends State<LoginPage> {
                             print(firebaseUser.email);
                             print(firebaseUser.phoneNumber);
                             print(firebaseUser.photoUri);
-                           /*  dataProccessor(
+                             dataProccessor(
                                  firebaseUser.displayName,
                                  firebaseUser.email,
                                  "",
                                  firebaseUser.photoUri,
-                                 "facebook");*/
+                                 "facebook");
                           });
                         }),
                   ],
@@ -275,12 +274,12 @@ class _LoginPageState extends State<LoginPage> {
                         print(firebaseUser.email);
                         print(firebaseUser.phoneNumber);
                         print(firebaseUser.photoUri);
-                       /*  dataProccessor(
+                         dataProccessor(
                              firebaseUser.displayName,
                              firebaseUser.email,
                              "",
                              firebaseUser.photoUri,
-                             "google");*/
+                             "twitter");
                       }),
                       child: Container(
                           child: Image(

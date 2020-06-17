@@ -9,3 +9,8 @@ String profileSuccess = "Profile Updated Successfully!!";
 String exit_warning = "Press back again to leave";
 String permission_warning = "Please Allow the Permission";
 String internetConnection= "No Internet Connection";
+
+
+String wallet = "https://phalcon.sjhinfotech.com/BliveWeb/purchase/wallet07.php?user_id=100001";
+String terms = "https://phalcon.sjhinfotech.com/BliveWeb/Terms/V1/level.php?userID=100001";
+String myprgress = "https://phalcon.sjhinfotech.com/BliveWeb/myProgress/myProgress.php?user_id=100001";

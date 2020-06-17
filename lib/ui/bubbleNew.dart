@@ -8,13 +8,14 @@ import 'dart:core';
 import 'dart:convert';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:honeybee/bubble_tabMenu.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/database_hepler.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/constant/permision.dart';
 import 'package:honeybee/model/gift.dart';
-import 'package:honeybee/ui/audio.dart';
-import 'package:honeybee/ui/editprofile.dart';
+import 'package:honeybee/ui/bubbleNew.dart';
+import 'package:honeybee/ui/liveroom/liveRoom.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
 import 'package:honeybee/ui/story.dart';
@@ -105,14 +106,11 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
     return !(await file.exists());
   }
 
-  //Gift Download Prosess Start
   Future<void> _downloadAssets(String name) async {
 
     if (!await _hasToDownloadAssets(name, _appDocsDir)) {
-//      toast(_appDocsDir, Colors.amber);
       return;
     }
-//    toast('$api/$name.zip', Colors.amber);
     var zippedFile =
     await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
 
@@ -124,7 +122,6 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
       if (file.isFile) {
         var outFile = File(filename);
         print('File Extract Here:: ' + outFile.path);
-//        toast("Un Zipping....WOW..!!!!!", Colors.yellow);
         outFile = await outFile.create(recursive: true);
         await outFile.writeAsBytes(file.content);
       }
@@ -135,11 +132,9 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
       String url, String filename, String _appDocsDir) async {
     var req = await http.Client().get(Uri.parse(url));
     var file = File('$_appDocsDir/$filename');
-//    toast("File Started to Download..", Colors.green);
     return file.writeAsBytes(req.bodyBytes);
   }
 
-//Gift Download Prosess End
 
   _storagepermissionstore() async {
     var storageStatus = await PermissionFun().storagePermision();
@@ -340,9 +335,8 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
           });
         }
         Timer(Duration(milliseconds: 500), () {
-           dataSlider();
+          dataSlider();
           Timer(Duration(milliseconds: 500), () {
-//            toast(giftVersion, Colors.red);
             if (d2['body']['giftVersion'] != giftVersion) {
               CommonFun().saveShare('giftVersion', d2['body']['giftVersion']);
               giftVersion = d2['body']['giftVersion'];
@@ -482,35 +476,6 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
         onWillPop: _onBackPressed,
         child: SafeArea(
           child: Scaffold(
-            floatingActionButton: FloatingActionButton(
-              child: const Image(
-                  image: AssetImage('assets/dashboard/Golive.png'),
-                  width: 75,
-                  height: 75),
-              onPressed: () async {
-                var camstatus = await PermissionFun().cameraPermision();
-                var micstatus = await PermissionFun().micPermision();
-                if (camstatus.toString() == "PermissionStatus.granted" &&
-                    micstatus.toString() == "PermissionStatus.granted") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AudioCall(
-                          userId1: userId,
-                          broadcasterId1: userId,
-                          username1: userName,
-                          userType1: "broad",
-                          broadcastType1: "audio"
-                      ),
-                    ),
-                  );
-                } else {
-                  toast("Please Allow the Permission", Colors.red);
-                }
-              },
-            ),
-            floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked,
             body: TabBarView(
               children: <Widget>[
                 Scaffold(
@@ -524,12 +489,7 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
                       child: IconButton(
                         icon: Icon(Icons.search),
                         onPressed: () {
-//                          Navigator.push(
-//                            context,
-//                            MaterialPageRoute(
-//                              builder: (context) => AdvancedSearch(),
-//                            ),
-//                          );
+
                         },
                       ),
                     ),
@@ -635,8 +595,8 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
                               child: Scaffold(
                                 body: RefreshIndicator(
                                   child: Container(
-                                    child: dispyActive(
-                                        activeList, activescrollController),
+                                    child: dispyActive(activeList,
+                                        activescrollController),
                                   ),
                                   onRefresh: refreshFun,
                                 ),
@@ -649,45 +609,7 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
                                     child: SingleChildScrollView(
                                       child: Column(
                                         children: <Widget>[
-                                          dispyUnivers(solo, "Solo",
-                                              soloscrollController),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          dispyUnivers(audio, "Audio",
-                                              audioscrollController),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          dispyUnivers(groupof3, "Group 3",
-                                              group3scrollController),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          dispyUnivers(groupof6, "Group 6",
-                                              group6scrollController),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          dispyUnivers(groupof9, "Group 9",
-                                              group9scrollController),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          dispyUnivers(
-                                              screenSharing,
-                                              "Screen Sharing",
-                                              screenscrollController),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          dispyUnivers(
-                                              pk, "PK", pkscrollController),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          dispyUnivers(hotlive, "Hot Live",
-                                              hotscrollController),
+
                                         ],
                                       ),
                                     ),
@@ -705,266 +627,19 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
                   ),
                 ),
                 Center(
-                  child: ChatHome()),
+                    child: ChatHome()),
                 Center(
-                  child: EditProfile()),
+                    child: DashboardNew()),
                 Center(
                     child: Profile()),
               ],
               controller: bottomController,
             ),
-            bottomNavigationBar: BottomAppBar(
-              shape: CircularNotchedRectangle(),
-              child: TabBar(
-                tabs: [
-                  Tab(
-                    child: Image(
-                      image: bottomController.index == 0
-                          ? AssetImage('assets/dashboard/HomeSelected.png')
-                          : AssetImage('assets/dashboard/Home.png'),
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                  Tab(
-                    child: Image(
-                      image: bottomController.index == 1
-                          ? AssetImage('assets/dashboard/ToppersSelected.png')
-                          : AssetImage('assets/dashboard/Toppers.png'),
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                  Tab(
-                    child: Image(
-                      image: bottomController.index == 2
-                          ? AssetImage('assets/dashboard/ToppersSelected.png')
-                          : AssetImage('assets/dashboard/Toppers.png'),
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                  Tab(
-                    child: Image(
-                      image: bottomController.index == 3
-                          ? AssetImage('assets/dashboard/ProfileSelected.png')
-                          : AssetImage('assets/dashboard/Profile.png'),
-                      width: 25,
-                      height: 25,
-                    ),
-                  )
-                ],
-                controller: bottomController,
-                onTap: (indexs) {
-                  print(indexs);
-                  setState(() {
-                    pageIndex = indexs;
-                  });
-                },
-                indicatorColor: Colors.grey,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-              ),
-            ),
+
           ),
         ),
       ),
     );
-  }
-
-  Widget dispyUnivers(list, name, viewController) {
-    return list.length != 0
-        ? Container(
-      height: 250,
-      width: double.infinity,
-         child: Column(
-          children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(30)),
-              color: Colors.black,
-            ),
-            child: Text(
-              name,
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle
-                  .copyWith(color: Colors.white, fontSize: 12),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(5),
-                scrollDirection: Axis.horizontal,
-                controller: viewController,
-                shrinkWrap: true,
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  var live = 'Live';
-                  var data = list[index];
-                  if (data['status'] == 0) {
-                    live = 'offline';
-                  }
-                  return Container(
-                    padding: const EdgeInsets.all(10),
-                    margin: EdgeInsets.only(left: 3, right: 3),
-                    width: 150,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          stops: [
-                            0.1,
-                            0.9
-                          ],
-                          colors: [
-                            Colors.black,
-                            Colors.transparent,
-                          ]),
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      image: DecorationImage(
-                        image: NetworkImage(data['profile_pic']),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Stack(
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () async {
-                            var camstatus =
-                            await PermissionFun().cameraPermision();
-                            var micstatus =
-                            await PermissionFun().micPermision();
-                            if (camstatus.toString() ==
-                                "PermissionStatus.granted" &&
-                                micstatus.toString() ==
-                                    "PermissionStatus.granted") {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AudioCall(
-                                    userId1: userId,
-                                    broadcasterId1:
-                                    data["user_id"].toString(),
-                                    username1: data["username"],
-                                    userType1: "audience",
-                                    broadcastType1: "none",
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        Positioned(
-                          left: 2,
-                          right: 2,
-                          bottom: 0,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5.0),
-                                gradient: LinearGradient(
-                                    begin: Alignment.bottomCenter,
-                                    end: Alignment.topCenter,
-                                    stops: [
-                                      0.1,
-                                      0.9
-                                    ],
-                                    colors: [
-                                      Colors.black,
-                                      Colors.transparent,
-                                    ])),
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                              alignment: Alignment.center,
-                              child: Text(
-                                data['profileName'],
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .subtitle
-                                    .copyWith(
-                                    color: Colors.white,
-                                    fontSize: 12),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 2,
-                          left: 5,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEC008C),
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            child: Container(
-                              width: 30,
-                              alignment: Alignment.center,
-                              child: Text(
-                                live,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .subtitle
-                                    .copyWith(
-                                    color: Colors.white,
-                                    fontSize: 12),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 2,
-                          right: 5,
-                          child: Container(
-                            width: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              border: Border.all(color: Colors.purple),
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  width: 20,
-                                  alignment: Alignment.center,
-                                  child: Image(
-                                    image: AssetImage(
-                                      "assets/images/dashboard/Group3.png",
-                                    ),
-                                    width: 10,
-                                    height: 10,
-                                  ),
-                                ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    data['viewer_count'],
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle
-                                        .copyWith(
-                                        color: Colors.white,
-                                        fontSize: 12),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          )
-        ],
-      ),
-    )
-        : Container();
   }
 
   Widget dispyActive(list, viewController) {
@@ -972,7 +647,7 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
         ? Container(
       width: double.infinity,
       height: double.infinity,
-          child: GridView.count(
+      child: GridView.count(
         controller: viewController,
         padding: const EdgeInsets.all(2),
         primary: false,
@@ -1023,7 +698,7 @@ class HomePage extends State<DashboardNew> with TickerProviderStateMixin {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AudioCall(
+                            builder: (context) => LiveRoom(
                               userId1: userId,
                               broadcasterId1:
                               data["user_id"].toString(),

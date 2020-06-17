@@ -1,0 +1,394 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:honeybee/constant/http.dart';
+
+class ListPersonPage extends StatefulWidget {
+  ListPersonPage({Key key, @required this.tosearch, @required this.touserid})
+      : super(key: key);
+
+  final String tosearch;
+  final String touserid;
+
+  _ListPersonPageState createState() =>
+      _ListPersonPageState(tosearch: tosearch, touserid: touserid);
+}
+
+class _ListPersonPageState extends State<ListPersonPage> {
+  _ListPersonPageState(
+      {Key key, @required this.tosearch, @required this.touserid});
+
+  final String tosearch;
+  final String touserid;
+
+  List<Person> _filteredList = [];
+  TextEditingController controller = TextEditingController();
+  ScrollController scrollController = ScrollController();
+  String filter = "";
+  bool isLoading = false;
+  int page = 1;
+  int lastpage = 0;
+  var userId;
+  final Shader linearGradient = LinearGradient(
+    colors: <Color>[Colors.pink, Colors.green],
+  ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));
+
+  Widget appBarTitle;
+  Icon actionIcon = Icon(Icons.search);
+
+  @override
+  void dispose() {
+    controller.dispose();
+    scrollController.dispose();
+    _filteredList.clear();
+
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    print('userid');
+    print(touserid);
+    appBarTitle = Text(tosearch);
+    userId = touserid.toString();
+    var types = "searchList";
+    switch (tosearch) {
+      case 'Fans':
+        types = "fans";
+        break;
+      case 'Followers':
+        types = "followers";
+        break;
+      case 'Friends':
+        types = "friends";
+        break;
+      case 'Audiences':
+        types = "audience";
+        break;
+      default:
+        break;
+    }
+    listData(types, page);
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        print("paginglist" + scrollController.position.toString());
+        if (lastpage != page) {
+          page++;
+          var types = "searchList";
+          switch (tosearch) {
+            case 'Fans':
+              types = "fans";
+              break;
+            case 'Followers':
+              types = "followers";
+              break;
+            case 'Friends':
+              types = "friends";
+              break;
+            case 'Audiences':
+              types = "audience";
+              break;
+
+            default:
+              break;
+          }
+          listData(types, page);
+          // } else {
+          // toast('you Reached the Last Page', Colors.red);
+        }
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0.1,
+        title: appBarTitle,
+        actions: <Widget>[
+          IconButton(
+            icon: actionIcon,
+            onPressed: () {
+              setState(() {
+                if (this.actionIcon.icon == Icons.search) {
+                  this.actionIcon = Icon(Icons.close);
+                  this.appBarTitle = TextField(
+                    onEditingComplete: () {
+                      _filteredList.clear();
+                      listData("searchList", page);
+                    },
+                    controller: controller,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search, color: Colors.white),
+                      hintText: "Search...",
+                      hintStyle: TextStyle(color: Colors.white),
+                    ),
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                    autofocus: true,
+                    cursorColor: Colors.white,
+                  );
+                } else {
+                  this.actionIcon = Icon(Icons.search);
+                  this.appBarTitle = Text(tosearch);
+                  _filteredList.clear();
+                  controller.clear();
+                  listData("searchList", 1);
+                }
+              });
+            },
+          ),
+        ],
+      ),
+      body: !isLoading
+          ? Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : _filteredList.length > 0
+              ? Container(
+                  child: ListView.builder(
+                    controller: scrollController,
+                    // scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: _filteredList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      // print("_filteredList" + _filteredList[index].relationName);
+
+                      return Card(
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () {
+                                  print(
+                                      "------------------userid-----------------");
+                                  print(_filteredList[index].userid);
+//                                  Navigator.push(
+//                                    context,
+//                                    MaterialPageRoute(
+//                                      builder: (context) => FullProfile(
+//                                          userId: _filteredList[index].userid),
+//                                    ),
+//                                  );
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      _filteredList[index].profilepic),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(3.0),
+                                width: 80,
+                                height: 40,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    Text(
+                                      _filteredList[index].personFirstName,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      maxLines: 1,
+                                      textAlign: TextAlign.left,
+                                    ),
+                                    Text('ID - ' + _filteredList[index].userid,
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.pink,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                '⭐ ' + _filteredList[index].lvl,
+                                style: TextStyle(
+                                    fontSize: 10.0,
+                                    fontWeight: FontWeight.bold,
+                                    foreground: Paint()
+                                      ..shader = linearGradient),
+                              ),
+                              RaisedButton(
+                                onPressed: () {
+                                  userRelation(
+                                      _filteredList[index].userrelation,
+                                      _filteredList[index].userid,
+                                      index);
+                                },
+                                textColor: Colors.white,
+                                padding: const EdgeInsets.all(0.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(80.0)),
+                                child: Container(
+                                  width: 100,
+                                  decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: <Color>[
+                                          Color(0xFF0D47A1),
+                                          Color(0xFF1976D2),
+                                          Color(0xFF42A5F5),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(80.0))),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        _filteredList[index].icon,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        "Unblock",
+                                        style: TextStyle(
+                                            fontSize: 8, color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              : Container(
+                  child: Center(
+                    child: Text("No Data"),
+                  ),
+                ),
+    );
+  }
+
+  listData(type, page) {
+    // _filteredList.clear();
+    String endPoint = "user/List";
+    String params =
+        "length=10&page=$page&user_id=" + userId + "&action=" + type;
+    print(type);
+    if (type == "searchList") {
+      print("==========controller.text=====================");
+      print(controller.text);
+      var search = controller.text == "" || controller.text == null
+          ? "1"
+          : controller.text;
+      endPoint = "user/search";
+      params = "length=10&page=$page&gender=all&searchTerm=" + search;
+      // print(type);
+    }
+    print(params);
+    makeGetRequest(endPoint, params, 0, context).then((response) {
+      var data = (response).trim();
+      var pic = json.decode(data);
+      lastpage = pic['body']["last_page"];
+      var res = pic['body'][type];
+      if (type == "audience") {
+        res = pic['body']['audience']['viewers_list'];
+      }
+      if (res.length > 0) {
+        for (dynamic v in res) {
+          var relation = v['userRelation'];
+          relation = relation == null ? 0 : relation;
+          IconData icon = Icons.add;
+          var name = "Unblock";
+          print("relation");
+          print(relation);
+          if (relation == 1) {
+            name = "Unfollow";
+            icon = Icons.remove;
+          } else if (relation == 3) {
+            name = "Friend";
+            icon = Icons.swap_horiz;
+          }
+          Person person = Person(v["profileName"], v["user_id"], v["level"],
+              v['userRelation'], v['profile_pic'], name, icon);
+          _filteredList.add(person);
+        }
+      }
+      if (page == 1) {
+        setState(() {
+          isLoading = true;
+        });
+      }
+    });
+  }
+
+  void userRelation(level, id, index) {
+    print('level');
+    print(level);
+    String endPoint = 'user/userRelation';
+    var action = "";
+    String returnData = "";
+    int relationInt = 0;
+    IconData icon = Icons.add;
+    switch (level) {
+      case 0:
+        action = "follow";
+        returnData = "Unfollow";
+        relationInt = 1;
+        icon = Icons.remove;
+        break;
+      case 1:
+        action = "unfollow";
+        returnData = "Follow";
+        icon = Icons.add;
+        break;
+      case 2:
+        action = "follow";
+        returnData = "Friends";
+        relationInt = 3;
+        icon = Icons.swap_horiz;
+        break;
+      case 3:
+        action = "unfollow";
+        returnData = "Follow";
+        relationInt = 2;
+        icon = Icons.add;
+        break;
+      default:
+    }
+    var params = {
+      "action": action,
+      "user_id": id.toString(),
+    };
+    print(endPoint + jsonEncode(params));
+    makePostRequest(endPoint, jsonEncode(params), 0, context)
+        .then((response) async {
+      setState(() {
+        _filteredList[index].relationName = returnData;
+        _filteredList[index].userrelation = relationInt;
+        _filteredList[index].icon = icon;
+      });
+      print(returnData);
+      // relationData = returnData;
+      print(relationInt);
+      // userrelation = relationInt;
+    });
+  }
+}
+
+class Person {
+  String personFirstName;
+  String userid;
+  String lvl;
+  int userrelation;
+  String profilepic;
+  String relationName;
+  IconData icon;
+
+  Person(this.personFirstName, this.userid, this.lvl, this.userrelation,
+      this.profilepic, this.relationName, this.icon);
+}

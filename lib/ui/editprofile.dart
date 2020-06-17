@@ -1,12 +1,48 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/listview.dart';
 import 'package:honeybee/utils/string.dart';
 
-void main() => runApp(new EditProfile());
+import 'liveroom/profileUi.dart';
 
-class EditProfile extends StatelessWidget {
+class EditProfile extends StatefulWidget {
+  EditProfile({Key key, @required this.touserid})
+      : super(key: key);
+
+  final String touserid;
+
+  _EditProfileState createState() => _EditProfileState( touserid: touserid);
+
+}
+
+class _EditProfileState extends State<EditProfile>  {
+  _EditProfileState({Key key, @required this.touserid});
+
+  final String touserid;
+
+  UserData uData = UserData();
+  var name = "";
+  var gender = "Female.png";
+  var level = "";
+  var fans = "";
+  var overallgold = "";
+  var friends = "";
+  var followers = "";
+  var country = "India";
+  bool loader = true;
+  var profilePic = "";
+  var refrenceId = "";
+  var status = "";
+  var agehide;
+  var genderhide;
+  var dobhide;
+  var dob;
+  var age;
+  var idhide;
 
   final List tags = [
     "↑Lv 10",
@@ -14,6 +50,53 @@ class EditProfile extends StatelessWidget {
     "♀ Female",
     '🌝 Happy face',
   ];
+
+  @override
+  void initState() {
+    var params = "action=fullProfile&user_id=" + touserid.toString();
+    makeGetRequest("user", params, 0, context).then((response) {
+      var res = jsonDecode(response);
+      var data = res['body'];
+      print(data);
+      setState(() {
+        status = data['status'];
+        dob = data['date_of_birth'];
+        age = data['age'];
+        agehide = data['is_the_age_hidden'];
+        genderhide = data['is_the_gender_hide'];
+        dobhide = data['is_the_dob_hidden'];
+        idhide = data['is_the_user_id_hidden'];
+        profilePic = data['profile_pic'];
+        name = data['profileName'];
+        friends = data['friends'];
+        followers = data['followers'];
+        fans = data['fans'];
+        overallgold = data['over_all_gold'];
+        gender = "Female.png";
+        level = data['level'];
+        age = data['age'];
+        name = data['profileName'];
+        if (data['gender'] == "male") gender = "male.jpg";
+        country = data['country'];
+        profilePic = data['profile_pic'];
+        refrenceId = data['reference_user_id'];
+        if (data['gender'] == "male") gender = "male.jpg";
+        uData.userrelation = data['userRelationship'];
+        if (uData.userrelation == null) uData.userrelation = 0;
+        uData.relationData = "Follow";
+        uData.relationImage = Icons.add;
+        if (uData.userrelation == 1) {
+          uData.relationData = 'Unfollow';
+          uData.relationImage = Icons.remove;
+        } else if (uData.userrelation == 3) {
+          uData.relationImage = Icons.swap_horiz;
+          uData.relationData = 'Friend';
+        }
+        loader = false;
+      });
+    });
+    super.initState();
+  }
 
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -34,7 +117,8 @@ class EditProfile extends StatelessWidget {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage('https://images.pexels.com/photos/1308881/pexels-photo-1308881.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500 ')
+                                image: NetworkImage(
+                                    'https://images.pexels.com/photos/1308881/pexels-photo-1308881.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500 ')
                             )
                         ),
                       ),)
@@ -49,7 +133,7 @@ class EditProfile extends StatelessWidget {
                             shape: BoxShape.circle,
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage('https://i.pinimg.com/originals/0b/c0/be/0bc0be8eebb2988d7dd5b814e8d04173.jpg'),
+                              image: NetworkImage(profilePic),
                             ),
                             border: Border.all(
                                 color: Colors.white,
@@ -66,10 +150,19 @@ class EditProfile extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('Amelia🌝', style: TextStyle(
+                    /*Text(name,
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 28.0
-                    ),),
+                    ),),*/
+                    name == null
+                        ? Text("Name")
+                        : Text(
+                      name,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28.0),
+                    ),
                     SizedBox(width: 5.0,),
                     /*Icon(Icons.check_circle, color: Colors.blueAccent,)*/
                   ],
@@ -79,22 +172,20 @@ class EditProfile extends StatelessWidget {
               SizedBox(height: 5.0,),
               Container(
                 child: Center(
-                  child: Text(
-                    "ID" +
-                        ' ' +
-                        '100025'+
-                        ' ' +
-                        "|" +
-                        ' ' +
-                        "India",
-                    style: TextStyle(
-                      fontSize: 13.0,
-                      color: Colors.pink,
-                    ),
-                  ),
+                  child: refrenceId == null
+                      ? Text("ID ")
+                      : Text(
+                      "ID: " + refrenceId+
+                      ' ' +
+                      "|" +
+                      ' ' +
+                      "India",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.subtitle.
+                      apply(color: Colors.orange)
+                  )
                 ),
               ),
-
               SizedBox(height: 5.0,),
               Container(
                 child: Container(
@@ -178,7 +269,7 @@ class EditProfile extends StatelessWidget {
                           child: Column(
                             // Replace with a Row for horizontal icon + text
                             children: <Widget>[
-                              Text("12K",
+                              Text(friends,
                                   style: TextStyle(color: Colors.black,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,)),
@@ -202,7 +293,7 @@ class EditProfile extends StatelessWidget {
                           child: Column(
                             // Replace with a Row for horizontal icon + text
                             children: <Widget>[
-                              Text("13K",
+                              Text(fans,
                                   style: TextStyle(color: Colors.black,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,)),
@@ -226,7 +317,7 @@ class EditProfile extends StatelessWidget {
                           child: Column(
                             // Replace with a Row for horizontal icon + text
                             children: <Widget>[
-                              Text("9k",
+                              Text(followers,
                                   style: TextStyle(color: Colors.black,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,)),
@@ -250,7 +341,7 @@ class EditProfile extends StatelessWidget {
                           child: Column(
                             // Replace with a Row for horizontal icon + text
                             children: <Widget>[
-                              Text("102K",
+                              Text(overallgold,
                                   style: TextStyle(color: Colors.black,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,)),
@@ -298,7 +389,8 @@ class EditProfile extends StatelessWidget {
                           fontSize: 18.0
                       ),),
                       SizedBox(width: 5.0,),
-                      Text('Banglore',style: TextStyle(
+                      Text(country,
+                        style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold
                       ),)
@@ -311,7 +403,8 @@ class EditProfile extends StatelessWidget {
                           fontSize: 18.0
                       ),),
                       SizedBox(width: 5.0,),
-                      Text('India',style: TextStyle(
+                      Text(country,
+                        style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold
                       ),)

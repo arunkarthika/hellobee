@@ -1,16 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
-import 'package:honeybee/ui/listusers.dart';
-import 'package:honeybee/ui/listview.dart';
-import 'package:honeybee/ui/mepage.dart';
 import 'package:honeybee/ui/message.dart';
-import 'package:honeybee/ui/profilecontainer.dart';
-import 'package:honeybee/ui/settingnew.dart';
-import 'package:honeybee/ui/settings.dart';
+import 'package:honeybee/ui/search_page.dart';
+import 'package:honeybee/ui/setting.dart';
 import 'package:honeybee/ui/webView.dart';
+import 'package:honeybee/utils/string.dart';
 import 'package:honeybee/widget/circularbutton.dart';
 
 class Profile extends StatefulWidget {
@@ -25,19 +22,12 @@ class Profilepage extends State<Profile> {
   var profileName;
   var level;
   var referenceId;
+  var userid;
   var profilePic;
   var diamond;
   var bGold;
+  var friends;
   bool loader = false;
-
-  final String wallet = 'assets/profile/Wallet.svg';
-  final String golds = 'assets/profile/Coin.svg';
-  final String aristocracy = 'assets/profile/Diamond.svg';
-  final String store = 'assets/profile/Statistics.svg';
-  final String medal = 'assets/profile/Medal.svg';
-  final String guild = 'assets/profile/Wallet.svg';
-  final String feedback = 'assets/profile/Writing.svg';
-  final String settings = 'assets/profile/Setting.svg';
 
   @override
   void initState() {
@@ -66,10 +56,13 @@ class Profilepage extends State<Profile> {
     print(await CommonFun().getStringData('profile_pic'));
     profileName = await CommonFun().getStringData('profileName');
     referenceId = await CommonFun().getStringData('reference_user_id');
+    userid = await CommonFun().getStringData('user_id');
     level = await CommonFun().getStringData('level');
     profilePic = await CommonFun().getStringData('profile_pic');
     diamond = await CommonFun().getStringData('diamond');
     bGold = await CommonFun().getStringData('over_all_gold');
+    friends = await CommonFun().getStringData('friends');
+
     setState(() {
       loader = true;
     });
@@ -85,7 +78,7 @@ class Profilepage extends State<Profile> {
           Container(
             margin: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
             height: 190,
-            child: ProfileContainer(),
+            child: profileheader(),
           ),
           Positioned(
             top: 215,
@@ -112,8 +105,7 @@ class Profilepage extends State<Profile> {
                   title: "Wallet",
                   icon: Icons.account_balance_wallet,
                   onTap: () {
-                    String textToSend =
-                        "https://phalcon.sjhinfotech.com/BliveWeb/purchase/wallet07.php?user_id=100001" ;
+                    String textToSend = wallet;
                     Navigator.of(context).push(
                         MaterialPageRoute<Null>(
                             builder: (BuildContext context) {
@@ -125,8 +117,7 @@ class Profilepage extends State<Profile> {
                   title: "Level",
                   icon: Icons.send,
                   onTap: () {
-                    String textToSend =
-                        "https://phalcon.sjhinfotech.com/BliveWeb/Terms/V1/level.php?userID=100001" ;
+                    String textToSend = terms;
                     Navigator.of(context).push(
                         MaterialPageRoute<Null>(
                             builder: (BuildContext context) {
@@ -139,8 +130,7 @@ class Profilepage extends State<Profile> {
                   title: "History",
                   icon: Icons.attach_money,
                   onTap: () {
-                    String textToSend =
-                        "https://phalcon.sjhinfotech.com/BliveWeb/myProgress/myProgress.php?user_id=100001" ;
+                    String textToSend = myprgress ;
                     Navigator.of(context).push(
                         MaterialPageRoute<Null>(
                             builder: (BuildContext context) {
@@ -185,7 +175,9 @@ class Profilepage extends State<Profile> {
                               title: Text("My Assets"),
                               trailing: IconButton(
                                 icon: Icon(Icons.chevron_right),
-                                onPressed: () {},
+                                onPressed: () {
+
+                                },
                               ),
                             ),
                             new ListTile(
@@ -204,7 +196,9 @@ class Profilepage extends State<Profile> {
                               title: Text("Store"),
                               trailing: IconButton(
                                 icon: Icon(Icons.chevron_right),
-                                onPressed: () {},
+                                onPressed: () {
+
+                                },
                               ),
                             ),
                             new ListTile(
@@ -223,7 +217,9 @@ class Profilepage extends State<Profile> {
                               title: Text("Aristocracy"),
                               trailing: IconButton(
                                 icon: Icon(Icons.chevron_right),
-                                onPressed: () {},
+                                onPressed: () {
+
+                                },
                               ),
                             ),
                             new ListTile(
@@ -242,7 +238,9 @@ class Profilepage extends State<Profile> {
                               title: Text("Medal"),
                               trailing: IconButton(
                                 icon: Icon(Icons.chevron_right),
-                                onPressed: () {},
+                                onPressed: () {
+
+                                },
                               ),
                             ),
                             new ListTile(
@@ -261,7 +259,9 @@ class Profilepage extends State<Profile> {
                               title: Text("Guild"),
                               trailing: IconButton(
                                 icon: Icon(Icons.chevron_right),
-                                onPressed: () {},
+                                onPressed: () {
+
+                                },
                               ),
                             ),
                             new ListTile(
@@ -328,6 +328,224 @@ class Profilepage extends State<Profile> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget profileheader() {
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 25.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        gradient: LinearGradient(
+          colors: [Colors.orange, Colors.deepOrangeAccent],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey[200],
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+           GestureDetector(
+              child: Container(
+                padding: const EdgeInsets.all(2.3),
+                decoration:
+                BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                child: CircleAvatar(
+                  maxRadius: 35.0,
+                  backgroundImage: NetworkImage(
+                      (profilePic),
+                    /*"https://images.pexels.com/photos/1580274/pexels-photo-1580274.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"*/
+                  ),
+                ),
+              ),
+             onTap: () {
+                Fluttertoast.showToast(msg: exit_warning);
+             },
+           ),
+              SizedBox(width: 21),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        profileName == null
+                            ? Text("Name")
+                            : Text(
+                          profileName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .title
+                              .apply(fontWeightDelta: 2, color: Colors.white),
+                        ),
+                        SizedBox(width: 15.0),
+                        /*GestureDetector(
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
+                          onTap: () {},
+                        )*/
+                      ],
+                    ),
+                    SizedBox(height: 5.0),
+                    /*Text(
+                      "ID 100250",
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle
+                          .apply(color: Colors.white),
+                    ),*/
+                    /*referenceId == null
+                        ? Text("ID ")
+                        : Text(
+                      "ID: " + referenceId,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.subtitle.
+                        apply(color: Colors.white)
+                    ),*/
+                    Row(
+                      children: <Widget>[
+                        referenceId == null
+                        ? Text("ID ")
+                        : Text(
+                      "ID: " + referenceId,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.subtitle.
+                        apply(color: Colors.white)
+                    ),
+                        SizedBox(width: 15.0),
+                        GestureDetector(
+                          child: level == null
+                              ? Text("ID ")
+                              : Text(
+                              "Lv: " + level,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.subtitle.
+                              apply(color: Colors.white)
+                          ),
+                          onTap: () {
+
+                          },
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: 15.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+            GestureDetector(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "849",
+                    style: Theme.of(context)
+                        .textTheme
+                        .title
+                        .apply(color: Colors.white),
+                  ),
+                  SizedBox(height: 3.0),
+                  Text(
+                    "Friends",
+                    style: TextStyle(color: Colors.grey[300]),
+                  ),
+                ]),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute<Null>(
+                        builder: (BuildContext context) {
+                          return new ListPersonPage(tosearch: "Friends", touserid: userid,);
+                        }));
+              },
+            ),
+            GestureDetector(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "51",
+                    style: Theme.of(context)
+                        .textTheme
+                        .title
+                        .apply(color: Colors.white),
+                  ),
+                  SizedBox(height: 3.0),
+                  Text(
+                    "Followers",
+                    style: TextStyle(color: Colors.grey[300]),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute<Null>(
+                        builder: (BuildContext context) {
+                          return new ListPersonPage(tosearch: "Followers", touserid: userid,);
+                        }));
+              },
+            ),
+           GestureDetector(
+            child: Column(
+                children: <Widget>[
+                  Text(
+                    "291",
+                    style: Theme.of(context)
+                        .textTheme
+                        .title
+                        .apply(color: Colors.white),
+                  ),
+                  SizedBox(height: 3.0),
+                  Text(
+                    "Fans",
+                    style: TextStyle(color: Colors.grey[300]),
+                  ),
+                ],
+              ),
+             onTap: () {
+               Navigator.of(context).push(
+                   MaterialPageRoute<Null>(
+                       builder: (BuildContext context) {
+                         return new ListPersonPage(tosearch: "Fans", touserid: userid,);
+                       }));
+             },
+           ),
+             GestureDetector(
+              child: Column(
+                children: <Widget>[
+                  bGold == null
+                      ? Text("0")
+                      : Text(
+                      bGold,
+                    style: Theme.of(context)
+                        .textTheme
+                        .title
+                        .apply(color: Colors.white),
+                  ),
+                  SizedBox(height: 3.0),
+                  Text(
+                    "B-Gold",
+                    style: TextStyle(color: Colors.grey[300]),
+                  ),
+                ],
+              ),
+               onTap: () {
+                 Fluttertoast.showToast(msg: exit_warning);
+               },
+             ),
+            ],
+          )
         ],
       ),
     );
