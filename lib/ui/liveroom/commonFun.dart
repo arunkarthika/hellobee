@@ -135,6 +135,8 @@ class Common {
   var displayanimaionIcon = {};
   var songs = {};
   var relationImage = Icons.add;
+  var closeContext;
+
 
   var guestList = {};
   List comboList = [];

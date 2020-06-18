@@ -117,5 +117,7 @@ flutter:
     - assets/dashboard/Toppers.png
     - assets/dashboard/Golive.png
     - assets/dashboard/ToppersSelected.png
+    - assets/images/audience/
+
 
 
