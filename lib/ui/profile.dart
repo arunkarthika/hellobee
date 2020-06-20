@@ -10,6 +10,8 @@ import 'package:honeybee/ui/webView.dart';
 import 'package:honeybee/utils/string.dart';
 import 'package:honeybee/widget/circularbutton.dart';
 
+import 'liveroom/personalChat/home.dart';
+
 class Profile extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -95,8 +97,7 @@ class Profilepage extends State<Profile> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ChatHome(
-                        ),
+                        builder: (context) => HomeScreen(currentUserId: 'common.firebaseId'),
                       ),
                     );
                   },

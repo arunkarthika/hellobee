@@ -2416,7 +2416,7 @@ Widget buildInfoList(common) {
   );
 }
 
-void sendGift(giftName, message, giftValue, giftCount, setState, context,
+void sendGiftold(giftName, message, giftValue, giftCount, setState, context,
     common) {
   var arriveMsg = "";
   if (common.diamond <= 0) {
@@ -2489,6 +2489,68 @@ void sendGift(giftName, message, giftValue, giftCount, setState, context,
               common.giftUserId;
           print(arriveMsg);
         }
+        common.publishMessage(common.broadcastUsername, arriveMsg);
+      }
+    });
+  }
+}
+void sendGift(
+    giftName, message, giftValue, giftCount, setState, context, common) {
+  var arriveMsg = '';
+  if (common.diamond <= 0) {
+    toast('Diamond Value is Low', Colors.red);
+  } else {
+    var params = {
+      'giftName': giftName,
+      'giftCount': giftCount.toString(),
+      'giftValue': giftValue.toString(),
+      'user_id': common.giftUserId.toString(),
+    };
+    makePostRequest('user/sendGift', jsonEncode(params), 0, context)
+        .then((response) {
+      var res = jsonDecode(response);
+      if (res['status'] == 0 && res['message'] == 'Success') {
+        setState(() {
+          common.diamond = res['body']['sender']['diamond_balance'];
+          common.level = res['body']['sender']['level'];
+        });
+        CommonFun().saveShare('diamond', common.diamond);
+        CommonFun().saveShare('level', common.level);
+        if (giftName == 'bulletMessage') {
+          arriveMsg = '£01bullet01£*£' +
+              common.name +
+              '£*£' +
+              common.username +
+              '£*£' +
+              Uri.encodeFull(common.profilePic) +
+              '£*£' +
+              common.level +
+              '£*£' +
+              message;
+        } else {
+          arriveMsg = '£01sendGift01£*£' +
+              common.userId +
+              '£*£' +
+              common.name +
+              '£*£' +
+              giftName +
+              '£*£' +
+              common.level +
+              '£*£' +
+              message +
+              '£*£' +
+              Uri.encodeFull(common.profilePic) +
+              '£*£' +
+              giftCount.toString() +
+              '£*£' +
+              giftValue.toString() +
+              '£*£' +
+              common.giftUserId +
+              '£*£' +
+              res['body']['receiver']['level'];
+        }
+        print(common.giftUsername);
+        print('print gift');
         common.publishMessage(common.broadcastUsername, arriveMsg);
       }
     });
@@ -3150,6 +3212,11 @@ void loadBullet(common) async {
   }
 }
 
+void onMicMute(common, setState) {
+  setState(() {
+    common.zego.onMicStateChanged(common, setState);
+  });
+}
 Widget multiGuestGift(context, common, setState) {
   return Container(
     height: 80,

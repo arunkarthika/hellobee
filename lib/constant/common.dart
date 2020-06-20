@@ -129,6 +129,13 @@ class CommonFun {
     final bytes = response?.bodyBytes;
     return (bytes != null ? base64Encode(bytes) : null);
   }
+  dynamic downloadFile(String url, String storeName) async {
+    var req = await http.Client().get(Uri.parse(url));
+    var outFile = File('$storeName');
+    outFile = await outFile.create(recursive: true);
+    await outFile.writeAsBytes(req.bodyBytes);
+  }
+
 
   giftDisplay(image) {
     print(image);

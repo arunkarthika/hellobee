@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:honeybee/bubble_tabMenu.dart';
 import 'package:honeybee/ui/Language.dart';
 import 'package:honeybee/ui/loginpage.dart';
-import 'package:honeybee/ui/webView.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:store_redirect/store_redirect.dart';
 

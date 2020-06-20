@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
@@ -7,9 +9,8 @@ import 'package:zego_express_engine/zego_express_engine.dart';
 class ZegoClass {
   ZegoCanvas previewCanvas;
   ZegoViewMode viewMode = ZegoViewMode.AspectFill;
-  var backgroundColor = 0x000000;
+  var backgroundColor = 0xFF00FF;
 
-  // List<Widget> playViewWidget = [];
   List playViewWidget = [];
   List guest = [];
   var previewID = {};
@@ -24,40 +25,27 @@ class ZegoClass {
   bool isHardwareEncode = false;
   String networkQuality = '';
   bool _isUseFrontCamera = true;
-  bool _isUseSpeaker = true;
-  bool _isCameraEnabled = true;
+  bool isUseSpeaker = false;
+  bool isCameraEnabled = true;
   bool _isMirrored = false;
-  // int width = int.tryParse(double.infinity.toString());
-  // int height = int.tryParse(double.infinity.toString());
-
-  // int width = 300;
-  // int height = 300;
+  bool isUseMic = true;
+  bool broadOffline = false;
 
   int width;
   int height;
 
   ZegoClass() {
-    // ZegoExpressEngine.createEngine(
-    //     1263844657,
-    //     '6fd98a7be6002228918436de65cff64556cc4fb01c88b266f6b3904cd83692e6',
-    //     true,
-    //     ZegoScenario.General,
-    //     enablePlatformView: false);
-    CommonFun().getStringData('userType').then((res) {
-      // if(res=="broad"){
-      //   setPreview();
-      // }
-    });
+    CommonFun().getStringData('userType').then((res) {});
   }
 
   void setPreview(setState, streamID, broadcastType) {
-    if (broadcastType != "audio") {
+    if (broadcastType != 'audio') {
       // Create a Texture Renderer
       ZegoExpressEngine.instance
           .createTextureRenderer(width, height)
           .then((textureID) {
         previewViewID = textureID;
-        previewID[int.tryParse(streamID)] = previewViewID;
+        previewID[streamID] = previewViewID;
 
         setState(() {
           // Create a Texture Widget
@@ -73,30 +61,23 @@ class ZegoClass {
   }
 
   void startPublish(streamID) {
-    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-    print("insidepublish stream " + streamID);
-    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
     ZegoExpressEngine.instance.startPublishingStream(streamID.toString());
   }
 
   void playRemoteStream(String streamID, setState, broadcastType) {
-    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-    print("inside play remote stream " + streamID);
-    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-
-    if (broadcastType == "audio") {
+    if (broadcastType == 'audio') {
       //for audio call
       ZegoExpressEngine.instance.enableCamera(false);
       ZegoExpressEngine.instance.startPlayingStream(streamID);
       //for audio call
-
+      previewID[streamID] = -1;
     } else {
       // Create a Texture Renderer
       ZegoExpressEngine.instance
           .createTextureRenderer(width, height)
           .then((textureID) {
         previewViewID = textureID;
-        previewID[int.tryParse(streamID)] = previewViewID;
+        previewID[streamID] = previewViewID;
 
         setState(() {
           // Create a Texture Widget
@@ -109,18 +90,13 @@ class ZegoClass {
             .startPlayingStream(streamID, canvas: previewCanvas);
         // ZegoExpressEngine.instance
         //     .startPlayingStream(streamID, canvas: ZegoCanvas.view(textureID));
-
-        print("inside startpreview");
-        print(streamID);
-        print("inside startpreview");
-        print(playViewWidget.length);
       });
     }
   }
 
   void startPreview(int viewID, broadcastType) {
     //for audio call
-    if (broadcastType == "audio") {
+    if (broadcastType == 'audio') {
       ZegoExpressEngine.instance.enableCamera(false);
       ZegoExpressEngine.instance.startPreview();
     } else {
@@ -131,63 +107,50 @@ class ZegoClass {
 
       // Start preview
       ZegoExpressEngine.instance.startPreview(canvas: previewCanvas);
-      print("inside startpreview");
-      print(viewID);
-      print("inside startpreview");
-      print(playViewWidget.length);
     }
-    //for beautification
-
-    // ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.SkinWhiten);
-    // ZegoBeautifyOption option = ZegoBeautifyOption(1.0, 1.0, 1.0);
-    // ZegoExpressEngine.instance.setBeautifyOption(option);
-//for beautification
-
-// audio mute
   }
 
   void beautify(skin, x, y, z) {
     switch (skin) {
-      case "Sharpen":
+      case 'Sharpen':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.Sharpen);
-       toast("Sharpen Applied Success!", Colors.green);
+        toast('Sharpen Applied Success!', Colors.green);
         break;
-      case "Polish":
+      case 'Polish':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.Polish);
-         toast("Polish Applied Success!", Colors.green);
+        toast('Polish Applied Success!', Colors.green);
         break;
-      case "Whiten":
+      case 'Whiten':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.Whiten);
-         toast("Whiten Applied Success!", Colors.green);
+        toast('Whiten Applied Success!', Colors.green);
         break;
-      case "SkinWhiten":
-        ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.SkinWhiten);
-         toast("SkinWhiten Applied Success!", Colors.green);
+      case 'SkinWhiten':
+        ZegoExpressEngine.instance
+            .enableBeautify(ZegoBeautifyFeature.SkinWhiten);
+        toast('SkinWhiten Applied Success!', Colors.green);
         break;
-         case "None":
+      case 'None':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.None);
-         toast("Beauty Removed Success!", Colors.green);
+        toast('Beauty Removed Success!', Colors.green);
         break;
-         case "Mychoice":
-        ZegoBeautifyOption option = ZegoBeautifyOption(x, y, z);
+      case 'Mychoice':
+        var option = ZegoBeautifyOption(x, y, z);
         ZegoExpressEngine.instance.setBeautifyOption(option);
-         toast("Beauty Choice Applied Success!", Colors.green);
+        toast('Beauty Choice Applied Success!', Colors.green);
         break;
       default:
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.None);
         break;
     }
-   
   }
 
   void setCallback(setState) {
+    ZegoExpressEngine.onRoomStateUpdate = (String roomID, ZegoRoomState state,
+        int errorCode, Map<String, dynamic> extendedData) {};
+
     ZegoExpressEngine.onRoomStreamUpdate = (String roomID,
         ZegoUpdateType updateType, List<ZegoStream> streamList) {
-          toast("onRoomStreamUpdate  Changed $updateType", Colors.orange);
-      print('onRoomStreamUpdate');
-      print('roomID' + roomID);
-      print(streamList);
-      print('updateType' + updateType.toString());
+      // toast('onRoomStreamUpdate  Changed $updateType', Colors.orange);
       if (updateType == ZegoUpdateType.Add) {
         // for (ZegoStream stream in streamList) {
         //   // playRemoteStream(stream.streamID, setState);
@@ -196,35 +159,24 @@ class ZegoClass {
     };
     // Set the publisher state callback
     ZegoExpressEngine.onRoomUserUpdate =
-        (String roomID, ZegoUpdateType updateType, List<ZegoUser> userList) {
-           toast("onRoomUserUpdate  Changed $updateType", Colors.greenAccent);
-      print('onroomuserupdate');
-      print('roomID' + roomID);
-      print('updateType' + userList.toString());
-    };
+        (String roomID, ZegoUpdateType updateType, List<ZegoUser> userList) {};
 
     ZegoExpressEngine.onPlayerStateUpdate = (String streamID,
         ZegoPlayerState state,
         int errorCode,
         Map<String, dynamic> extendedData) {
-      print("here comssssssssssssssssssssssss" + state.toString());
-      print("here comssssssssssssssssssssssss" + errorCode.toString());
+//      if (errorCode.toString() == '1004020' &&
+//          streamID == common.broadcasterId) {
+//        // broadOffline=true;
+//      }
     };
     ZegoExpressEngine.onPublisherStateUpdate = (String streamID,
         ZegoPublisherState state,
         int errorCode,
         Map<String, dynamic> extendedData) {
       if (errorCode == 0) {
-        // setState(() {
         isPublishing = true;
-        print("---------------------onroomuser update " +
-            streamID +
-            "--------------------------");
-        // });
-
-      } else {
-        print('Publish error: $errorCode');
-      }
+      } else {}
     };
 
     // Set the publisher quality callback
@@ -260,10 +212,8 @@ class ZegoClass {
     // Set the publisher video size changed callback
     ZegoExpressEngine.onPublisherVideoSizeChanged =
         (int width, int height, ZegoPublishChannel channel) {
-      // setState(() {
       publishWidth = width;
       publishHeight = height;
-      // });
     };
   }
 
@@ -272,10 +222,35 @@ class ZegoClass {
     ZegoExpressEngine.instance.useFrontCamera(_isUseFrontCamera);
   }
 
-  void videoMute() {
-    _isCameraEnabled = !_isCameraEnabled;
-    ZegoExpressEngine.instance.enableCamera(_isCameraEnabled);
-    print("video mute function " + _isCameraEnabled.toString());
+   void videoMute(common, setState, context) {
+    setState(() {
+      isCameraEnabled = !isCameraEnabled;
+      ZegoExpressEngine.instance.enableCamera(isCameraEnabled);
+    });
+    var action = 'videoUnmute';
+    if (isCameraEnabled == false) {
+      action = 'videoMute';
+    }
+    var endPoint = 'user/userRelation';
+    var params = {
+      'action': action,
+      'user_id': common.userId,
+    };
+    makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
+      var data = jsonDecode(response);
+      if (data['status'] == 0) {
+        common.publishMessage(
+            common.broadcastUsername,
+            '£01refreshAudience01£*£' +
+                common.userId +
+                '£*£' +
+                common.name +
+                '£*£' +
+                common.username +
+                '£*£' +
+                common.profilePic);
+      }
+    });
   }
 
   void mirror() {
@@ -289,25 +264,15 @@ class ZegoClass {
     }
   }
 
-  void onSpeakerStateChanged() {
-    // setState(() {
-    _isUseSpeaker = !_isUseSpeaker;
-    ZegoExpressEngine.instance.muteSpeaker(!_isUseSpeaker);
-    // });
+  void onMicStateChanged(common, setState) {
+    setState(() {
+      common.zego.isUseMic = !common.zego.isUseMic;
+      ZegoExpressEngine.instance.muteMicrophone(!common.zego.isUseMic);
+    });
+  }
 
-    // CupertinoButton(
-    //             padding: const EdgeInsets.all(0.0),
-    //             pressedOpacity: 1.0,
-    //             borderRadius: BorderRadius.circular(0.0),
-    //             child: Image(
-    //               width: 44.0,
-    //               image: _isUseSpeaker
-    //                   ? AssetImage(
-    //                       'resources/images/bottom_microphone_on_icon.png')
-    //                   : AssetImage(
-    //                       'resources/images/bottom_microphone_off_icon.png'),
-    //             ),
-    //             onPressed: onSpeakerStateChanged,
-    //           ),
+  void onSpeakerStateChanged() {
+    isUseSpeaker = !isUseSpeaker;
+    ZegoExpressEngine.instance.muteSpeaker(!isUseSpeaker);
   }
 }

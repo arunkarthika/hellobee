@@ -13,12 +13,14 @@ import 'package:honeybee/model/AudienceList.dart';
 import 'package:honeybee/model/Chatmodel.dart';
 import 'package:honeybee/model/Queue.dart';
 import 'package:flutter/material.dart';
+import 'package:base32/base32.dart';
 import 'package:flutter/services.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:popup_menu/popup_menu.dart';
 import 'package:social_share_plugin/social_share_plugin.dart';
 import 'package:svgaplayer_flutter/svgaplayer_flutter.dart';
 import 'package:swipedetector/swipedetector.dart';
@@ -89,9 +91,11 @@ class RenderBroadcast extends State<LiveRoom>
     "💐 Life style🤳",
     "Bio: 😚 Forget Whoe Forgets U 👍"
   ];
-  
+
   @override
   void initState() {
+    common.connectionState = MqttCurrentConnectionState.DISCONNECTED;
+    WidgetsBinding.instance.addObserver(this);
     common.animationController = SVGAAnimationController(vsync: this);
     loadAnimation(setState, common);
     Wakelock.enable();
@@ -102,63 +106,51 @@ class RenderBroadcast extends State<LiveRoom>
     common.broadcasterId = broadcasterId;
     common.broadcastUsername = broadcastUsername;
     common.giftController = TabController(length: 2, vsync: this);
-    print("okok1");
+    common.audienceController = TabController(length: 2, vsync: this);
+    common.audienceContributerController =
+        TabController(length: 2, vsync: this);
+    common.contributerController = TabController(length: 2, vsync: this);
     Timer(Duration(milliseconds: 500), () {
-      print("okok2");
-      prepareMqttClient();
-      print("Yeah, this line is printed after 1 seconds");
       ZegoUser user = ZegoUser(userId, common.username);
       ZegoExpressEngine.instance.loginRoom(broadcastUsername, user);
-
       common.zego.setCallback(setState);
-
       common.zego.width = MediaQuery.of(context).size.width.ceil().toInt();
       common.zego.height = (MediaQuery.of(context).size.height.ceil().toInt());
+      if (userType == 'broad') {
 
-      Timer(Duration(milliseconds: 500), () {
-        onMessage();
-        print(userType);
-        if (userType == "broad") {
+        common.zego.broadOffline = false;
+        common.broadcastType = broadcastType;
+        common.zego.playViewWidget = [];
+        common.zego.setPreview(
+            setState, common.broadcasterId.toString(), common.broadcastType);
+        common.zego.startPublish(common.broadcasterId.toString());
+        getAudience();
+        var endPoint = 'user/goLive';
+        var params = {
+          'action': 'live',
+          'broadcast_type': broadcastType,
+        };
+        makePostRequest(endPoint, jsonEncode(params), 0, context)
+            .then((response) {
           common.broadcastType = broadcastType;
-          getAudience();
-          String endPoint = 'user/goLive';
-          var params = {
-            "action": "live",
-            "broadcast_type": broadcastType,
-          };
-
-          print(endPoint + jsonEncode(params));
-          makePostRequest(endPoint, jsonEncode(params), 0, context)
-              .then((response) {
-            print("object" + response);
-
-            setState(() {
-              common.gift = false;
-              common.camera = true;
-              common.loader = false;
-              common.guestFlag = true;
-            });
+          prepareMqttClient();
+          Timer(Duration(milliseconds: 500), () {
+            onMessage();
           });
-        } else {
-          addAudience();
-        }
-      });
+          setState(() {
+            common.gift = false;
+            common.camera = true;
+            common.loader = false;
+            common.guestFlag = true;
+          });
+        });
+      } else {
+        addAudience();
+      }
     });
-
-    print(common.chatlist);
-    Chatmodel chatmodel = Chatmodel(
-        "",
-        "",
-        "Warning : We moderate Live Broadcast. Smoking, Vulgarity, Porn, Indecent exposure, child pornographu and abuse or Any copyright infringement is NOT allowed and will be banned. Live broadcasts are monitored 24X7 . Hack or mis-uses subject to account closure,suspension , or permanent Ban  ",
-        "grey");
-    common.chatlist.add(chatmodel);
-    print(common.chatlist);
-
+    warningMsg();
     giftControllerFun();
-
     common.scrollControllerforbottom.addListener(() {
-      print(common.scrollControllerforbottom.position.pixels);
-      print(common.scrollControllerforbottom.position.maxScrollExtent);
       if (common.scrollControllerforbottom.position.pixels ==
           common.scrollControllerforbottom.position.maxScrollExtent) {
         if (common.pageforbottm <= common.lastpageforbottom) {
@@ -178,30 +170,41 @@ class RenderBroadcast extends State<LiveRoom>
       }
     });
 
-    SystemChannels.lifecycle.setMessageHandler((state) {
-      common.publishMessage(
-          common.broadcastUsername, "on detached " + state.toString());
-      if (state.toString() == "AppLifecycleState.paused") {
-        common.currentPassTime = DateTime.now();
-      }
-      if (state.toString() == "AppLifecycleState.detached") {
-        common.publishMessage(common.broadcastUsername, "on detached");
-        print("app Destroyed");
-      }
-      if (state.toString() == "AppLifecycleState.resumed") {
-        common.idelTime += dateTimeDiff(common.currentPassTime);
-        print('common.idelTime');
-        print(common.idelTime);
-      }
-      return null;
-    });
+
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('state = $state');
+    if (state.toString() == 'AppLifecycleState.paused') {
+      common.currentPassTime = DateTime.now();
+      if (common.userId == common.broadcasterId ||
+          common.guestData.indexWhere((item) => item.userId == common.userId) !=
+              -1) {
+        common.zego.isUseMic = true;
+        onMicMute(common, setState);
+      }
+    }
+    if (state.toString() == 'AppLifecycleState.resumed') {
+      common.idelTime += dateTimeDiff(common.currentPassTime);
+      if (common.userId == common.broadcasterId ||
+          common.guestData.indexWhere((item) => item.userId == common.userId) !=
+              -1) {
+        common.zego.isUseMic = false;
+        onMicMute(common, setState);
+      }
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
   void dispose() {
-    if (userType == "broad") {
+    common.menu.dismiss();
+    print('inside dispose');
+    common.player.stop();
+    if (userType == 'broad') {
+      common.publishMessage(
+          common.broadcastUsername, '£01BroadENded01£*£' + common.userId);
       ZegoExpressEngine.instance.stopPublishingStream();
     }
     ZegoExpressEngine.instance.stopPreview();
@@ -212,25 +215,19 @@ class RenderBroadcast extends State<LiveRoom>
     ZegoExpressEngine.onPlayerStateUpdate = null;
     ZegoExpressEngine.onPlayerQualityUpdate = null;
     ZegoExpressEngine.onPlayerVideoSizeChanged = null;
-
     for (final streamID in common.zego.previewID.keys) {
       disposePlay(streamID);
     }
 
     ZegoExpressEngine.instance.logoutRoom(broadcastUsername);
     common.zego.playViewWidget = [];
-    common.zego.playViewWidget.clear();
     common.c = 0;
-    common.zego.guest = [];
-    common.zego.guest.clear();
     common.scrollController.dispose();
     common.chatController.dispose();
     common.giftController.dispose();
     common.animationController.dispose();
     common.normalleft1controller.dispose();
     common.normalleft2controller.dispose();
-    common.normalright1controller.dispose();
-    common.normalright2controller.dispose();
     common.mesagecontroller.dispose();
     common.bullet1controller.dispose();
     common.bullet2controller.dispose();
@@ -238,10 +235,21 @@ class RenderBroadcast extends State<LiveRoom>
     common.arrivedMessageController.dispose();
     common.menuController.dispose();
     common.audioScrollcontroller.dispose();
+    common.audienceController.dispose();
+    common.audienceContributerController.dispose();
+    common.contributerController.dispose();
+    common.dayscrollController.dispose();
+    common.fullscrollController.dispose();
+    common.invitTimeController.dispose();
+    common.timerController.dispose();
+    common.menu.dismiss();
+    WidgetsBinding.instance.removeObserver(this);
     Timer(Duration(milliseconds: 1200), () {
-      common.client.disconnect();
+      if (common.connectionState == MqttCurrentConnectionState.CONNECTED) {
+        common.client.disconnect();
+      }
+      super.dispose();
     });
-    super.dispose();
   }
 
   disposePlay(streamID) {
@@ -253,11 +261,11 @@ class RenderBroadcast extends State<LiveRoom>
 
   @override
   Widget build(BuildContext context) {
+    common.closeContext=context;
+    PopupMenu.context = context;
     common.widthScreen = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onDoubleTap: () {
-
-      },
+      onDoubleTap: () {},
       child: SafeArea(
         child: common.loader == true
             ? Container(
@@ -272,19 +280,15 @@ class RenderBroadcast extends State<LiveRoom>
                     body: Stack(
                       children: common.swipeup
                           ? <Widget>[body()]
-                          : <Widget>[
-                              body(),
-                              header(),
-                              footer()
-                            ],
+                          : <Widget>[body(), header(), footer()],
                     ),
                   ),
                   onSwipeUp: () {
                     print("up");
-                   /* switchToAnother(common.prevUserId, common.prevUsername);*/
+                    /* switchToAnother(common.prevUserId, common.prevUsername);*/
                   },
                   onSwipeDown: () {
-                   /* switchToAnother(common.nextUserId, common.nextUsername);*/
+                    /* switchToAnother(common.nextUserId, common.nextUsername);*/
                     print("down");
                   },
                   onSwipeLeft: () {
@@ -398,14 +402,12 @@ class RenderBroadcast extends State<LiveRoom>
           left: 90.0,
           child: GestureDetector(
             onTap: () => {
-
+              onMicMute(common, setState)
             },
-            child: Image(
-              image: AssetImage(
-                "assets/broadcast/mic.png",
-              ),
-              width: 28,
-              height: 28,
+            child: Icon(
+              common.zego.isUseMic ? Icons.mic : Icons.mic_off,
+              size: 30,
+              color: Colors.white,
             ),
           ),
         ),
@@ -438,8 +440,7 @@ class RenderBroadcast extends State<LiveRoom>
                 ),
                 width: 28,
                 height: 28,
-                color: Colors.white
-            ),
+                color: Colors.white),
           ),
         ),
         Positioned(
@@ -560,7 +561,7 @@ class RenderBroadcast extends State<LiveRoom>
     });
   }
 
-  getAudience() async {
+  getAudienceold() async {
     String endPoint = "user/List";
     String params = "page=" +
         common.page.toString() +
@@ -590,7 +591,7 @@ class RenderBroadcast extends State<LiveRoom>
       common.guestData.clear();
       common.guestList.forEach((k, v) {
         GuestData gData = GuestData(k, v["profileName"], v["username"],
-            v["profile_pic"], v["level"], 0);
+            v["profile_pic"], v["level"], 0,0);
         common.guestData.add(gData);
         print('Key=$k, Value=$v');
 
@@ -606,6 +607,65 @@ class RenderBroadcast extends State<LiveRoom>
       print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
     });
   }
+  dynamic getAudience() {
+    setState(() {
+      common.loaderInside = true;
+    });
+    var endPoint = 'user/List';
+    var params = 'page=' +
+        common.page.toString() +
+        '&length=10&action=audience&user_id=' +
+        broadcasterId.toString();
+    makeGetRequest(endPoint, params, 0, context).then((response) {
+      var pic = json.decode(response);
+      if (common.page <= common.pageLength) {
+        for (var list in pic['body']['audience']['viewers_list']) {
+          print(list);
+          var audList = AudienceList(list['user_id'], list['profileName'],
+              list['username'], list['profile_pic']);
+          common.audiencelist.insert(0, audList);
+        }
+        common.pageLength = pic['body']['audience']['last_page'];
+      }
+      common.videoMute = pic['body']['audience']['video_muted'];
+      common.broadcastType =
+      pic['body']['audience']['broadCastList']['broadcast_type'];
+
+      common.viewerCount = pic['body']['audience']['audience_count'].toString();
+      if (pic['body']['audience']['textMuteList'] == null) {
+        pic['body']['audience']['textMuteList'] = [];
+      }
+      if (pic['body']['audience']['textMuteList'].contains(common.userId)) {
+        common.textMute = true;
+      }
+      common.guestList = pic['body']['audience']['guestList'];
+      int gold = pic['body']['audience']['goldRecive'];
+      common.starOriginalValue = gold;
+      common.starUpdate(gold, setState);
+      common.guestList ??= {};
+      common.guestList.forEach((k, v) {
+        var temp = common.guestData.indexWhere((item) => item.userId == k);
+        if (temp == -1) {
+          var gData = GuestData(k, v['profileName'], v['username'],
+              v['profile_pic'], v['level'], 0, v['video_muted']);
+          common.guestData.add(gData);
+          common.zego.playRemoteStream(k, setState, common.broadcastType);
+        } else {
+          common.guestData.forEach((item) {
+            if (item.userId == v['user_id']) {
+              item.videoMute = v['video_muted'];
+            }
+          });
+        }
+      });
+      setState(() {
+        common.loaderInside = false;
+        common.guestData = common.guestData;
+      });
+    });
+    print('=============================outside===================');
+  }
+
 
   dateTimeDiff(time) {
     DateTime now = DateTime.now();
@@ -656,7 +716,7 @@ class RenderBroadcast extends State<LiveRoom>
     }
   }
 
-  addAudience() async {
+  addAudienceold() async {
     String endPoint = "user/audiance";
     var params = {
       "action": "addAudience",
@@ -700,7 +760,7 @@ class RenderBroadcast extends State<LiveRoom>
         common.guestData.clear();
         common.guestList.forEach((k, v) {
           GuestData gData = GuestData(k, v["profileName"], v["username"],
-              v["profile_pic"], v["level"], 0);
+              v["profile_pic"], v["level"],0, 0);
           common.guestData.add(gData);
           print('Key=$k, Value=$v');
           common.zego.playRemoteStream(k, setState, common.broadcastType);
@@ -731,6 +791,133 @@ class RenderBroadcast extends State<LiveRoom>
       });
     });
   }
+  dynamic addAudience() {
+    setState(() {
+      common.loaderInside = true;
+    });
+    var endPoint = 'user/audiance';
+    var params = {
+      'action': 'addAudience',
+      'length': '10',
+      'page': common.page.toString(),
+      'user_id': common.broadcasterId
+    };
+    makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
+      var data = (response).trim();
+      var pic = json.decode(data);
+      var temp = pic['body'];
+      if (pic['body']['broadCastList']['kickOutList'].contains(common.userId) ||
+          pic['body']['broadCastList']['blockList'].contains(common.userId)) {
+        toast('You are not allowed to enter into this room', Colors.red);
+        onWillPopOffline();
+        return false;
+      }
+      print(common.connectionState);
+      if (common.connectionState != MqttCurrentConnectionState.CONNECTED) {
+        prepareMqttClient();
+      }
+      print(common.connectionState);
+      Timer(Duration(milliseconds: 500), () {
+        print(common.connectionState);
+        if (common.c == 0) {
+          onMessage();
+        }
+        print(common.connectionState);
+        setState(() {
+          common.prevUserId = pic['body']['prevUserId'].toString();
+          common.nextUserId = pic['body']['nextUserId'].toString();
+          common.prevUserId = common.prevUserId == null ||
+              common.prevUserId == '' ||
+              common.prevUserId == 'false'
+              ? ''
+              : common.prevUserId;
+          common.nextUserId = common.nextUserId == null ||
+              common.nextUserId == '' ||
+              common.nextUserId == 'false'
+              ? ''
+              : common.nextUserId;
+          common.prevUsername = pic['body']['prevUser'] == null ||
+              pic['body']['prevUser'] == '' ||
+              pic['body']['prevUser'] == false
+              ? ''
+              : pic['body']['prevUser'];
+          common.nextUsername = pic['body']['nextUser'] == null ||
+              pic['body']['nextUser'] == '' ||
+              pic['body']['nextUser'] == false
+              ? ''
+              : pic['body']['nextUser'];
+          if (pic['body']['broadCastList']['status'] == 'INACTIVE') {
+            common.zego.broadOffline = true;
+          }
+          if (common.page <= common.pageLength) {
+            var broad = temp['broadCastList'];
+            for (var list in temp['viewers_list']) {
+              var audList = AudienceList(list['user_id'], list['profileName'],
+                  list['username'], list['profile_pic']);
+              common.audiencelist.insert(0, audList);
+            }
+            temp['textMuteList'] = temp['textMuteList'] ?? [];
+            if (temp['textMuteList']
+                .indexWhere((item) => item == common.userId) !=
+                -1) {
+              common.textMute = true;
+            }
+            common.broadcasterProfileName = broad['profileName'];
+            common.broadcastType = broad['broadcast_type'];
+            common.gold = int.tryParse(broad['over_all_gold']);
+            common.broadprofilePic = broad['profile_pic'];
+            common.giftUserId = broad['user_id'].toString();
+            common.giftUsername = broad['username'];
+            common.broadcastUsername = broad['username'];
+            common.broadcasterId = broad['user_id'];
+            common.pageLength = temp['last_page'];
+            common.videoMute = temp['video_muted'];
+            common.guestList = temp['guestList'];
+          }
+          common.viewerCount = temp['audience_count'].toString();
+          common.guestList ??= {};
+          common.zego.playViewWidget = [];
+          common.zego.playRemoteStream(
+              common.broadcasterId, setState, common.broadcastType);
+          common.guestData = [];
+          common.guestList.forEach((k, v) {
+            var gData = GuestData(k, v['profileName'], v['username'],
+                v['profile_pic'], v['level'], 0, v['video_muted']);
+            common.guestData.add(gData);
+            common.zego.playRemoteStream(k, setState, common.broadcastType);
+          });
+          if (common.broadcastType == 'pk') {
+            common.client
+                .subscribe(common.guestData[0].username, MqttQos.exactlyOnce);
+          }
+          common.userrelation = temp['userRelation'];
+          common.guestData = common.guestData;
+
+          int gold = pic['body']['goldRecive'];
+          common.starOriginalValue = gold;
+          common.starUpdate(gold, setState);
+          common.gift = true;
+          common.camera = false;
+          common.loader = false;
+          common.guestFlag = false;
+          common.loaderInside = false;
+          var arriveMsg = '£01getGuestData01£*£' +
+              common.userId +
+              '£*£' +
+              common.name +
+              '£*£' +
+              common.username +
+              '£*£' +
+              Uri.encodeFull(common.profilePic) +
+              '£*£' +
+              common.level +
+              '£*£' +
+              common.entranceEffect;
+          common.publishMessage(common.broadcastUsername, arriveMsg);
+        });
+      });
+    });
+  }
 
   void giftControllerFun() {
     common.menuController = AnimationController(
@@ -743,451 +930,597 @@ class RenderBroadcast extends State<LiveRoom>
     print('=======================common.arrivedMessageController==========');
     print(common.arrivedMessageController);
     common.arrivedMessageAnimation =
-        Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
       parent: common.arrivedMessageController,
       curve: Curves.easeIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.arrivedStatus = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.arrivedStatus = false;
-              });
-              common.arrivedMessageController.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.arrivedStatus = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.arrivedStatus = false;
+          });
+          common.arrivedMessageController.stop();
+        }
+      });
     print("=======bullet1controller==============");
     common.bullet1controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet1animation =
-        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet1controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.animation1Status = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.animation1Status = false;
-              });
-              common.bullet1controller.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.animation1Status = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.animation1Status = false;
+          });
+          common.bullet1controller.stop();
+        }
+      });
     print("=======bullet2controller==============");
     common.bullet2controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet2animation =
-        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet2controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.animation2Status = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.animation2Status = false;
-              });
-              common.bullet2controller.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.animation2Status = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.animation2Status = false;
+          });
+          common.bullet2controller.stop();
+        }
+      });
     print("=======bullet3controller==============");
     common.bullet3controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet3animation =
-        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet3controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.animation3Status = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.animation3Status = false;
-              });
-              common.bullet3controller.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.animation3Status = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.animation3Status = false;
+          });
+          common.bullet3controller.stop();
+        }
+      });
     print("=======normalleft1controller==============");
     common.normalleft1controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalleft1animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalleft1controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading1 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading1 = false;
-              });
-              common.normalleft1controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading1 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading1 = false;
+          });
+          common.normalleft1controller.stop();
+        }
+      });
     print("=======normalleft2controller==============");
     common.normalleft2controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalleft2animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalleft2controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading3 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading3 = false;
-              });
-              common.normalleft2controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading3 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading3 = false;
+          });
+          common.normalleft2controller.stop();
+        }
+      });
     print("=======normalright1controller==============");
     common.normalright1controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalright1animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalright1controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading2 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading2 = false;
-              });
-              common.normalright1controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading2 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading2 = false;
+          });
+          common.normalright1controller.stop();
+        }
+      });
     print("=======normalright2controller==============");
     common.normalright2controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalright2animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalright2controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading4 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading4 = false;
-              });
-              common.normalright2controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading4 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading4 = false;
+          });
+          common.normalright2controller.stop();
+        }
+      });
   }
 
   void onMessage() {
+    common.c++;
     common.client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage recMess = c[0].payload;
-      // print(c[0].topic);
-      String receivedTopic = c[0].topic;
-      // String LocationJson=recMess.payload.message.toString();
-      String locationJson =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-
-      print("MQTTClientWrapper::GOT A  MESSAGE $locationJson");
-      // buildchatzone("GOT A  MESSAGE $receivedTopic $LocationJson");
+      var receivedTopic = c[0].topic;
+      var locationJson =
+      MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
       var tmpmsg = locationJson;
-      if (tmpmsg.contains("£01AudArrive01£*") && !tmpmsg.contains(userId)) {
-        var arrData = tmpmsg.split("£*£");
-        setState(() {
-          AudienceList audList =
-              AudienceList(arrData[1], arrData[2], arrData[3], arrData[4]);
-          common.audiencelist.insert(0, audList);
-          Arrivedqueue giftqueue = Arrivedqueue(arrData[2], arrData[6]);
-          common.arrivedqueuelist.add(giftqueue);
-          loadArrived(setState, common);
-          // // var arriveMsg="£01AudArrive01£*£"+userId+"£*£"+name+"£*£"+username+"£*£"+profilePic;
-          //  _channel.sendMessage(AgoraRtmMessage.fromText(arriveMsg));
-          var arrived = arrData[5] + arrData[1] + arrData[2] + " has arrived";
-          buildchatzone(arrived, "blue");
-        });
-      } else if (tmpmsg.contains("£01getGuestData01£*£")) {
-        if (common.broadcastType != "solo" &&
-            common.broadcastType != "pk" &&
-            common.userTypeGlob == "broad") {
-          var arrData = tmpmsg.split("£*£");
-          var arriveMsg = "£01GuestDataUpdate01£*£" +
-              arrData[1] +
-              "£*£" +
-              jsonEncode(common.guestData.map((i) => i.toJson()).toList())
-                  .toString();
-          toggleSendChannelMessage(arriveMsg, common);
-        }
-      } else if (tmpmsg.contains("£01GuestDataUpdate01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        print(arrData[1] + " == " + common.userId);
-        if (arrData[1] == common.userId) {
-          var jsonData = jsonDecode(arrData[2]);
-          print(jsonData);
-          for (var gdata in jsonData) {
-            common.guestData.forEach((item) {
-              print(item.userId + ' and ' + gdata['userId']);
-              if (item.userId == gdata['userId']) {
-                print("before points");
-                print(item.points);
-                item.points = gdata['points'];
-                print("after points update");
-                print(item.points);
-              }
-            });
-            print(gdata['userId'].toString());
-            print(gdata['points']);
+      var arrData = tmpmsg.split('£*£');
+      print('################################');
+      print(tmpmsg);
+      print(arrData);
+      switch (arrData[0]) {
+        case '£01AudArrive01':
+          if (!tmpmsg.contains(userId)) {
+            var audList =
+            AudienceList(arrData[1], arrData[2], arrData[3], arrData[4]);
+            common.audiencelist.insert(0, audList);
+            var giftqueue = Arrivedqueue(arrData[2], arrData[6]);
+            common.arrivedqueuelist.add(giftqueue);
+            loadArrived(setState, common);
+            var arrived = arrData[5] + arrData[1] + arrData[2] + ' has arrived';
+            buildchatzone(arrived, 'blue', receivedTopic);
           }
-          // setState(() {
-
-          // common.guestData=common.guestData;
-          print("ggggggggggggggggggggggggggggggggggggggggggggggggggg");
-          print(jsonEncode(common.guestData.map((i) => i.toJson()).toList())
-              .toString());
-          print(common.guestData[0].points);
-          // print("ggggggggggggggggggggggggggggggggggggggggggggggggggg");
-          // common.guestData = [];
-          // GuestData.fromJson(jsonData);
-          // print("ggggggggggggggggggggggggggggggggggggggggggggggggggg");
-          // print(jsonEncode(common.guestData.map((i) => i.toJson()).toList())
-          //     .toString());
-          // print("ggggggggggggggggggggggggggggggggggggggggggggggggggg");
-          // });
-        }
-      } else if (tmpmsg.contains("£01RemoveAud01£*") &&
-          !tmpmsg.contains(userId)) {
-        var arrData = tmpmsg.split("£*£");
-        setState(() {
-          // AudienceList audList =
-          //     AudienceList(arrData[1], arrData[2], arrData[3], arrData[4]);
-          common.audiencelist.removeWhere((item) => item.userId == arrData[1]);
-          // common.audiencelist.remove(audList);
-          var arrived = arrData[5] + arrData[1] + arrData[2] + " has Left";
-          buildchatzone(arrived, "pinkAccent");
-        });
-      } else if (tmpmsg.contains("£01sendGift01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        int giftTempvalue = int.tryParse(arrData[7]) * int.tryParse(arrData[8]);
-
-        if (common.userTypeGlob == "broad") {
-          common.bgold += giftTempvalue;
-        }
-        if (common.broadcastType == "audio") {
-          setState(() {
-            if (common.userId == arrData[9]) {
-              common.gold += giftTempvalue;
+          break;
+        case '£01getGuestData01':
+          print(common.userTypeGlob +
+              ' globtype ' +
+              common.username +
+              '==' +
+              receivedTopic +
+              ' broad type ' +
+              common.broadcastType +
+              ' printed from ' +
+              common.userId);
+          if (common.broadcastType != 'solo' &&
+              common.username == receivedTopic) {
+            var arriveMsg = '£01GuestDataUpdate01£*£' +
+                arrData[1] +
+                '£*£' +
+                jsonEncode(common.guestData.map((i) => i.toJson()).toList())
+                    .toString() +
+                '£*£' +
+                common.pkBroadId +
+                '£*£' +
+                common.pkBroadUsername +
+                '£*£' +
+                common.pkgold.toString() +
+                '£*£' +
+                common.pkRemainingTime.toString();
+            common.publishMessage(common.broadcastUsername, arriveMsg);
+          }
+          break;
+        case '£01GuestDataUpdate01':
+          if (arrData[1] == common.userId) {
+            common.pkBroadId = arrData[3];
+            common.pkBroadUsername = arrData[4];
+            common.pkgold = int.parse(arrData[5].toString());
+            print('common.broadcastType');
+            print(common.broadcastType);
+            if (arrData[6] != '0' && common.broadcastType == 'pk') {
+              // var time = DateTime.parse(arrData[6]).second;
+              common.timerController.stop();
+              common.timerController = AnimationController(
+                  vsync: this,
+                  duration: Duration(seconds: int.parse(arrData[6])));
+              print(common.timerController.duration);
+              common.timerDuration = int.parse(arrData[6]);
+              common.timerController.reset();
+              common.timerController.forward();
             }
-          });
-          // var temp =
-          common.guestData.forEach((item) {
-            print(item.userId + ' and ' + arrData[1]);
-            if (item.userId == arrData[9]) {
-              print("before points");
-              print(item.points);
-              item.points += giftTempvalue;
-              print("after points update");
-              print(item.points);
+            var jsonData = jsonDecode(arrData[2]);
+            for (var gdata in jsonData) {
+              common.guestData.forEach((item) {
+                if (item.userId == gdata['userId']) {
+                  item.points = gdata['points'];
+                }
+              });
             }
-          });
-          String json =
-              jsonEncode(common.guestData.map((i) => i.toJson()).toList())
-                  .toString();
-          print(json);
-          // common.guestData.indexWhere((item){
+          }
+          break;
+        case '£01pkChallenge01':
+          switch (arrData[1]) {
+            case 'Start':
+              if (common.username == receivedTopic) {
+              }
+              break;
+            case 'Accepted':
+              if (common.username == receivedTopic) {
+                var guestId = common.userId;
+                if (common.pkBroadId == common.userId) {
+                  guestId = common.guestData[0].userId;
+                }
+                var duration = int.parse(arrData[6].toString()) * 60;
 
-          // });
-          //  item.userId == arrData[1]);
-          print("selected receiver index");
-          //     print(temp);
-          // common.guestData[temp].points += common.gold;
-        } else {
-          setState(() {
-            common.gold += giftTempvalue;
-          });
-        }
-        if (arrData[5] == "normal") {
-          NormalGiftqueue giftqueue =
-              NormalGiftqueue(arrData[2], arrData[3], arrData[6], arrData[7]);
-          common.normalgiftqueuelist.add(giftqueue);
-          // // if (isnormalload == false) {
-          loadNormal(setState, common);
-          // }
-        } else {
-          Giftqueue giftqueue = Giftqueue(arrData[3]);
-          common.giftqueuelist.add(giftqueue);
-          loadAnimation(setState, common);
-          // }
-        }
-        var arrived =
-            arrData[4] + arrData[1] + arrData[2] + " has sent " + arrData[3];
-        buildchatzone(arrived, "yellow");
-      } else if (tmpmsg.contains("£01GuestInvite01£*") &&
-          receivedTopic == common.username) {
-        print("=============function inside invitation============");
-        var arrData = tmpmsg.split("£*£");
-        print(arrData);
-        print(common.inviteRequest
-                .indexWhere((item) => item.userId == arrData[1])
-                .toString() +
-            " soundar");
-        var content = arrData[3] +
-            "  Has Sent You Request " +
-            common.inviteRequest
-                .indexWhere((item) => item.userId == arrData[1])
-                .toString() +
-            " soundar";
-        if (userType == "broad") {
-          if (common.inviteRequest
+              }
+              break;
+            case 'Rejected':
+              if (common.username == receivedTopic &&
+                  arrData[2] == common.userId) {
+                toast('Guest rejected your PK time request', Colors.red);
+              }
+              break;
+            case 'StartTimer':
+              common.pkgold = 0;
+              common.guestData[0].points = 0;
+              common.timerController.stop();
+              var duration = int.tryParse(arrData[2]);
+              print('@@@@@@@@@@@@@@@@ common.timerDuration@@@@@@@@@@@@@@');
+              print(common.timerDuration);
+              common.timerDuration = duration;
+              common.pkRemainingTime = duration;
+              print('@@@@@@@@@@@@@@@@ common.timerDuration@@@@@@@@@@@@@@');
+              print(common.timerDuration);
+              print('1common.timerController.duration');
+              print(common.timerController.duration);
+              common.timerController = AnimationController(
+                  vsync: this, duration: Duration(seconds: duration));
+              print('2common.timerController.duration');
+              print(common.timerController.duration);
+              common.timerController.reset();
+              print('2common.timerController.duration');
+              print(common.timerController.duration);
+              common.timerController.forward()
+                ..whenComplete(() {
+                  if (common.userId == common.pkBroadId) {
+                  }
+                });
+              break;
+            case 'End':
+              common.showEmoji = true;
+              common.pkGuest = false;
+              common.pkHost = false;
+              if (arrData[2] == 'draw') {
+                common.pkGuest = true;
+                common.pkHost = true;
+              } else {
+                if (common.broadcasterId == arrData[3]) {
+                  common.pkHost = true;
+                } else if (common.guestData[0].userId == arrData[3]) {
+                  common.pkGuest = true;
+                }
+              }
+              Timer(Duration(milliseconds: 10000), () {
+                common.timerDuration = 0;
+                common.pkRemainingTime = 0;
+                common.pkgold = 0;
+                common.guestData[0].points = 0;
+                common.showEmoji = false;
+                setState(() {});
+              });
+              break;
+            default:
+          }
+          break;
+        case '£01RemoveAud01':
+          if (!tmpmsg.contains(userId)) {
+            common.audiencelist
+                .removeWhere((item) => item.userId == arrData[1]);
+            var arrived = arrData[5] + arrData[1] + arrData[2] + ' has Left';
+            buildchatzone(arrived, 'pinkAccent', receivedTopic);
+          }
+          break;
+        case '£01kickout01':
+          if (arrData[1] == common.userId) {
+            toast('Host Kicked You Out', Colors.red);
+            onWillPopOffline();
+          }
+          break;
+        case '£01TextStatus01':
+          if (arrData[1] == common.userId) {
+            if (arrData[2] == 'textMute') {
+              common.textMute = true;
+            } else {
+              common.textMute = false;
+            }
+          }
+          break;
+        case '£01GuestInvite01':
+          buildchatzone(
+              arrData[6] +
+                  arrData[1] +
+                  arrData[3] +
+                  '  has requested to join the call',
+              'yellow',
+              receivedTopic);
+
+          if (receivedTopic == common.username) {
+            var content = arrData[3] + '  Has Sent You Request';
+            if (userType == 'broad') {
+              if (common.inviteRequest
                   .indexWhere((item) => item.userId == arrData[1])
                   .toString() ==
-              "-1") {
-            InviteRequest queue = InviteRequest(
-                arrData[3], arrData[5], arrData[6], arrData[1], arrData[4]);
-            print(content);
-            setState(() {
-              common.inviteRequest.add(queue);
+                  '-1' &&
+                  common.guestData
+                      .indexWhere((item) => item.userId == arrData[1])
+                      .toString() ==
+                      '-1') {
+                var queue = InviteRequest(
+                    arrData[3], arrData[5], arrData[6], arrData[1], arrData[4]);
+                setState(() {
+                  common.inviteRequest.add(queue);
+                });
+              }
+            } else {
+              _invitationPopUp(
+                  content, arrData[1], 'guest', common.broadcastUsername);
+            }
+          }
+          break;
+        case '£01sendGift01':
+          var giftTempvalue =
+              int.tryParse(arrData[7]) * int.tryParse(arrData[8]);
+          if (common.broadcastUsername == receivedTopic) {
+            if (common.userTypeGlob == 'broad') {
+              common.bgold += giftTempvalue;
+              common.level = arrData[10];
+              CommonFun().saveShare('level', common.level);
+            }
+            common.pkgold += giftTempvalue;
+            common.gold += giftTempvalue;
+            common.starOriginalValue += giftTempvalue;
+            common.starUpdate(common.starOriginalValue, setState);
+          }
+
+          if (common.broadcastType != 'solo') {
+            common.guestData.forEach((item) {
+              if (item.userId == arrData[9]) {
+                item.points += giftTempvalue;
+              }
             });
           }
-        } else {
-          _invitationPopUp(content, arrData[1], "guest", common.broadcastUsername);
-        }
-      } else if (tmpmsg.contains("£01GuestInviteResponse01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        if (arrData[1] == "Accepted") {
-          if (userId == arrData[2]) {
-            addGuest();
-          }
-        }
-      } else if (tmpmsg.contains("£01relationStatus01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        if (arrData[1] == "unfollow")
-          buildchatzone(
-              arrData[3] + " has " + arrData[1] + "ed the anchor.", "grey");
-        else
-          buildchatzone(
-              arrData[3] + " has " + arrData[1] + "ed the anchor.", "green");
-      } else if (tmpmsg.contains("£01PK!nvIte01£*") &&
-          receivedTopic == common.username) {
-        print("=============function inside invitation============");
-        var arrData = tmpmsg.split("£*£");
-        print(arrData);
-        var content = arrData[7] + "  Has Sent PK Request";
-        print(content);
-        print(userId + " and " + arrData[1]);
-
-        if (userId == arrData[1]) {
-          _invitationPopUp(content, arrData[1], "pk", arrData[6]);
-        }
-      } else if (tmpmsg.contains("£01PKInviteResponse01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        if (receivedTopic == common.username) {
-          if (arrData[1] == "Accepted") {
-            toast("PK request Accepted", Colors.orange);
+          var arrived =
+              arrData[4] + arrData[1] + arrData[2] + ' has sent ' + arrData[3];
+          if (arrData[5] == 'normal') {
+            var giftqueue =
+            NormalGiftqueue(arrData[2], arrData[3], arrData[6], arrData[7]);
+            common.normalgiftqueuelist.add(giftqueue);
+            loadNormal(setState, common);
+            if (int.tryParse(arrData[7]) != 1) {
+              arrived = arrData[4] +
+                  arrData[1] +
+                  arrData[2] +
+                  ' has sent ' +
+                  arrData[3] +
+                  ' X' +
+                  arrData[7];
+            }
           } else {
-            toast("PK request rejected", Colors.orange);
+            var giftqueue = Giftqueue(arrData[3]);
+            common.giftqueuelist.add(giftqueue);
+            loadAnimation(setState, common);
           }
-        }
-      } else if (tmpmsg.contains("£01RemoveGus01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        print(common.zego.guest.toString());
-        print(common.guestData
-            .indexWhere((item) => item.userId == arrData[1])
-            .toString());
-        print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-        // int pos = common.zego.guest.indexOf(arrData[1]);
-        // print(pos.toString());
-        // common.zego.guest.removeAt(pos);
-        // pos = pos + 1;
-        // if (broadcastType != "audio") {
-        //   common.zego.playViewWidget.removeAt(pos);
-        // }
+          buildchatzone(arrived, 'yellow', receivedTopic);
 
-        int pos =
-            common.guestData.indexWhere((item) => item.userId == arrData[1]);
-        // common.zego.guest.removeAt(pos);
-        pos = pos + 1;
-        if (broadcastType != "audio") {
-          common.zego.playViewWidget.removeAt(pos);
-        }
-        setState(() {
+          break;
+        case '£01GuestInviteResponse01':
+          if (arrData[1] == 'Accepted') {
+            if (userId == arrData[2]) {
+              addGuest();
+            }
+          }
+          break;
+        case '£01relationStatus01':
+          Chatmodel chatmodel;
+          if (arrData[1] == 'unfollow') {
+            chatmodel = Chatmodel(
+                '',
+                '',
+                arrData[3] + ' has ' + arrData[1] + 'ed the anchor.',
+                'grey',
+                receivedTopic);
+          } else {
+            chatmodel = Chatmodel(
+                '',
+                '',
+                arrData[3] + ' has ' + arrData[1] + 'ed the anchor.',
+                'green',
+                receivedTopic);
+          }
+          common.chatList.add(chatmodel);
+
+          break;
+        case '£01PK!nvIte01':
+          if (receivedTopic == common.username) {
+            var content = arrData[7] + '  Has Sent PK Request';
+            if (userId == arrData[1] && common.pkSession == false) {
+              _invitationPopUp(content, arrData[1], 'pk', arrData[6]);
+            }
+          }
+          break;
+        case '£01PKInviteResponse01':
+          if (receivedTopic == common.username) {
+            if (arrData[1] == 'Accepted' && common.pkSession == false) {
+              var pkGuest = {
+                'userId': arrData[2],
+                'idleTime': arrData[6],
+                'actualTime': arrData[7],
+                'totalTime': arrData[8],
+                'username': arrData[4]
+              };
+
+              var broadcastingTime = dateTimeDiff(common.currentTime);
+              var actualBroadcastingTime = broadcastingTime - common.idelTime;
+
+              var pkBroad = {
+                'userId': common.userId,
+                'idleTime': common.idelTime,
+                'actualTime': actualBroadcastingTime,
+                'totalTime': broadcastingTime,
+                'username': common.username
+              };
+              toast('PK request Accepted', Colors.orange);
+
+            } else {
+              toast('PK request rejected', Colors.orange);
+            }
+          } else if (receivedTopic == common.username) {
+            common.publishMessage(arrData[4],
+                '£01T0aSt01£*£${common.userId}£*£${common.name} is already in PK');
+          }
+          break;
+        case '£01pkSession01':
+          common.timerDuration = 0;
+          common.pkRemainingTime = 0;
+          common.pkgold = 0;
+          if (receivedTopic == common.broadcastUsername) {
+            if (arrData[1] == 'Start') {
+              common.pkSessionId = arrData[3];
+              common.client.subscribe(arrData[2], MqttQos.exactlyOnce);
+              common.pkBroadId = arrData[4];
+              common.pkBroadUsername = arrData[5];
+              print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+              print('subscribed to new topic ' + arrData[5]);
+            } else {
+              disposePlay(common.guestData[0].userId);
+              print(
+                  '@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${common.zego.playViewWidget.length}');
+              common.client.unsubscribe(arrData[2]);
+              common.guestData = [];
+              common.zego.playViewWidget.removeAt(1);
+              print(
+                  '@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${common.zego.playViewWidget.length}');
+              if (common.userTypeGlob == 'broad') {
+                common.pkSession = false;
+              }
+            }
+            getAudience();
+            print('===============inside==========');
+          }
+          break;
+        case '£01T0aSt01':
+          if (receivedTopic == common.username) {
+            toast(arrData[2], Colors.orange);
+          }
+          break;
+        case '£01RemoveGus01':
+          var pos =
+          common.guestData.indexWhere((item) => item.userId == arrData[1]);
+          pos = pos + 1;
+          if (common.broadcastType != 'audio') {
+            common.zego.playViewWidget.removeAt(pos);
+          }
           common.guestData.removeWhere((item) => item.userId == arrData[1]);
-        });
-        if (arrData[1] != userId &&
-            arrData[1] != common.broadcasterId &&
-            broadcastType != "audio") {
-          disposePlay(arrData[1]);
-        } else if (arrData[1] == userId) {
-          common.camera = false;
-          common.guestFlag = false;
-          ZegoExpressEngine.instance.stopPublishingStream();
-          ZegoExpressEngine.instance.stopPreview();
-        }
-      } else if (tmpmsg.contains("£01bullet01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        Bulletqueue giftqueue = Bulletqueue(arrData[1], arrData[5], arrData[3]);
-        // setState(() {
-        common.bulletqueuelist.add(giftqueue);
-        // });
-        loadBullet(common);
-      } else if (tmpmsg.contains("£01refreshAudience01£*")) {
-        var arrData = tmpmsg.split("£*£");
-        if (userId != arrData[1]) {
+          if (arrData[1] != common.userId) {
+            disposePlay(arrData[1]);
+          } else if (arrData[1] == common.userId) {
+            common.camera = false;
+            common.guestFlag = false;
+            ZegoExpressEngine.instance.stopPublishingStream();
+            ZegoExpressEngine.instance.stopPreview();
+          }
+          break;
+        case '£01bullet01':
+          var giftqueue = Bulletqueue(arrData[1], arrData[5], arrData[3]);
+          common.bulletqueuelist.add(giftqueue);
+          loadBullet(common);
+          break;
+        case '£01refreshAudience01':
+          common.page = 1;
+          common.audiencelist = [];
           getAudience();
-        }
-      } else {
-        print("==============LocationJson================");
-        print(locationJson);
-        if (!tmpmsg.contains("£*£")) buildchatzone(locationJson, "white");
+          break;
+        case '£01BroadENded01':
+          if (common.closeContext != null) {
+            Navigator.of(common.closeContext).pop(false);
+          }
+          if (receivedTopic == common.broadcastUsername &&
+              common.userTypeGlob != 'broad') {
+            clearGiftList();
+            common.zego.broadOffline = true;
+          }
+          break;
+        default:
+          if (!tmpmsg.contains('£*£')) {
+            buildchatzone(tmpmsg, 'white', receivedTopic);
+          }
+          break;
       }
+      if (arrData[0] == '£01BroadENded01' &&
+          receivedTopic == common.broadcastUsername &&
+          common.userTypeGlob == 'broad') {
+        return false;
+      }
+      setState(() {});
     });
   }
+
 
   void prepareMqttClient() async {
     _setupMqttClient();
@@ -1337,37 +1670,38 @@ class RenderBroadcast extends State<LiveRoom>
         false;
   }
 
-  addGuest() {
+  dynamic addGuest() {
+    setState(() {
+      common.loaderInside = true;
+    });
     var params = {
-      "action": "addGuest",
-      "guest_id": userId,
-      "broadcast_id": common.broadcasterId
+      'action': 'addGuest',
+      'guest_id': common.userId,
+      'broadcast_id': common.broadcasterId
     };
-    makePostRequest("user/guest", jsonEncode(params), 0, context)
+    makePostRequest('user/guest', jsonEncode(params), 0, context)
         .then((response) {
       var data = jsonDecode(response);
-      print(data);
       if (data['status'] == 0) {
-        setState(() {
-          common.camera = true;
-          common.guestFlag = true;
-        });
+        common.camera = true;
+        common.guestFlag = true;
+        common.loaderInside = false;
         common.publishMessage(
             broadcastUsername,
-            "£01refreshAudience01£*£" +
-                userId +
-                "£*£" +
+            '£01refreshAudience01£*£' +
+                common.userId +
+                '£*£' +
                 common.name +
-                "£*£" +
+                '£*£' +
                 common.username +
-                "£*£" +
+                '£*£' +
                 common.profilePic +
-                "£*£" +
+                '£*£' +
                 common.level);
-        common.zego.setPreview(setState, userId, common.broadcastType);
+        common.zego.setPreview(setState, common.userId, common.broadcastType);
         common.zego.startPublish(userId);
-        GuestData gData = GuestData(userId, common.name, common.username,
-            common.profilePic, common.level, 0);
+        var gData = GuestData(userId, common.name, common.username,
+            common.profilePic, common.level, 0, 0);
         setState(() {
           common.guestData.add(gData);
         });
@@ -1395,19 +1729,7 @@ class RenderBroadcast extends State<LiveRoom>
         subscribeToTopic(broadcastUsername);
       }
       if (userType != "broad") {
-        var arriveMsg = "£01AudArrive01£*£" +
-            userId +
-            "£*£" +
-            common.name +
-            "£*£" +
-            common.username +
-            "£*£" +
-            Uri.encodeFull(common.profilePic) +
-            "£*£" +
-            common.level +
-            "£*£" +
-            common.entranceEffect;
-        toggleSendChannelMessage(arriveMsg, common);
+        audienceArrive();
       }
     } else {
       print(
@@ -1456,41 +1778,96 @@ class RenderBroadcast extends State<LiveRoom>
         'MQTTClientWrapper::OnConnected client callback - Client connection was sucessful');
   }
 
-  void buildchatzone(String string, colors) {
+  void buildchatzone(String string, colors,String topic) {
     print('string');
     print(string);
     int txtsize = string.length;
     print(string.substring(2, 8));
     Chatmodel chatmodel = Chatmodel(string.substring(0, 2),
-        string.substring(2, 8), string.substring(8, txtsize), colors);
+        string.substring(2, 8), string.substring(8, txtsize), colors,"");
     setState(() {
-      common.chatlist.add(chatmodel);
+      common.chatList.add(chatmodel);
     });
   }
+  void audienceArrive() {
+    var arriveMsg = '£01AudArrive01£*£' +
+        common.userId +
+        '£*£' +
+        common.name +
+        '£*£' +
+        common.username +
+        '£*£' +
+        Uri.encodeFull(common.profilePic) +
+        '£*£' +
+        common.level +
+        '£*£' +
+        common.entranceEffect;
+    common.publishMessage(common.broadcastUsername, arriveMsg);
+  }
+  void warningMsg() {
+    var chatmodel = Chatmodel(
+        '',
+        '',
+        'Warning : We moderate Live Broadcast. Smoking, Vulgarity, Porn, Indecent exposure, child pornographu and abuse or Any copyright infringement is NOT allowed and will be banned. Live broadcasts are monitored 24X7 . Hack or mis-uses subject to account closure,suspension , or permanent Ban  ',
+        'grey',""
+        );
+    common.chatList.add(chatmodel);
+  }
 
-  void switchToAnother(String broadid, String broadcastername) {
-    common.client.unsubscribe(common.broadcastUsername);
-    common.broadcasterId = broadid;
-    subscribeToTopic(broadcastername);
-    common.zego.playViewWidget = [];
-    common.zego.playViewWidget.clear();
-    common.zego.guest = [];
-    common.zego.guest.clear();
-    addAudience();
+  void switchToAnother(broadid, broadcastername) {
+    try {
+      if (common.guestFlag == false &&
+          broadid != '' &&
+          broadid != common.broadcasterId &&
+          broadid != null &&
+          broadcastername != null &&
+          broadcastername != '') {
+        setState(() {
+          common.client.unsubscribe(common.broadcastUsername);
+
+          common.removeAudience(context, common);
+          common.player.stop();
+          common.loader = true;
+          Timer(Duration(milliseconds: 1000), () {
+            subscribeToTopic(broadcastername);
+            for (final streamID in common.zego.previewID.keys) {
+              disposePlay(streamID);
+            }
+            ZegoExpressEngine.instance.stopPlayingStream(common.broadcasterId);
+            common.zego.playViewWidget = [];
+            clearGiftList();
+            stopAnimation();
+
+            common.broadcasterId = broadid;
+            common.broadcastUsername = broadcastername;
+            common.page = 1;
+            common.audiencelist = [];
+            addAudience();
+            audienceArrive();
+
+            warningMsg();
+          });
+        });
+      } else {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   Widget buildInfoList(common) {
     print("chatlis" +
-        common.chatlist.length.toString() +
-        common.chatlist[0].txtmsg);
-    Timer(Duration(milliseconds: 100), () => common.mesagecontroller
+        common.chatList.length.toString() +
+        common.chatList[0].txtmsg);
+    Timer(
+        Duration(milliseconds: 100),
+        () => common.mesagecontroller
             .jumpTo(common.mesagecontroller.position.maxScrollExtent));
     return ListView.builder(
-      itemCount: common.chatlist.length,
+      itemCount: common.chatList.length,
       controller: common.mesagecontroller,
       itemBuilder: (context, i) {
         Color color;
-        switch (common.chatlist[i].color) {
+        switch (common.chatList[i].color) {
           case "green":
             color = Colors.green;
             break;
@@ -1512,59 +1889,63 @@ class RenderBroadcast extends State<LiveRoom>
         }
         return Align(
           alignment: Alignment.centerLeft,
-          child: common.chatlist[i].level != ""
+          child: common.chatList[i].level != ""
               ? Container(
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.fromLTRB(5, 5, 10, 5),
-            child: Row(
-              children: <Widget>[
-                MyCircleAvatar(
-                  imgUrl: messages1[i]['contactImgUrl'],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        print("object");
-                        profileviewAudience(common.chatlist[i].gold, context, common);//common.chatlist[i].gold, context, common
-                      },
-                      child: Container(
-                        constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * .6),
-                        padding: const EdgeInsets.all(15.0),
-                        decoration: BoxDecoration(
-                          color: Color(0xfff9f9f9),
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(25),
-                            bottomLeft: Radius.circular(25),
-                            bottomRight: Radius.circular(25),
-                          ),
-                        ),
-                        child: Text(
-                          common.chatlist[i].txtmsg,
-                          style: Theme.of(context).textTheme.body1.apply(
-                            color: Colors.black87,
-                          ),
-                        ),
+                  margin: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.fromLTRB(5, 5, 10, 5),
+                  child: Row(
+                    children: <Widget>[
+                      MyCircleAvatar(
+                        imgUrl: messages1[i]['contactImgUrl'],
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(width: 15),
-              ],
-            ),
-          )
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          GestureDetector(
+                            onTap: () {
+                              print("object");
+                              profileviewAudience(
+                                  common.chatList[i].gold,
+                                  context,
+                                  common); //common.chatList[i].gold, context, common
+                            },
+                            child: Container(
+                              constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * .6),
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: Color(0xfff9f9f9),
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(25),
+                                  bottomLeft: Radius.circular(25),
+                                  bottomRight: Radius.circular(25),
+                                ),
+                              ),
+                              child: Text(
+                                common.chatList[i].txtmsg,
+                                style: Theme.of(context).textTheme.body1.apply(
+                                      color: Colors.black87,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 15),
+                    ],
+                  ),
+                )
               : Container(
-            padding: EdgeInsets.only(bottom: 10),
-            child: Text(
-              common.chatlist[i].txtmsg,
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle
-                  .copyWith(color: Colors.white, fontSize: 12),
-            ),
-          ),
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    common.chatList[i].txtmsg,
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle
+                        .copyWith(color: Colors.white, fontSize: 12),
+                  ),
+                ),
         );
       },
     );
@@ -1577,11 +1958,12 @@ class RenderBroadcast extends State<LiveRoom>
       itemCount: common.audiencelist.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: (){
-            profileviewAudience(common.audiencelist[index].userId, context, common);
+          onTap: () {
+            profileviewAudience(
+                common.audiencelist[index].userId, context, common);
           },
           child: Container(
-            margin:EdgeInsets.fromLTRB(1.5, 0, 1.5, 0),
+            margin: EdgeInsets.fromLTRB(1.5, 0, 1.5, 0),
             width: 45,
             height: 45,
             decoration: BoxDecoration(
@@ -1592,7 +1974,7 @@ class RenderBroadcast extends State<LiveRoom>
                 width: 1.0,
               ),
               image: DecorationImage(
-                alignment:Alignment.center,
+                alignment: Alignment.center,
                 image: NetworkImage(
                   common.audiencelist[index].profilePic,
                 ),
@@ -1606,7 +1988,7 @@ class RenderBroadcast extends State<LiveRoom>
   }
 
   profileviewAudience(id, context, common) {
-    print("userId"+ id);
+    print("userId" + id);
     var params = "";
     if (id == common.userId)
       params = "action=quickProfile";
@@ -1663,9 +2045,10 @@ class RenderBroadcast extends State<LiveRoom>
                                   child: Row(
                                     children: <Widget>[
                                       Container(
-                                          padding: const EdgeInsets.only(left: 3),
-                                          child: Icon(Icons.report, color: Colors.black)
-                                      ),
+                                          padding:
+                                              const EdgeInsets.only(left: 3),
+                                          child: Icon(Icons.report,
+                                              color: Colors.black)),
                                       Text(
                                         " Report",
                                         style: TextStyle(
@@ -1679,11 +2062,10 @@ class RenderBroadcast extends State<LiveRoom>
                                 ),
                               ],
                             ),
-                            onTap: (){
+                            onTap: () {
                               _asyncSimpleDialog(context);
                             },
-                          )
-                      ),
+                          )),
                       Positioned(
                         top: 25,
                         left: 0,
@@ -1696,7 +2078,9 @@ class RenderBroadcast extends State<LiveRoom>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => EditProfile(touserid: id,),
+                                    builder: (context) => EditProfile(
+                                      touserid: id,
+                                    ),
                                   ),
                                 );
                               },
@@ -1710,9 +2094,7 @@ class RenderBroadcast extends State<LiveRoom>
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-
-                              )
-                          ),
+                              )),
                         ),
                       ),
                       Positioned(
@@ -1726,7 +2108,9 @@ class RenderBroadcast extends State<LiveRoom>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => EditProfile(touserid: id,),
+                                    builder: (context) => EditProfile(
+                                      touserid: id,
+                                    ),
                                   ),
                                 );
                               },
@@ -1736,13 +2120,12 @@ class RenderBroadcast extends State<LiveRoom>
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(100.0),
                                   image: DecorationImage(
-                                    image: NetworkImage("https://blive.s3.ap-south-1.amazonaws.com/WebpageAsserts/DBeffect/Golden_Dp.webp"),
+                                    image: NetworkImage(
+                                        "https://blive.s3.ap-south-1.amazonaws.com/WebpageAsserts/DBeffect/Golden_Dp.webp"),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-
-                              )
-                          ),
+                              )),
                         ),
                       ),
                       Positioned(
@@ -1768,7 +2151,7 @@ class RenderBroadcast extends State<LiveRoom>
                           child: Text(
                             "ID" +
                                 ' ' +
-                                data['reference_user_id' ] +
+                                data['reference_user_id'] +
                                 ' ' +
                                 "|" +
                                 ' ' +
@@ -1797,7 +2180,8 @@ class RenderBroadcast extends State<LiveRoom>
                                     border: Border.all(color: Colors.black)),
                                 margin: const EdgeInsets.only(right: 5),
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 4),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 5, 20, 4),
                                   child: Text(
                                     tags[index],
                                     style: TextStyle(color: Colors.black),
@@ -1824,38 +2208,42 @@ class RenderBroadcast extends State<LiveRoom>
                                   child: Column(
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
-                                      Text(  data['friends'],
-                                          style: TextStyle(color: Colors.black,
+                                      Text(data['friends'],
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("Friends",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                                 FlatButton(
                                   padding: EdgeInsets.all(10.0),
                                   child: Column(
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
-                                      Text( data['fans'],
-                                          style: TextStyle(color: Colors.black,
+                                      Text(data['fans'],
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("Fans",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                                 FlatButton(
                                   padding: EdgeInsets.all(10.0),
@@ -1863,18 +2251,20 @@ class RenderBroadcast extends State<LiveRoom>
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
                                       Text(data['followers'],
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("Followers",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                                 FlatButton(
                                   padding: EdgeInsets.all(10.0),
@@ -1882,18 +2272,20 @@ class RenderBroadcast extends State<LiveRoom>
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
                                       Text(data['over_all_gold'].toString(),
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("B-Gold",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                               ],
                             ),
@@ -1914,17 +2306,22 @@ class RenderBroadcast extends State<LiveRoom>
                                 side: BorderSide(color: Colors.white),
                               ),
                               color: Colors.white,
-                              label: Text('Call',
-                                style: TextStyle(color: Colors.black),),
-                              icon: Icon(Icons.call, color:Colors.green,size: 18,),
+                              label: Text(
+                                'Call',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              icon: Icon(
+                                Icons.call,
+                                color: Colors.green,
+                                size: 18,
+                              ),
                               onPressed: () {
                                 common.publishMessage(
                                     data['username'],
                                     "£01GuestInvite01£*£" +
                                         id +
                                         "£*£" +
-                                        common.broadcasterId
-                                            .toString() +
+                                        common.broadcasterId.toString() +
                                         "£*£" +
                                         data['profileName'] +
                                         "£*£" +
@@ -1941,15 +2338,20 @@ class RenderBroadcast extends State<LiveRoom>
                                 side: BorderSide(color: Colors.white),
                               ),
                               color: Colors.white,
-                              label: Text('Chat',
-                                style: TextStyle(color: Colors.black),),
-                              icon: Icon(Icons.message, color:Colors.black,size: 18,),
+                              label: Text(
+                                'Chat',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              icon: Icon(
+                                Icons.message,
+                                color: Colors.black,
+                                size: 18,
+                              ),
                               onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChatHome(
-                                    ),
+                                    builder: (context) => ChatHome(),
                                   ),
                                 );
                               },
@@ -1962,12 +2364,16 @@ class RenderBroadcast extends State<LiveRoom>
                               color: Colors.deepOrange,
                               splashColor: Colors.yellow[200],
                               animationDuration: Duration(seconds: 4),
-                              label: Text('Follow',
-                                style: TextStyle(color: Colors.white),),
-                              icon: Icon(Icons.add, color:Colors.white,size: 18,),
-                              onPressed: ()  {
-
-                              },
+                              label: Text(
+                                'Follow',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              icon: Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              onPressed: () {},
                             ),
                           ],
                         ),
@@ -2032,8 +2438,8 @@ class RenderBroadcast extends State<LiveRoom>
                         .copyWith(color: Colors.white, fontSize: 12),
                     overflow: TextOverflow.ellipsis,
                   ),
-                ],)
-          ),
+                ],
+              )),
         ),
         Positioned(
           top: 5,
@@ -2124,7 +2530,7 @@ class RenderBroadcast extends State<LiveRoom>
                 height: 8,
               ),
             ),
-            onTap: (){
+            onTap: () {
               onTrophyClick();
             },
           ),
@@ -2193,7 +2599,8 @@ class RenderBroadcast extends State<LiveRoom>
                         child: Column(
                           // Replace with a Row for horizontal icon + text
                           children: <Widget>[
-                            SvgPicture.asset(pk,
+                            SvgPicture.asset(
+                              pk,
                               width: 30.0,
                               height: 30.0,
                               fit: BoxFit.fill,
@@ -2209,7 +2616,8 @@ class RenderBroadcast extends State<LiveRoom>
                         child: Column(
                           // Replace with a Row for horizontal icon + text
                           children: <Widget>[
-                            SvgPicture.asset(gallery,
+                            SvgPicture.asset(
+                              gallery,
                               width: 30.0,
                               height: 30.0,
                               fit: BoxFit.fill,
@@ -2225,7 +2633,8 @@ class RenderBroadcast extends State<LiveRoom>
                         child: Column(
                           // Replace with a Row for horizontal icon + text
                           children: <Widget>[
-                            SvgPicture.asset(music,
+                            SvgPicture.asset(
+                              music,
                               width: 30.0,
                               height: 30.0,
                               fit: BoxFit.fill,
@@ -2236,8 +2645,7 @@ class RenderBroadcast extends State<LiveRoom>
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => MyMusic(
-                              ),
+                              builder: (context) => MyMusic(),
                             ),
                           );
                         },
@@ -2246,7 +2654,8 @@ class RenderBroadcast extends State<LiveRoom>
                         padding: EdgeInsets.all(10.0),
                         child: Column(
                           children: <Widget>[
-                            SvgPicture.asset(games,
+                            SvgPicture.asset(
+                              games,
                               width: 30.0,
                               height: 30.0,
                               fit: BoxFit.fill,
@@ -2268,7 +2677,7 @@ class RenderBroadcast extends State<LiveRoom>
     );
   }
 
-  _share(){
+  _share() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -2294,7 +2703,8 @@ class RenderBroadcast extends State<LiveRoom>
                           ),
                         ),
                         onPressed: () async {
-                          File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+                          File file = await ImagePicker.pickImage(
+                              source: ImageSource.gallery);
                           await SocialSharePlugin.shareToFeedFacebook(
                               path: file.path,
                               onSuccess: (_) {
@@ -2324,17 +2734,18 @@ class RenderBroadcast extends State<LiveRoom>
                           String url = 'https://flutter.dev/';
                           final text =
                               'Flutter is Google’s portable UI toolkit for building beautiful, natively-compiled applications for mobile, web, and desktop from a single codebase.';
-                          final result = await SocialSharePlugin.shareToTwitterLink(
-                              text: text,
-                              url: url,
-                              onSuccess: (_) {
-                                print('TWITTER SUCCESS');
-                                return;
-                              },
-                              onCancel: () {
-                                print('TWITTER CANCELLED');
-                                return;
-                              });
+                          final result =
+                              await SocialSharePlugin.shareToTwitterLink(
+                                  text: text,
+                                  url: url,
+                                  onSuccess: (_) {
+                                    print('TWITTER SUCCESS');
+                                    return;
+                                  },
+                                  onCancel: () {
+                                    print('TWITTER CANCELLED');
+                                    return;
+                                  });
                           print(result);
                         },
                       ),
@@ -2351,7 +2762,8 @@ class RenderBroadcast extends State<LiveRoom>
                           String url = 'https://flutter.dev/';
                           final quote =
                               'Flutter is Google’s portable UI toolkit for building beautiful, natively-compiled applications for mobile, web, and desktop from a single codebase.';
-                          final result = await SocialSharePlugin.shareToFeedFacebookLink(
+                          final result =
+                              await SocialSharePlugin.shareToFeedFacebookLink(
                             quote: quote,
                             url: url,
                             onSuccess: (_) {
@@ -2381,8 +2793,10 @@ class RenderBroadcast extends State<LiveRoom>
                           ),
                         ),
                         onPressed: () async {
-                          File file = await ImagePicker.pickImage(source: ImageSource.gallery);
-                          await SocialSharePlugin.shareToFeedInstagram(path: file.path);
+                          File file = await ImagePicker.pickImage(
+                              source: ImageSource.gallery);
+                          await SocialSharePlugin.shareToFeedInstagram(
+                              path: file.path);
                         },
                       ),
                     ],
@@ -2434,7 +2848,7 @@ class RenderBroadcast extends State<LiveRoom>
                     padding: EdgeInsets.only(right: 10),
                     child: Row(
                       mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween, // added line
+                          MainAxisAlignment.spaceBetween, // added line
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         GestureDetector(
@@ -2442,8 +2856,14 @@ class RenderBroadcast extends State<LiveRoom>
                             if (common.chatController.text.isEmpty) {
                               return;
                             }
-                            sendGift("bulletMessage", common.chatController.text,
-                                1, 0, setState, context, common);
+                            sendGift(
+                                "bulletMessage",
+                                common.chatController.text,
+                                1,
+                                0,
+                                setState,
+                                context,
+                                common);
                             common.chatController.text = "";
                           },
                           child: Image(
@@ -2484,7 +2904,7 @@ class RenderBroadcast extends State<LiveRoom>
     common.focusNode.requestFocus();
   }
 
-  onTrophyClick(){
+  onTrophyClick() {
     final popup = BeautifulPopup(
       context: context,
       template: TemplateGreenRocket,
@@ -2496,7 +2916,7 @@ class RenderBroadcast extends State<LiveRoom>
           'et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, '
           'ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.',
       actions: [
-       /* popup.button(
+        /* popup.button(
           label: 'Close',
           onPressed: Navigator.of(context).pop,
         ),*/
@@ -2504,4 +2924,32 @@ class RenderBroadcast extends State<LiveRoom>
     );
   }
 
+  dynamic clearGiftList() {
+    common.chatList = [];
+    common.guestData = [];
+    common.vipGift = [];
+    common.giftqueuelist = [];
+    common.normalgiftqueuelist = [];
+    common.bulletqueuelist = [];
+    common.arrivedqueuelist = [];
+    common.inviteRequest = [];
+    common.normalList1 = [];
+    common.normalList2 = [];
+    common.normalList3 = [];
+    common.normalList4 = [];
+    common.bullet1List = [];
+    common.bullet2List = [];
+    common.bullet3List = [];
+  }
+  dynamic stopAnimation() {
+    common.animationController.stop();
+    common.normalleft1controller.stop();
+    common.normalleft2controller.stop();
+    common.bullet1controller.stop();
+    common.bullet2controller.stop();
+    common.bullet3controller.stop();
+    common.arrivedMessageController.stop();
+    common.timerController.stop();
+  }
 }
+

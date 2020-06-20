@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:honeybee/ui/chat.dart';
+import 'package:honeybee/ui/chatui.dart';
 import 'package:honeybee/utils/global.dart';
 
 class ChatHome extends StatelessWidget {
