@@ -693,9 +693,8 @@ class RenderBroadcast extends State<LiveRoom>
           .then((response) {
         print("object" + response);
         print(userType);
-        Navigator.pop(context);
         userType == "broad"
-            ? Navigator.pushAndRemoveUntil(
+            ? Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => BroadcastEnd(
@@ -705,13 +704,8 @@ class RenderBroadcast extends State<LiveRoom>
                       gold: common.bgold.toString(),
                       userId: broadcasterId),
                 ),
-                (Route<dynamic> route) => false,
               )
-            : Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => Dashboard()),
-                (Route<dynamic> route) => false,
-              );
+            :             Navigator.of(context).pop();
       });
     }
   }
@@ -1498,6 +1492,11 @@ class RenderBroadcast extends State<LiveRoom>
           break;
         case '£01BroadENded01':
           if (common.closeContext != null) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Dashboard()),
+                  (Route<dynamic> route) => false,
+            );
             Navigator.of(common.closeContext).pop(false);
           }
           if (receivedTopic == common.broadcastUsername &&

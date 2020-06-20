@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
+import 'package:honeybee/ui/audio/footer.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/utils/global.dart';
@@ -2222,6 +2223,323 @@ Widget showNormalGift(context, common) {
       ),
     ],
   );
+}
+Widget showNormalGiftold(context, common) {
+  print('------------inside normal------------');
+  return Container(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          alignment: Alignment.centerLeft,
+          child: AnimatedBuilder(
+              animation: common.normalleft1controller,
+              builder: (context, child) {
+                return Transform(
+                  transform: Matrix4.translationValues(
+                      common.normalleft1animation.value * common.widthScreen,
+                      0.0,
+                      0.0),
+                  child: AnimatedOpacity(
+                    opacity: common.loading1 ? 1 : 0,
+                    duration: Duration(seconds: 1),
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(3, 1, 15, 1),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.black, Colors.transparent],
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(25.0),
+                          bottomLeft: const Radius.circular(25.0),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  common.normalList1.length == 0
+                                      ? 'https://s3.ap-south-1.amazonaws.com/bliveprod-profile-pic/logo.png'
+                                      : common.normalList1[0],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  common.normalList1.length == 0
+                                      ? 'hi'
+                                      : common.normalList1[1],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1
+                                      .copyWith(
+                                      color: Colors.white, fontSize: 10),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  common.normalList1.length == 0
+                                      ? 'hi'
+                                      : common.normalList1[2],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1
+                                      .copyWith(
+                                      color: Colors.white, fontSize: 12),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 5),
+                          Container(
+                            width: 25,
+                            height: 25,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: common.normalList1.length == 0
+                                    ? NetworkImage(
+                                  'https://s3.ap-south-1.amazonaws.com/bliveprod-profile-pic/logo.png',
+                                )
+                                    : MemoryImage(
+                                  common.normalList1[3] as Uint8List,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            child: Text(
+                              'Combo',
+                              style: buildTextStyle(
+                                  context,
+                                  12,
+                                  FontWeight.bold,
+                                  Colors.amber,
+                                  FontStyle.normal),
+                            ),
+                          ),
+                          Text(
+                            ' x ',
+                            style: buildTextStyle(context, 14, FontWeight.bold,
+                                Colors.amber, FontStyle.normal),
+                          ),
+                          AnimatedCountFirst(
+                            count: common.normalList1.length == 0
+                                ? 1
+                                : int.tryParse(
+                                common.normalList1[4].toString()),
+                            curve: Curves.ease,
+                            duration: Duration(seconds: 5),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+        ),
+        SizedBox(
+          height: 50,
+        ),
+        Container(
+          alignment: Alignment.centerLeft,
+          child: AnimatedBuilder(
+              animation: common.normalleft2controller,
+              builder: (context, child) {
+                return Transform(
+                  transform: Matrix4.translationValues(
+                      common.normalleft2animation.value * common.widthScreen,
+                      0.0,
+                      0.0),
+                  child: AnimatedOpacity(
+                    opacity: common.loading3 ? 1 : 0,
+                    duration: Duration(seconds: 1),
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(3, 1, 15, 1),
+                      // height: 50,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.black, Colors.transparent],
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(25.0),
+                          bottomLeft: const Radius.circular(25.0),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                  common.normalList3.length == 0
+                                      ? 'https://s3.ap-south-1.amazonaws.com/bliveprod-profile-pic/logo.png'
+                                      : common.normalList3[0],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  common.normalList3.length == 0
+                                      ? 'hi'
+                                      : common.normalList3[1],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1
+                                      .copyWith(
+                                      color: Colors.white, fontSize: 10),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  common.normalList3.length == 0
+                                      ? 'hi'
+                                      : common.normalList3[2],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle1
+                                      .copyWith(
+                                      color: Colors.white, fontSize: 12),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            width: 25,
+                            height: 25,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              image: DecorationImage(
+                                image: common.normalList3.length == 0
+                                    ? NetworkImage(
+                                  'https://s3.ap-south-1.amazonaws.com/bliveprod-profile-pic/logo.png',
+                                )
+                                    : MemoryImage(
+                                  common.normalList3[3] as Uint8List,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Container(
+                            child: Text(
+                              'Combo',
+                              style: buildTextStyle(
+                                  context,
+                                  12,
+                                  FontWeight.bold,
+                                  Colors.amber,
+                                  FontStyle.normal),
+                            ),
+                          ),
+                          Text(
+                            ' x ',
+                            style: buildTextStyle(context, 14, FontWeight.bold,
+                                Colors.amber, FontStyle.normal),
+                          ),
+                          AnimatedCountSecond(
+                            count: common.normalList1.length == 0
+                                ? 1
+                                : int.tryParse(
+                                common.normalList1[4].toString()),
+                            curve: Curves.ease,
+                            duration: Duration(seconds: 5),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+        ),
+      ],
+    ),
+  );
+}
+
+
+class AnimatedCountFirst extends ImplicitlyAnimatedWidget {
+  final int count;
+
+  AnimatedCountFirst(
+      {Key key,
+        @required this.count,
+        @required Duration duration,
+        Curve curve = Curves.linear})
+      : super(duration: duration, curve: curve, key: key);
+
+  @override
+  ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() =>
+      _AnimatedCountFirstState();
+}
+
+class _AnimatedCountFirstState
+    extends AnimatedWidgetBaseState<AnimatedCountFirst> {
+  IntTween _count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _count.evaluate(animation).toString(),
+      style: buildTextStyle(
+          context, 16, FontWeight.bold, Colors.amber, FontStyle.italic),
+    );
+  }
+
+  @override
+  void forEachTween(TweenVisitor visitor) {
+    _count = visitor(
+        _count, widget.count, (dynamic value) => IntTween(begin: value));
+  }
+}
+
+
+TextStyle buildTextStyle(BuildContext context, double size,
+    FontWeight fontWeight, Color color, FontStyle fontStyle) {
+  return Theme.of(context).textTheme.subtitle1.copyWith(
+      color: color,
+      fontSize: size,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle);
 }
 
 Widget arrivedShow(common) {

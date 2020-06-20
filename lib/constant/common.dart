@@ -152,4 +152,13 @@ class CommonFun {
       ],
     );
   }
+  TextStyle buildTextStyle(BuildContext context, double size,
+      FontWeight fontWeight, Color color, FontStyle fontStyle) {
+    return Theme.of(context).textTheme.subtitle1.copyWith(
+        color: color,
+        fontSize: size,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle);
+  }
+
 }

@@ -1694,6 +1694,49 @@ Widget buildInfoList(common) {
     },
   );
 }
+class AnimatedCountSecond extends ImplicitlyAnimatedWidget {
+  final int count;
+
+  AnimatedCountSecond(
+      {Key key,
+        @required this.count,
+        @required Duration duration,
+        Curve curve = Curves.linear})
+      : super(duration: duration, curve: curve, key: key);
+
+  @override
+  ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() =>
+      _AnimatedCountSecondState();
+}
+class _AnimatedCountSecondState
+    extends AnimatedWidgetBaseState<AnimatedCountSecond> {
+  IntTween _count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _count.evaluate(animation).toString(),
+      style: buildTextStyle(
+          context, 16, FontWeight.bold, Colors.amber, FontStyle.italic),
+    );
+  }
+
+  @override
+  void forEachTween(TweenVisitor visitor) {
+    _count = visitor(
+        _count, widget.count, (dynamic value) => IntTween(begin: value));
+  }
+
+  TextStyle buildTextStyle(BuildContext context, double size,
+      FontWeight fontWeight, Color color, FontStyle fontStyle) {
+    return Theme.of(context).textTheme.subtitle1.copyWith(
+        color: color,
+        fontSize: size,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle);
+  }
+}
+
 
 void sendGift(
     giftName, message, giftValue, giftCount, setState, context, common) {
