@@ -1474,11 +1474,6 @@ class RenderBroadcast extends State<LiveRoom>
           break;
         case '£01BroadENded01':
           if (common.closeContext != null) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Dashboard()),
-              (Route<dynamic> route) => false,
-            );
             Navigator.of(common.closeContext).pop(false);
           }
           if (receivedTopic == common.broadcastUsername &&

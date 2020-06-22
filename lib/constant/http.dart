@@ -24,7 +24,7 @@ makeGetRequest(String endPoint, String params, int woutauth, context) async {
   String basicAuth =
       'Basic ' + base64Encode(utf8.encode('$username:$password'));
   String url =
-      'https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/$endPoint?$params';
+      'https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/$endPoint?$params';
   var response;
   print(url);
   print(woutauth);
@@ -39,7 +39,7 @@ makeGetRequest(String endPoint, String params, int woutauth, context) async {
   if (response.statusCode == 401 && woutauth == 0) {
     var json = jsonEncode({'device': 'android'});
     var urlData =
-        "https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/system/auth";
+        "https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/system/auth";
     var session = await http.post(Uri.encodeFull(urlData),
         body: jsonDecode(json), headers: {"Authorization": "Bearer $username"});
     if (session.statusCode == 406) {
@@ -71,7 +71,7 @@ makePostRequest(String endPoint, String params, int woutauth, context) async {
   String password = await CommonFun().getStringData('token');
   String basicAuth =
       'Basic ' + base64Encode(utf8.encode('$username:$password'));
-  String url = 'https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/$endPoint';
+  String url = 'https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/$endPoint';
   print(url);
   var response;
   if (woutauth == 0) {
@@ -86,7 +86,7 @@ makePostRequest(String endPoint, String params, int woutauth, context) async {
   if (response.statusCode == 401 && woutauth == 0) {
     var json = jsonEncode({'device': 'android'});
     var urlData =
-        "https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/system/auth";
+        "https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/system/auth";
     var session = await http.post(Uri.encodeFull(urlData),
         body: jsonDecode(json), headers: {"Authorization": "Bearer $username"});
     if (session.statusCode == 406) {

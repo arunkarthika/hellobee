@@ -330,15 +330,10 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         child: SafeArea(
           child: Scaffold(
             floatingActionButton: FloatingActionButton(
-              child: const Image(
-                  image: AssetImage('assets/dashboard/Golive.png'),
-                  width: 75,
-                  height: 75),
+              child: const Icon(Icons.audiotrack,),backgroundColor: Colors.deepOrangeAccent,
               onPressed: () async {
-                var camstatus = await PermissionFun().cameraPermision();
                 var micstatus = await PermissionFun().micPermision();
-                if (camstatus.toString() == "PermissionStatus.granted" &&
-                    micstatus.toString() == "PermissionStatus.granted") {
+                if (micstatus.toString() == "PermissionStatus.granted") {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -497,77 +492,83 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 0
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.orange,
-                          backgroundImage: AssetImage('assets/dashboard/Home.png'),
-
-                        ),
-                        )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Home.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset('assets/dashboard/Home.png'),
-                      ),
-                      width: bottomController.index == 0?40:30,
-                      height: bottomController.index == 0?40:30,
+                              padding: const EdgeInsets.all(5.0),
+                              child: Image.asset('assets/dashboard/Home.png'),
+                            ),
+                      width: bottomController.index == 0 ? 40 : 30,
+                      height: bottomController.index == 0 ? 40 : 30,
                     ),
-                  ),                  Tab(
+                  ),
+                  Tab(
                     child: Container(
                       child: bottomController.index == 1
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.orange,
-                          backgroundImage: AssetImage('assets/dashboard/Toppers.png'),
-
-                        ),
-                        )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Toppers.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset('assets/dashboard/Toppers.png'),
-                      ),
-                      width: bottomController.index == 1?40:30,
-                      height: bottomController.index == 1?40:30,
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Toppers.png'),
+                            ),
+                      width: bottomController.index == 1 ? 40 : 30,
+                      height: bottomController.index == 1 ? 40 : 30,
                     ),
-                  ),                  Tab(
+                  ),
+                  Tab(
                     child: Container(
                       child: bottomController.index == 2
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.orange,
-                          backgroundImage: AssetImage('assets/dashboard/Toppers.png'),
-
-                        ),
-                        )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Toppers.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset('assets/dashboard/Toppers.png'),
-                      ),
-                      width: bottomController.index == 2?40:30,
-                      height: bottomController.index ==2?40:30,
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Toppers.png'),
+                            ),
+                      width: bottomController.index == 2 ? 40 : 30,
+                      height: bottomController.index == 2 ? 40 : 30,
                     ),
-                  ),                  Tab(
+                  ),
+                  Tab(
                     child: Container(
                       child: bottomController.index == 3
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.orange,
-                          backgroundImage: AssetImage('assets/dashboard/Profile.png'),
-
-                        ),
-                        )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Profile.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset('assets/dashboard/Profile.png'),
-                      ),
-                      width: bottomController.index == 3?40:30,
-                      height: bottomController.index == 3?40:30,
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Profile.png'),
+                            ),
+                      width: bottomController.index == 3 ? 40 : 30,
+                      height: bottomController.index == 3 ? 40 : 30,
                     ),
                   ),
                 ],

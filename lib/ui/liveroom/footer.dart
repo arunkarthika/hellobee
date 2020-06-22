@@ -479,10 +479,8 @@ void onInvitaion(context, common) {
                                           child: Container(
                                             width: 50,
                                             height: 50,
-                                            child: Image(
-                                              image: AssetImage(
-                                                "assets/images/broadcast/Reject.png",
-                                              ),
+                                            child: Icon(
+                                              Icons.delete,color: Colors.white,
                                             ),
                                           ),
                                         ),
@@ -514,11 +512,9 @@ void onInvitaion(context, common) {
                                           child: Container(
                                             width: 50,
                                             height: 50,
-                                            child: Image(
-                                              image: AssetImage(
-                                                "assets/images/broadcast/Accept.png",
+                                              child: Icon(
+                                                Icons.video_call,color: Colors.white,
                                               ),
-                                            ),
                                           ),
                                         ),
                                       ),
