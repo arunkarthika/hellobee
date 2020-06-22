@@ -500,17 +500,17 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(5.0),
                         child: CircleAvatar(
                           radius: 10,
-                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundColor: Colors.orange,
                           backgroundImage: AssetImage('assets/dashboard/Home.png'),
 
                         ),
                         )
                           : Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: Image.asset('assets/dashboard/Home.png'),
                       ),
-                      width: 40,
-                      height: 40,
+                      width: bottomController.index == 0?40:30,
+                      height: bottomController.index == 0?40:30,
                     ),
                   ),                  Tab(
                     child: Container(
@@ -519,17 +519,17 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(5.0),
                         child: CircleAvatar(
                           radius: 10,
-                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundColor: Colors.orange,
                           backgroundImage: AssetImage('assets/dashboard/Toppers.png'),
 
                         ),
                         )
                           : Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: Image.asset('assets/dashboard/Toppers.png'),
                       ),
-                      width: 40,
-                      height: 40,
+                      width: bottomController.index == 1?40:30,
+                      height: bottomController.index == 1?40:30,
                     ),
                   ),                  Tab(
                     child: Container(
@@ -538,17 +538,17 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(5.0),
                         child: CircleAvatar(
                           radius: 10,
-                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundColor: Colors.orange,
                           backgroundImage: AssetImage('assets/dashboard/Toppers.png'),
 
                         ),
                         )
                           : Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: Image.asset('assets/dashboard/Toppers.png'),
                       ),
-                      width: 40,
-                      height: 40,
+                      width: bottomController.index == 2?40:30,
+                      height: bottomController.index ==2?40:30,
                     ),
                   ),                  Tab(
                     child: Container(
@@ -557,17 +557,17 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(5.0),
                         child: CircleAvatar(
                           radius: 10,
-                          backgroundColor: Colors.orangeAccent[100],
+                          backgroundColor: Colors.orange,
                           backgroundImage: AssetImage('assets/dashboard/Profile.png'),
 
                         ),
                         )
                           : Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(5.0),
                         child: Image.asset('assets/dashboard/Profile.png'),
                       ),
-                      width: 40,
-                      height: 40,
+                      width: bottomController.index == 3?40:30,
+                      height: bottomController.index == 3?40:30,
                     ),
                   ),
                 ],
@@ -695,7 +695,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                           left: 5,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: Colors.orangeAccent[100],
+                              color: Colors.orange,
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             child: Container(
@@ -719,7 +719,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                           right: 10,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: Colors.orangeAccent[100],
+                              color: Colors.orange,
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             child: Container(
@@ -745,7 +745,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
 //                    child: Container(
 //                      width: 30,
 //                decoration: BoxDecoration(
-//                color: Colors.orangeAccent[100],
+//                color: Colors.orange,
 //                borderRadius: BorderRadius.circular(30.0),
 //                ),
 //                      child: Row(

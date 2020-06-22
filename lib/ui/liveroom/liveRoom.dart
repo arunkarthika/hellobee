@@ -117,7 +117,6 @@ class RenderBroadcast extends State<LiveRoom>
       common.zego.width = MediaQuery.of(context).size.width.ceil().toInt();
       common.zego.height = (MediaQuery.of(context).size.height.ceil().toInt());
       if (userType == 'broad') {
-
         common.zego.broadOffline = false;
         common.broadcastType = broadcastType;
         common.zego.playViewWidget = [];
@@ -170,9 +169,9 @@ class RenderBroadcast extends State<LiveRoom>
       }
     });
 
-
     super.initState();
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('state = $state');
@@ -261,7 +260,7 @@ class RenderBroadcast extends State<LiveRoom>
 
   @override
   Widget build(BuildContext context) {
-    common.closeContext=context;
+    common.closeContext = context;
     PopupMenu.context = context;
     common.widthScreen = MediaQuery.of(context).size.width;
     return GestureDetector(
@@ -399,17 +398,15 @@ class RenderBroadcast extends State<LiveRoom>
         ),
         Positioned(
           bottom: 10.0,
-          left: 90.0,
-          child: GestureDetector(
-            onTap: () => {
-              onMicMute(common, setState)
-            },
+          left: 130.0,
+          child: common.userTypeGlob=='broad'?GestureDetector(
+            onTap: () => {onMicMute(common, setState)},
             child: Icon(
               common.zego.isUseMic ? Icons.mic : Icons.mic_off,
               size: 30,
               color: Colors.white,
             ),
-          ),
+          ):Container(),
         ),
         Positioned(
           bottom: 10.0,
@@ -429,7 +426,7 @@ class RenderBroadcast extends State<LiveRoom>
         ),
         Positioned(
           bottom: 10.0,
-          left: 130.0,
+          left: 90.0,
           child: GestureDetector(
             onTap: () {
               _share();
@@ -444,20 +441,9 @@ class RenderBroadcast extends State<LiveRoom>
           ),
         ),
         Positioned(
-          bottom: 10,
-          right: 10,
-          child: GestureDetector(
-            child: Image(
-              image: AssetImage(
-                "assets/broadcast/gift.png",
-              ),
-              width: 35,
-              height: 35,
-            ),
-            onTap: () {
-              giftShow(context, common);
-            },
-          ),
+          bottom: 5,
+          right: 0,
+          child: audienceBroadShow(context, common, setState),
         ),
       ],
     );
@@ -513,10 +499,9 @@ class RenderBroadcast extends State<LiveRoom>
       print(arriveMsg);
       toggleSendChannelMessage(arriveMsg, common);
       if (common.guestFlag == false) {
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Dashboard()),
-          (Route<dynamic> route) => false,
         );
       }
     });
@@ -591,7 +576,7 @@ class RenderBroadcast extends State<LiveRoom>
       common.guestData.clear();
       common.guestList.forEach((k, v) {
         GuestData gData = GuestData(k, v["profileName"], v["username"],
-            v["profile_pic"], v["level"], 0,0);
+            v["profile_pic"], v["level"], 0, 0);
         common.guestData.add(gData);
         print('Key=$k, Value=$v');
 
@@ -607,6 +592,7 @@ class RenderBroadcast extends State<LiveRoom>
       print("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
     });
   }
+
   dynamic getAudience() {
     setState(() {
       common.loaderInside = true;
@@ -629,7 +615,7 @@ class RenderBroadcast extends State<LiveRoom>
       }
       common.videoMute = pic['body']['audience']['video_muted'];
       common.broadcastType =
-      pic['body']['audience']['broadCastList']['broadcast_type'];
+          pic['body']['audience']['broadCastList']['broadcast_type'];
 
       common.viewerCount = pic['body']['audience']['audience_count'].toString();
       if (pic['body']['audience']['textMuteList'] == null) {
@@ -663,9 +649,8 @@ class RenderBroadcast extends State<LiveRoom>
         common.guestData = common.guestData;
       });
     });
-    print('=============================outside===================');
+    print('============== ===============outside===================');
   }
-
 
   dateTimeDiff(time) {
     DateTime now = DateTime.now();
@@ -705,7 +690,7 @@ class RenderBroadcast extends State<LiveRoom>
                       userId: broadcasterId),
                 ),
               )
-            :             Navigator.of(context).pop();
+            : Navigator.of(context).pop();
       });
     }
   }
@@ -754,7 +739,7 @@ class RenderBroadcast extends State<LiveRoom>
         common.guestData.clear();
         common.guestList.forEach((k, v) {
           GuestData gData = GuestData(k, v["profileName"], v["username"],
-              v["profile_pic"], v["level"],0, 0);
+              v["profile_pic"], v["level"], 0, 0);
           common.guestData.add(gData);
           print('Key=$k, Value=$v');
           common.zego.playRemoteStream(k, setState, common.broadcastType);
@@ -785,6 +770,7 @@ class RenderBroadcast extends State<LiveRoom>
       });
     });
   }
+
   dynamic addAudience() {
     setState(() {
       common.loaderInside = true;
@@ -821,23 +807,23 @@ class RenderBroadcast extends State<LiveRoom>
           common.prevUserId = pic['body']['prevUserId'].toString();
           common.nextUserId = pic['body']['nextUserId'].toString();
           common.prevUserId = common.prevUserId == null ||
-              common.prevUserId == '' ||
-              common.prevUserId == 'false'
+                  common.prevUserId == '' ||
+                  common.prevUserId == 'false'
               ? ''
               : common.prevUserId;
           common.nextUserId = common.nextUserId == null ||
-              common.nextUserId == '' ||
-              common.nextUserId == 'false'
+                  common.nextUserId == '' ||
+                  common.nextUserId == 'false'
               ? ''
               : common.nextUserId;
           common.prevUsername = pic['body']['prevUser'] == null ||
-              pic['body']['prevUser'] == '' ||
-              pic['body']['prevUser'] == false
+                  pic['body']['prevUser'] == '' ||
+                  pic['body']['prevUser'] == false
               ? ''
               : pic['body']['prevUser'];
           common.nextUsername = pic['body']['nextUser'] == null ||
-              pic['body']['nextUser'] == '' ||
-              pic['body']['nextUser'] == false
+                  pic['body']['nextUser'] == '' ||
+                  pic['body']['nextUser'] == false
               ? ''
               : pic['body']['nextUser'];
           if (pic['body']['broadCastList']['status'] == 'INACTIVE') {
@@ -852,7 +838,7 @@ class RenderBroadcast extends State<LiveRoom>
             }
             temp['textMuteList'] = temp['textMuteList'] ?? [];
             if (temp['textMuteList']
-                .indexWhere((item) => item == common.userId) !=
+                    .indexWhere((item) => item == common.userId) !=
                 -1) {
               common.textMute = true;
             }
@@ -924,186 +910,186 @@ class RenderBroadcast extends State<LiveRoom>
     print('=======================common.arrivedMessageController==========');
     print(common.arrivedMessageController);
     common.arrivedMessageAnimation =
-    Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+        Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
       parent: common.arrivedMessageController,
       curve: Curves.easeIn,
     ))
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.arrivedStatus = true;
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.arrivedStatus = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.arrivedStatus = false;
+              });
+              common.arrivedMessageController.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.arrivedStatus = false;
-          });
-          common.arrivedMessageController.stop();
-        }
-      });
     print("=======bullet1controller==============");
     common.bullet1controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet1animation =
-    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet1controller,
       curve: Curves.fastOutSlowIn,
     ))
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.animation1Status = true;
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.animation1Status = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.animation1Status = false;
+              });
+              common.bullet1controller.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.animation1Status = false;
-          });
-          common.bullet1controller.stop();
-        }
-      });
     print("=======bullet2controller==============");
     common.bullet2controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet2animation =
-    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet2controller,
       curve: Curves.fastOutSlowIn,
     ))
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.animation2Status = true;
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.animation2Status = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.animation2Status = false;
+              });
+              common.bullet2controller.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.animation2Status = false;
-          });
-          common.bullet2controller.stop();
-        }
-      });
     print("=======bullet3controller==============");
     common.bullet3controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet3animation =
-    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet3controller,
       curve: Curves.fastOutSlowIn,
     ))
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.animation3Status = true;
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.animation3Status = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.animation3Status = false;
+              });
+              common.bullet3controller.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.animation3Status = false;
-          });
-          common.bullet3controller.stop();
-        }
-      });
     print("=======normalleft1controller==============");
     common.normalleft1controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalleft1animation = Tween<Offset>(
-        begin: Offset.zero, end: Offset(0.0, -6.0))
+            begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalleft1controller,
       curve: Curves.fastOutSlowIn,
     ))
-      ..addStatusListener((status) {
-        print("========================= normal status===================");
-        print(status);
+          ..addStatusListener((status) {
+            print("========================= normal status===================");
+            print(status);
 
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.loading1 = true;
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.loading1 = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.loading1 = false;
+              });
+              common.normalleft1controller.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.loading1 = false;
-          });
-          common.normalleft1controller.stop();
-        }
-      });
     print("=======normalleft2controller==============");
     common.normalleft2controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalleft2animation = Tween<Offset>(
-        begin: Offset.zero, end: Offset(0.0, -6.0))
+            begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalleft2controller,
       curve: Curves.fastOutSlowIn,
     ))
-      ..addStatusListener((status) {
-        print("========================= normal status===================");
-        print(status);
+          ..addStatusListener((status) {
+            print("========================= normal status===================");
+            print(status);
 
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.loading3 = true;
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.loading3 = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.loading3 = false;
+              });
+              common.normalleft2controller.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.loading3 = false;
-          });
-          common.normalleft2controller.stop();
-        }
-      });
     print("=======normalright1controller==============");
     common.normalright1controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalright1animation = Tween<Offset>(
-        begin: Offset.zero, end: Offset(0.0, -6.0))
+            begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalright1controller,
       curve: Curves.fastOutSlowIn,
     ))
-      ..addStatusListener((status) {
-        print("========================= normal status===================");
-        print(status);
+          ..addStatusListener((status) {
+            print("========================= normal status===================");
+            print(status);
 
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.loading2 = true;
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.loading2 = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.loading2 = false;
+              });
+              common.normalright1controller.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.loading2 = false;
-          });
-          common.normalright1controller.stop();
-        }
-      });
     print("=======normalright2controller==============");
     common.normalright2controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalright2animation = Tween<Offset>(
-        begin: Offset.zero, end: Offset(0.0, -6.0))
+            begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalright2controller,
       curve: Curves.fastOutSlowIn,
     ))
-      ..addStatusListener((status) {
-        print("========================= normal status===================");
-        print(status);
+          ..addStatusListener((status) {
+            print("========================= normal status===================");
+            print(status);
 
-        if (status == AnimationStatus.forward) {
-          setState(() {
-            common.loading4 = true;
+            if (status == AnimationStatus.forward) {
+              setState(() {
+                common.loading4 = true;
+              });
+            }
+            if (status == AnimationStatus.completed) {
+              setState(() {
+                common.loading4 = false;
+              });
+              common.normalright2controller.stop();
+            }
           });
-        }
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            common.loading4 = false;
-          });
-          common.normalright2controller.stop();
-        }
-      });
   }
 
   void onMessage() {
@@ -1112,7 +1098,7 @@ class RenderBroadcast extends State<LiveRoom>
       MqttPublishMessage recMess = c[0].payload;
       var receivedTopic = c[0].topic;
       var locationJson =
-      MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
       var tmpmsg = locationJson;
       var arrData = tmpmsg.split('£*£');
@@ -1123,7 +1109,7 @@ class RenderBroadcast extends State<LiveRoom>
         case '£01AudArrive01':
           if (!tmpmsg.contains(userId)) {
             var audList =
-            AudienceList(arrData[1], arrData[2], arrData[3], arrData[4]);
+                AudienceList(arrData[1], arrData[2], arrData[3], arrData[4]);
             common.audiencelist.insert(0, audList);
             var giftqueue = Arrivedqueue(arrData[2], arrData[6]);
             common.arrivedqueuelist.add(giftqueue);
@@ -1191,8 +1177,7 @@ class RenderBroadcast extends State<LiveRoom>
         case '£01pkChallenge01':
           switch (arrData[1]) {
             case 'Start':
-              if (common.username == receivedTopic) {
-              }
+              if (common.username == receivedTopic) {}
               break;
             case 'Accepted':
               if (common.username == receivedTopic) {
@@ -1201,7 +1186,6 @@ class RenderBroadcast extends State<LiveRoom>
                   guestId = common.guestData[0].userId;
                 }
                 var duration = int.parse(arrData[6].toString()) * 60;
-
               }
               break;
             case 'Rejected':
@@ -1232,8 +1216,7 @@ class RenderBroadcast extends State<LiveRoom>
               print(common.timerController.duration);
               common.timerController.forward()
                 ..whenComplete(() {
-                  if (common.userId == common.pkBroadId) {
-                  }
+                  if (common.userId == common.pkBroadId) {}
                 });
               break;
             case 'End':
@@ -1298,12 +1281,12 @@ class RenderBroadcast extends State<LiveRoom>
             var content = arrData[3] + '  Has Sent You Request';
             if (userType == 'broad') {
               if (common.inviteRequest
-                  .indexWhere((item) => item.userId == arrData[1])
-                  .toString() ==
-                  '-1' &&
+                          .indexWhere((item) => item.userId == arrData[1])
+                          .toString() ==
+                      '-1' &&
                   common.guestData
-                      .indexWhere((item) => item.userId == arrData[1])
-                      .toString() ==
+                          .indexWhere((item) => item.userId == arrData[1])
+                          .toString() ==
                       '-1') {
                 var queue = InviteRequest(
                     arrData[3], arrData[5], arrData[6], arrData[1], arrData[4]);
@@ -1343,7 +1326,7 @@ class RenderBroadcast extends State<LiveRoom>
               arrData[4] + arrData[1] + arrData[2] + ' has sent ' + arrData[3];
           if (arrData[5] == 'normal') {
             var giftqueue =
-            NormalGiftqueue(arrData[2], arrData[3], arrData[6], arrData[7]);
+                NormalGiftqueue(arrData[2], arrData[3], arrData[6], arrData[7]);
             common.normalgiftqueuelist.add(giftqueue);
             loadNormal(setState, common);
             if (int.tryParse(arrData[7]) != 1) {
@@ -1420,7 +1403,6 @@ class RenderBroadcast extends State<LiveRoom>
                 'username': common.username
               };
               toast('PK request Accepted', Colors.orange);
-
             } else {
               toast('PK request rejected', Colors.orange);
             }
@@ -1465,7 +1447,7 @@ class RenderBroadcast extends State<LiveRoom>
           break;
         case '£01RemoveGus01':
           var pos =
-          common.guestData.indexWhere((item) => item.userId == arrData[1]);
+              common.guestData.indexWhere((item) => item.userId == arrData[1]);
           pos = pos + 1;
           if (common.broadcastType != 'audio') {
             common.zego.playViewWidget.removeAt(pos);
@@ -1495,7 +1477,7 @@ class RenderBroadcast extends State<LiveRoom>
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => Dashboard()),
-                  (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
             );
             Navigator.of(common.closeContext).pop(false);
           }
@@ -1516,10 +1498,8 @@ class RenderBroadcast extends State<LiveRoom>
           common.userTypeGlob == 'broad') {
         return false;
       }
-      setState(() {});
     });
   }
-
 
   void prepareMqttClient() async {
     _setupMqttClient();
@@ -1777,17 +1757,18 @@ class RenderBroadcast extends State<LiveRoom>
         'MQTTClientWrapper::OnConnected client callback - Client connection was sucessful');
   }
 
-  void buildchatzone(String string, colors,String topic) {
+  void buildchatzone(String string, colors, String topic) {
     print('string');
     print(string);
     int txtsize = string.length;
     print(string.substring(2, 8));
     Chatmodel chatmodel = Chatmodel(string.substring(0, 2),
-        string.substring(2, 8), string.substring(8, txtsize), colors,"");
+        string.substring(2, 8), string.substring(8, txtsize), colors, "");
     setState(() {
       common.chatList.add(chatmodel);
     });
   }
+
   void audienceArrive() {
     var arriveMsg = '£01AudArrive01£*£' +
         common.userId +
@@ -1803,13 +1784,14 @@ class RenderBroadcast extends State<LiveRoom>
         common.entranceEffect;
     common.publishMessage(common.broadcastUsername, arriveMsg);
   }
+
   void warningMsg() {
     var chatmodel = Chatmodel(
         '',
         '',
         'Warning : We moderate Live Broadcast. Smoking, Vulgarity, Porn, Indecent exposure, child pornographu and abuse or Any copyright infringement is NOT allowed and will be banned. Live broadcasts are monitored 24X7 . Hack or mis-uses subject to account closure,suspension , or permanent Ban  ',
-        'grey',""
-        );
+        'grey',
+        "");
     common.chatList.add(chatmodel);
   }
 
@@ -2940,6 +2922,7 @@ class RenderBroadcast extends State<LiveRoom>
     common.bullet2List = [];
     common.bullet3List = [];
   }
+
   dynamic stopAnimation() {
     common.animationController.stop();
     common.normalleft1controller.stop();
@@ -2951,4 +2934,3 @@ class RenderBroadcast extends State<LiveRoom>
     common.timerController.stop();
   }
 }
-
