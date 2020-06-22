@@ -205,6 +205,8 @@ class RenderBroadcast extends State<LiveRoom>
       common.publishMessage(
           common.broadcastUsername, '£01BroadENded01£*£' + common.userId);
       ZegoExpressEngine.instance.stopPublishingStream();
+    }else{
+      onWillPopOffline();
     }
     ZegoExpressEngine.instance.stopPreview();
     ZegoExpressEngine.onPublisherStateUpdate = null;
@@ -399,7 +401,7 @@ class RenderBroadcast extends State<LiveRoom>
         Positioned(
           bottom: 10.0,
           left: 130.0,
-          child: common.userTypeGlob=='broad'?GestureDetector(
+          child: common.userTypeGlob=='broad'||common.guestFlag == true?GestureDetector(
             onTap: () => {onMicMute(common, setState)},
             child: Icon(
               common.zego.isUseMic ? Icons.mic : Icons.mic_off,
@@ -472,40 +474,14 @@ class RenderBroadcast extends State<LiveRoom>
   }
 
   Future<bool> onWillPopOffline() async {
+    print('offline');
     if (common.guestFlag == true) {
       common.removeGuest(common.userId, context);
     }
-    String endPoint = "user/audiance";
-    print(endPoint);
-    var params = {
-      "action": "removeAudience",
-      "length": "10",
-      "page": common.page.toString(),
-      "user_id": broadcasterId
-    };
+    common.removeAudience(context, common);
+    Navigator.of(context).pop();
 
-    makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
-      common.audiencelist.removeWhere((item) => item.userId == userId);
-      var arriveMsg = "£01RemoveAud01£*£" +
-          userId +
-          "£*£" +
-          common.name +
-          "£*£" +
-          common.username +
-          "£*£" +
-          Uri.encodeFull(common.profilePic) +
-          "£*£" +
-          common.level;
-      print(arriveMsg);
-      toggleSendChannelMessage(arriveMsg, common);
-      if (common.guestFlag == false) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
-        );
-      }
-    });
-    return Future.value(true);
+    return false;
   }
 
   void getaudiencelist(common, context) {
@@ -615,7 +591,7 @@ class RenderBroadcast extends State<LiveRoom>
       }
       common.videoMute = pic['body']['audience']['video_muted'];
       common.broadcastType =
-          pic['body']['audience']['broadCastList']['broadcast_type'];
+         'audio';
 
       common.viewerCount = pic['body']['audience']['audience_count'].toString();
       if (pic['body']['audience']['textMuteList'] == null) {
@@ -1246,7 +1222,10 @@ class RenderBroadcast extends State<LiveRoom>
           }
           break;
         case '£01RemoveAud01':
+          print('removeuserid'+userId);
+          print(tmpmsg);
           if (!tmpmsg.contains(userId)) {
+            print('removeuseridignite'+userId);
             common.audiencelist
                 .removeWhere((item) => item.userId == arrData[1]);
             var arrived = arrData[5] + arrData[1] + arrData[2] + ' has Left';
