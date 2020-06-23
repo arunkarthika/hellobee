@@ -205,7 +205,7 @@ class RenderBroadcast extends State<LiveRoom>
       common.publishMessage(
           common.broadcastUsername, '£01BroadENded01£*£' + common.userId);
       ZegoExpressEngine.instance.stopPublishingStream();
-    }else{
+    } else {
       onWillPopOffline();
     }
     ZegoExpressEngine.instance.stopPreview();
@@ -385,63 +385,73 @@ class RenderBroadcast extends State<LiveRoom>
           child: bulletMessageShow(common),
         ),
         Positioned(
-          bottom: 10.0,
-          left: 10.0,
-          child: GestureDetector(
-            onTap: () => _profileview(),
-            child: Image(
-              image: AssetImage(
-                "assets/broadcast/menu.png",
-              ),
-              width: 28,
-              height: 28,
-            ),
-          ),
-        ),
+            bottom: 10.0,
+            left: 10.0,
+            child: SizedBox(
+              width: 30,
+              height: 30, // specific value
+
+              child: RaisedButton(
+                  onPressed: () {},
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0)),
+                  padding: const EdgeInsets.all(0.0),
+                  child: common.gradient(Icons.menu)),
+            )),
         Positioned(
           bottom: 10.0,
           left: 130.0,
-          child: common.userTypeGlob=='broad'||common.guestFlag == true?GestureDetector(
-            onTap: () => {onMicMute(common, setState)},
-            child: Icon(
-              common.zego.isUseMic ? Icons.mic : Icons.mic_off,
-              size: 30,
-              color: Colors.white,
-            ),
-          ):Container(),
+          child: common.userTypeGlob == 'broad' || common.guestFlag == true
+              ? SizedBox(
+                  width: 30,
+                  height: 30, // specific value
+
+                  child: RaisedButton(
+                      onPressed: () {
+                        onMicMute(common, setState);
+                      },
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(80.0)),
+                      padding: const EdgeInsets.all(0.0),
+                      child: common.gradient(
+                        common.zego.isUseMic ? Icons.mic : Icons.mic_off,
+                      )),
+                )
+              : Container(),
         ),
         Positioned(
-          bottom: 10.0,
-          left: 50.0,
-          child: GestureDetector(
-            onTap: () {
-              chatEnable(context, setState, common);
-            },
-            child: Image(
-              image: AssetImage(
-                "assets/broadcast/Chat.png",
+            bottom: 10.0,
+            left: 50.0,
+            child: SizedBox(
+              width: 30,
+              height: 30, // specific value
+
+              child: RaisedButton(
+                  onPressed: () {
+                    chatEnable(context, setState, common);
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(80.0)),
+                  padding: const EdgeInsets.all(0.0),
+                  child: common.gradient(Icons.chat_bubble)),
+            )),
+        Positioned(
+            bottom: 10.0,
+            left: 90.0,
+            child: SizedBox(
+              width: 30,
+              height: 30, // specific value
+
+              child: RaisedButton(
+                onPressed: () {
+                  _share();
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0)),
+                padding: const EdgeInsets.all(0.0),
+                child:common.gradient(Icons.share)
               ),
-              width: 28,
-              height: 28,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 10.0,
-          left: 90.0,
-          child: GestureDetector(
-            onTap: () {
-              _share();
-            },
-            child: Image(
-                image: AssetImage(
-                  "assets/liveroom/share.png",
-                ),
-                width: 28,
-                height: 28,
-                color: Colors.white),
-          ),
-        ),
+            )),
         Positioned(
           bottom: 5,
           right: 0,
@@ -590,8 +600,7 @@ class RenderBroadcast extends State<LiveRoom>
         common.pageLength = pic['body']['audience']['last_page'];
       }
       common.videoMute = pic['body']['audience']['video_muted'];
-      common.broadcastType =
-         'audio';
+      common.broadcastType = 'audio';
 
       common.viewerCount = pic['body']['audience']['audience_count'].toString();
       if (pic['body']['audience']['textMuteList'] == null) {
@@ -1222,10 +1231,10 @@ class RenderBroadcast extends State<LiveRoom>
           }
           break;
         case '£01RemoveAud01':
-          print('removeuserid'+userId);
+          print('removeuserid' + userId);
           print(tmpmsg);
           if (!tmpmsg.contains(userId)) {
-            print('removeuseridignite'+userId);
+            print('removeuseridignite' + userId);
             common.audiencelist
                 .removeWhere((item) => item.userId == arrData[1]);
             var arrived = arrData[5] + arrData[1] + arrData[2] + ' has Left';
@@ -1942,7 +1951,7 @@ class RenderBroadcast extends State<LiveRoom>
     );
   }
 
-  profileviewAudience(id, context, common) {
+   profileviewAudience(id, context, common) {
     print("userId" + id);
     var params = "";
     if (id == common.userId)
@@ -2255,7 +2264,7 @@ class RenderBroadcast extends State<LiveRoom>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            RaisedButton.icon(
+                            common.userTypeGlob == 'broad'?  RaisedButton.icon(
                               shape: RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(color: Colors.white),
@@ -2286,7 +2295,7 @@ class RenderBroadcast extends State<LiveRoom>
                                         "£*£" +
                                         data['level']);
                               },
-                            ),
+                            ):Container(),
                             RaisedButton.icon(
                               shape: RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(18.0),

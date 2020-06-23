@@ -19,50 +19,68 @@ Widget audienceBroadShow(context, common, setState) {
     child: Row(
       children: <Widget>[
         common.guestFlag == false && common.broadcastType != 'pk'
-            ? GestureDetector(
-                onTap: () {
-                  if (int.tryParse(common.level) < 10) {
-                    toast('Sorry!! You must reach level 10', Colors.red);
-                  } else {
-                    common.publishMessage(
-                        common.broadcastUsername,
-                        '£01GuestInvite01£*£' +
-                            common.userId +
-                            '£*£' +
-                            common.broadcasterId +
-                            '£*£' +
-                            common.name +
-                            '£*£' +
-                            common.username +
-                            '£*£' +
-                            common.profilePic +
-                            '£*£' +
-                            common.level);
-                  }
-                },
-                child: Icon(
-                  Icons.video_call,
-                  size: 30,
-                  color: Colors.white,
-                ),
+            ? SizedBox(
+                width: 30,
+                height: 30, // specific value
+
+                child: RaisedButton(
+                    onPressed: () {
+                      if (int.tryParse(common.level) < 10) {
+                        toast('Sorry!! You must reach level 10', Colors.red);
+                      } else {
+                        common.publishMessage(
+                            common.broadcastUsername,
+                            '£01GuestInvite01£*£' +
+                                common.userId +
+                                '£*£' +
+                                common.broadcasterId +
+                                '£*£' +
+                                common.name +
+                                '£*£' +
+                                common.username +
+                                '£*£' +
+                                common.profilePic +
+                                '£*£' +
+                                common.level);
+                      }
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(80.0)),
+                    padding: const EdgeInsets.all(0.0),
+                    child: common.gradient(Icons.video_call)),
               )
-            : Container(),
+            : SizedBox(
+                width: 30,
+                height: 30, // specific value
+                child: common.guestFlag == true&&common.userTypeGlob != 'broad'
+                    ? RaisedButton(
+                        onPressed: () {
+                          common.removeGuest(common.userId, context);
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80.0)),
+                        padding: const EdgeInsets.all(0.0),
+                        child: common.gradient(Icons.call_end))
+                    : Container(),
+              ),
         SizedBox(
           width: 5,
         ),
         common.userTypeGlob == 'broad' && common.pkSession == false
             ? Stack(
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      onInvitaion(context, common);
-                    },
-                    child: Container(
-                        child: Icon(
-                      Icons.format_list_bulleted,
-                      size: 30,
-                      color: Colors.white,
-                    )),
+                  SizedBox(
+                    width: 30,
+                    height: 30, // specific value
+
+                    child: RaisedButton(
+                        onPressed: () {
+                          onInvitaion(context, common);
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80.0)),
+                        padding: const EdgeInsets.all(0.0),
+                        child: common.gradient(Icons.list)),
                   ),
                   common.inviteRequest.length != 0
                       ? Positioned(
@@ -94,15 +112,17 @@ Widget audienceBroadShow(context, common, setState) {
           width: 5,
         ),
         common.gift == true
-            ? GestureDetector(
-                child: Icon(
-                  Icons.card_giftcard,
-                  size: 30,
-                  color: Colors.white,
-                ),
-                onTap: () {
-                  giftShow(context, common);
-                },
+            ? SizedBox(
+                width: 30,
+                height: 30, // specific value
+                child: RaisedButton(
+                    onPressed: () {
+                      giftShow(context, common);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(80.0)),
+                    padding: const EdgeInsets.all(0.0),
+                    child: common.gradient(Icons.card_giftcard)),
               )
             : Container(),
       ],
@@ -361,145 +381,98 @@ void onInvitaion(context, common) {
         common.closeContext = context;
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                      child: Text(
-                        'Invitation Request',
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle1
-                            .copyWith(color: Colors.white),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    common.inviteRequest.length != 0
-                        ? Expanded(
-                      child: Container(
-                        child: ListView.builder(
-                            itemCount: common.inviteRequest.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                margin: EdgeInsets.only(bottom: 5),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        width: 60,
-                                        height: 60,
+          return Container(
+            padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  child: Text(
+                    'Invitation Request',
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1
+                        .copyWith(color: Colors.white),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                common.inviteRequest.length != 0
+                    ? Expanded(
+                        child: Container(
+                          child: ListView.builder(
+                              itemCount: common.inviteRequest.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: EdgeInsets.only(bottom: 5),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 2,
                                         child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(50)),
-                                            image: DecorationImage(
-                                                image: NetworkImage(
-                                                  common.inviteRequest[index]
-                                                      .image,
-                                                ),
-                                                fit: BoxFit.cover),
+                                          width: 60,
+                                          height: 60,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(50)),
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                    common.inviteRequest[index]
+                                                        .image,
+                                                  ),
+                                                  fit: BoxFit.cover),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 6,
-                                      child: Container(
-                                        margin: EdgeInsets.all(5),
-                                        alignment: Alignment.center,
-                                        width: 50,
-                                        height: 50,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              common
-                                                  .inviteRequest[index].name,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .subtitle1
-                                                  .copyWith(
-                                                  color: Colors.white),
-                                            ),
-                                            Text(
-                                              common
-                                                  .inviteRequest[index].level,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .subtitle1
-                                                  .copyWith(
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          common.publishMessage(
-                                            common.broadcastUsername,
-                                            '£01GuestInviteResponse01£*£Rejected£*£' +
-                                                common.inviteRequest[index]
-                                                    .userId +
-                                                '£*£' +
-                                                common.inviteRequest[index]
-                                                    .name +
-                                                '£*£' +
-                                                common.inviteRequest[index]
-                                                    .name +
-                                                '£*£' +
-                                                common.inviteRequest[index]
-                                                    .image,
-                                          );
-                                          setState(() {
-                                            common.inviteRequest
-                                                .removeAt(index);
-                                          });
-                                        },
+                                      Expanded(
+                                        flex: 6,
                                         child: Container(
+                                          margin: EdgeInsets.all(5),
+                                          alignment: Alignment.center,
                                           width: 50,
                                           height: 50,
-                                          child: Icon(
-                                            Icons.delete,
-                                            size: 30,
-                                            color: Colors.white,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                common
+                                                    .inviteRequest[index].name,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1
+                                                    .copyWith(
+                                                        color: Colors.white),
+                                              ),
+                                              Text(
+                                                common
+                                                    .inviteRequest[index].level,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1
+                                                    .copyWith(
+                                                        color: Colors.white),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          if ((common.broadcastType ==
-                                              'solo' &&
-                                              common.guestData.length <
-                                                  2) ||
-                                              (common.broadcastType ==
-                                                  'audio' &&
-                                                  common.guestData
-                                                      .length <
-                                                      9) &&
-                                                  int.tryParse(
-                                                      common.level) >=
-                                                      10) {
+                                      Expanded(
+                                        flex: 2,
+                                        child: GestureDetector(
+                                          onTap: () {
                                             common.publishMessage(
                                               common.broadcastUsername,
-                                              '£01GuestInviteResponse01£*£Accepted£*£' +
+                                              '£01GuestInviteResponse01£*£Rejected£*£' +
                                                   common.inviteRequest[index]
                                                       .userId +
                                                   '£*£' +
@@ -507,7 +480,7 @@ void onInvitaion(context, common) {
                                                       .name +
                                                   '£*£' +
                                                   common.inviteRequest[index]
-                                                      .username +
+                                                      .name +
                                                   '£*£' +
                                                   common.inviteRequest[index]
                                                       .image,
@@ -516,57 +489,104 @@ void onInvitaion(context, common) {
                                               common.inviteRequest
                                                   .removeAt(index);
                                             });
-                                          } else {
-                                            if (int.tryParse(common.level) >=
-                                                10) {
-                                              toast(
-                                                  'Sorry!! You must reach level 10',
-                                                  Colors.red);
-                                            } else {
-                                              toast(
-                                                  'Sorry!! Guest room already filled',
-                                                  Colors.red);
-                                            }
-                                          }
-                                        },
-                                        child: Container(
-                                          width: 50,
-                                          height: 50,
-                                          child: Icon(
-                                            Icons.video_call,
-                                            size: 30,
-                                            color: Colors.white,
+                                          },
+                                          child: Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: Icon(
+                                              Icons.delete,
+                                              size: 30,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                      ),
-                    )
-                        : Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'No Invitation',
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle1
-                                .copyWith(color: Colors.white),
+                                      Expanded(
+                                        flex: 2,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if ((common.broadcastType ==
+                                                        'solo' &&
+                                                    common.guestData.length <
+                                                        2) ||
+                                                (common.broadcastType ==
+                                                            'audio' &&
+                                                        common.guestData
+                                                                .length <
+                                                            9) &&
+                                                    int.tryParse(
+                                                            common.level) >=
+                                                        10) {
+                                              common.publishMessage(
+                                                common.broadcastUsername,
+                                                '£01GuestInviteResponse01£*£Accepted£*£' +
+                                                    common.inviteRequest[index]
+                                                        .userId +
+                                                    '£*£' +
+                                                    common.inviteRequest[index]
+                                                        .name +
+                                                    '£*£' +
+                                                    common.inviteRequest[index]
+                                                        .username +
+                                                    '£*£' +
+                                                    common.inviteRequest[index]
+                                                        .image,
+                                              );
+                                              setState(() {
+                                                common.inviteRequest
+                                                    .removeAt(index);
+                                              });
+                                            } else {
+                                              if (int.tryParse(common.level) >=
+                                                  10) {
+                                                toast(
+                                                    'Sorry!! You must reach level 10',
+                                                    Colors.red);
+                                              } else {
+                                                toast(
+                                                    'Sorry!! Guest room already filled',
+                                                    Colors.red);
+                                              }
+                                            }
+                                          },
+                                          child: Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: Icon(
+                                              Icons.video_call,
+                                              size: 30,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ),
+                      )
+                    : Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'No Invitation',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1
+                                  .copyWith(color: Colors.white),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            });
+              ],
+            ),
+          );
+        });
       }).whenComplete(() {
     common.closeContext = null;
   });

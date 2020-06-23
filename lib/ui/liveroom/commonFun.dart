@@ -757,6 +757,30 @@ class Common {
     setState(() {});
   }
 
+  Widget gradient(IconData iconData) {
+
+    return Ink(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment(0.8, 0.0), // 10% of the width, so there are ten blinds.
+          colors: [Colors.red, Colors.orangeAccent], // whitish to gray
+          tileMode: TileMode.repeated, // repeats the gradient over the canvas
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(80.0)),
+      ),
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 30.0, minHeight: 30.0),
+        // min sizes for Material buttons
+        alignment: Alignment.center,
+        child: Icon(
+          iconData,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
   dynamic removeAudience(context, common) {
     var endPoint = 'user/audiance';
     var params = {

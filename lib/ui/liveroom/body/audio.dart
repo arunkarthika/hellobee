@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:honeybee/ui/liveroom/profileUi.dart';
 
 import '../footer.dart';
 Widget audio(context, setState, common) {
@@ -48,9 +49,35 @@ Widget audio(context, setState, common) {
                     onTap: () {
                       setState(() {
                         if (common.userTypeGlob == 'broad') {
-                          common.giftUserId = common.guestData[index].userId;
-                          giftShow(context, common);
-                        } else if (common.guestData.length > index &&
+
+                           showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text('Do you want to Go to?'),
+                                actions: <Widget>[
+                                  new FlatButton(
+                                    onPressed: () {
+                                      profileviewAudience(common.broadcasterId, context, common);
+
+                                    },
+                                    child: Text('ViewProfile'),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      common.giftUserId = common.guestData[index].userId;
+                                      giftShow(context, common);
+                                    },
+                                    child: Text('Gift'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+
+                          } else if (common.guestData.length > index &&
                             common.userTypeGlob != 'broad') {
                           giftShow(context, common);
                           common.giftUserId = common.guestData[index].userId;
