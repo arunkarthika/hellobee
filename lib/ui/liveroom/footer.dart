@@ -18,7 +18,7 @@ Widget audienceBroadShow(context, common, setState) {
   return Container(
     child: Row(
       children: <Widget>[
-        common.guestFlag == false && common.broadcastType != 'pk'
+        common.guestFlag == false &&common.userTypeGlob != 'broad'
             ? SizedBox(
                 width: 30,
                 height: 30, // specific value
@@ -55,7 +55,9 @@ Widget audienceBroadShow(context, common, setState) {
                 child: common.guestFlag == true&&common.userTypeGlob != 'broad'
                     ? RaisedButton(
                         onPressed: () {
-                          common.removeGuest(common.userId, context);
+                          if (common.guestFlag == true) {
+                            common.removeGuest(common.userId, context);
+                          }
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(80.0)),
@@ -2658,11 +2660,11 @@ Widget buildInfoList(common) {
                         GestureDetector(
                           onTap: () {
                             print("object");
-                            profileviewAudience(
+                          /*  profileviewAudience(
                                 common.chatlist[i].gold,
                                 context,
                                 common); //common.chatlist[i].gold, context, common
-                          },
+                          */},
                           child: Container(
                             constraints: BoxConstraints(
                                 maxWidth:

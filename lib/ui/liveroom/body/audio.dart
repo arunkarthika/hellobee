@@ -54,18 +54,18 @@ Widget audio(context, setState, common) {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text('Confirmation'),
                                 content: Text('Do you want to Go to?'),
                                 actions: <Widget>[
                                   new FlatButton(
                                     onPressed: () {
-                                      profileviewAudience(common.broadcasterId, context, common);
-
+//                                      Navigator.pop(context);
+                                      profileviewAudience(common.guestData[index].userId, context, common);
                                     },
                                     child: Text('ViewProfile'),
                                   ),
                                   FlatButton(
                                     onPressed: () {
+                                      Navigator.pop(context,true);
                                       common.giftUserId = common.guestData[index].userId;
                                       giftShow(context, common);
                                     },

@@ -703,6 +703,7 @@ class Common {
       'guest_id': userId,
       'broadcast_id': broadcasterId
     };
+    print("params$params");
     makePostRequest('user/guest', jsonEncode(params), 0, context)
         .then((response) {
       var data = jsonDecode(response);

@@ -1434,21 +1434,18 @@ class RenderBroadcast extends State<LiveRoom>
           }
           break;
         case '£01RemoveGus01':
-          var pos =
-              common.guestData.indexWhere((item) => item.userId == arrData[1]);
-          pos = pos + 1;
-          if (common.broadcastType != 'audio') {
-            common.zego.playViewWidget.removeAt(pos);
-          }
-          common.guestData.removeWhere((item) => item.userId == arrData[1]);
-          if (arrData[1] != common.userId) {
-            disposePlay(arrData[1]);
-          } else if (arrData[1] == common.userId) {
-            common.camera = false;
-            common.guestFlag = false;
-            ZegoExpressEngine.instance.stopPublishingStream();
-            ZegoExpressEngine.instance.stopPreview();
-          }
+          setState(() {
+
+            common.guestData.removeWhere((item) => item.userId == arrData[1]);
+            if (arrData[1] != common.userId) {
+              disposePlay(arrData[1]);
+            } else if (arrData[1] == common.userId) {
+              common.camera = false;
+              common.guestFlag = false;
+              ZegoExpressEngine.instance.stopPublishingStream();
+              ZegoExpressEngine.instance.stopPreview();
+            }
+          });
           break;
         case '£01bullet01':
           var giftqueue = Bulletqueue(arrData[1], arrData[5], arrData[3]);

@@ -32,16 +32,6 @@ profileviewAudience(id, context, common) {
     common.userrelation = data['userRelationship'];
     print('common.userrelation');
     print(common.userrelation);
-    if (common.userrelation == null) common.userrelation = 0;
-    common.relationData = "Follow";
-    common.relationImage = "assets/images/audience/Fans.png";
-    if (common.userrelation == 1) {
-      common.relationData = 'Unfollow';
-      common.relationImage = "assets/images/audience/Followings.png";
-    } else if (common.userrelation == 3) {
-      common.relationImage = "assets/images/audience/Friends.png";
-      common.relationData = 'Friend';
-    }
     print('common.relationData');
     print(common.relationData);
     showModalBottomSheet(
@@ -291,25 +281,12 @@ profileviewAudience(id, context, common) {
                               side: BorderSide(color: Colors.white),
                             ),
                             color: Colors.white,
-                            label: Text('Call',
+                            label: Text('EndCall',
                               style: TextStyle(color: Colors.black),),
-                            icon: Icon(Icons.call, color:Colors.green,size: 18,),
+                            icon: Icon(Icons.call_end, color:Colors.redAccent,size: 18,),
                             onPressed: () {
-                              common.publishMessage(
-                                  data['username'],
-                                  "£01GuestInvite01£*£" +
-                                      id +
-                                      "£*£" +
-                                      common.broadcasterId
-                                          .toString() +
-                                      "£*£" +
-                                      data['profileName'] +
-                                      "£*£" +
-                                      data['username'] +
-                                      "£*£" +
-                                      data['profile_pic'] +
-                                      "£*£" +
-                                      data['level']);
+                              Navigator.pop(context,true);
+                              common.removeGuest(id, context);
                             },
                           ),
                           RaisedButton.icon(
