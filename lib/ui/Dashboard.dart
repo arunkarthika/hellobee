@@ -160,12 +160,12 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
           activescrollController.position.maxScrollExtent) {
         if (page <= pageLength) {
           page++;
-          dataProccessor(0, "all");
+          dataProccessor(0, "audio");
         }
       }
     });
 
-    dataProccessor(0, globalType);
+    dataProccessor(0, "audio");
     ZegoExpressEngine.createEngine(
         1263844657,
         '6fd98a7be6002228918436de65cff64556cc4fb01c88b266f6b3904cd83692e6',
@@ -194,7 +194,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   dataProccessor(loader, type) {
     String endPoint = "user/liveStatus";
     String params = "type=" +
-        type +
+        "audio" +
         "&page=" +
         page.toString() +
         "&length=10&&geo=all&country=India&city=Erode";
@@ -205,9 +205,9 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         int bodyLength = d2['body']['active_user_details'].length;
         if (bodyLength != 0) {
           setState(() {
-            if (type == "all") {
+            if (type == "audio") {
               activeList = List.from(activeList)
-                ..addAll(d2['body']['active_user_details']['allLists']);
+                ..addAll(d2['body']['active_user_details']['audioLists']);
               pageLength = d2['body']['last_page'];
             }
             merge = 1;
@@ -268,7 +268,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
           completer.complete();
         }
       } else if (d2['status'] == 1 && d2['message'] == "Session Expiry") {
-        dataProccessor(0, globalType);
+        dataProccessor(0, "audio");
       }
     });
   }
@@ -302,7 +302,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
       activeList = [];
       page = 1;
       pageLength = 1;
-      dataProccessor(1, globalType);
+      dataProccessor(1, "audio");
     });
     return null;
   }
