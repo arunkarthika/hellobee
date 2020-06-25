@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:honeybee/constant/http.dart';
-import 'package:honeybee/ui/editprofile.dart';
 import 'package:honeybee/ui/message.dart';
+
+import '../editMeprofile.dart';
 
 final List tags = [
   "↑Lv 10",
@@ -514,305 +515,305 @@ class _FullProfileState extends State<FullProfile> {
     return Scaffold(
       body: loader == true
           ? Container(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      )
           : Container(
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    child: Image(
-                      image: AssetImage(
-                        "assets/images/audience/Pink_BG.jpg",
-                      ),
-                      fit: BoxFit.fill,
+        child: Stack(
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: Image(
+                image: AssetImage(
+                  "assets/images/audience/Pink_BG.jpg",
+                ),
+                fit: BoxFit.fill,
+              ),
+            ),
+            Positioned(
+              top: 50,
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  width: 175,
+                  height: 175,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(profilePic),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Positioned(
-                    top: 50,
-                    left: 0,
-                    right: 0,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        width: 175,
-                        height: 175,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: NetworkImage(profilePic),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 230,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            name,
-                           /* style: Theme.of(context)
+                ),
+              ),
+            ),
+            Positioned(
+              top: 230,
+              left: 0,
+              right: 0,
+              child: Container(
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      name,
+                      /* style: Theme.of(context)
                                 .textTheme
                                 .headline5
                                 .copyWith(color: Colors.white),*/
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    status == "ACTIVE"
+                        ? FlatButton(
+                      color: Colors.transparent,
+                      child: Row(
+                        // Replace with a Row for horizontal icon + text
+                        children: <Widget>[
+                          Text(
+                            "Live",
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle
+                                .copyWith(color: Colors.green),
                           ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          status == "ACTIVE"
-                              ? FlatButton(
-                                  color: Colors.transparent,
-                                  child: Row(
-                                    // Replace with a Row for horizontal icon + text
-                                    children: <Widget>[
-                                      Text(
-                                        "Live",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle
-                                            .copyWith(color: Colors.green),
-                                      ),
-                                      Icon(
-                                        Icons.settings_remote,
-                                        color: Colors.green,
-                                      )
-                                    ],
-                                  ),
-                                  onPressed: () {},
-                                )
-                              : Container()
+                          Icon(
+                            Icons.settings_remote,
+                            color: Colors.green,
+                          )
                         ],
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 270,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Text(
-                        "ID" + ' ' + (idhide == 1 ? "PRIVATE" : refrenceId),
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle
-                            .copyWith(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 300,
-                    left: 0,
-                    right: 0,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        // width: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
-                              decoration: BoxDecoration(
-                                color: Colors.pink,
-                                border: Border.all(color: Colors.orange),
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                              child: Row(children: <Widget>[
-                                Container(
-                                  width: 20,
-                                  alignment: Alignment.center,
-                                  child: Icon(
-                                    Icons.star,
-                                    size: 18,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                                Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    level,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle
-                                        .copyWith(
-                                          color: Colors.white,
-                                          // fontSize: 12,
-                                        ),
-                                  ),
-                                ),
-                              ]),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 400,
-                    left: 0,
-                    right: 0,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        // width: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Container(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Age",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    agehide == 1 ? "PRIVATE" : age.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Gender",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  genderhide == 1
-                                      ? Text(
-                                          "PRIVATE",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle
-                                              .copyWith(color: Colors.white),
-                                        )
-                                      : Image(
-                                          image: AssetImage(
-                                            "assets/images/audience/" + gender,
-                                          ),
-                                          width: 25,
-                                          height: 25,
-                                        ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "D.O.B",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    dobhide == 1 ? "PRIVATE" : dob.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 50,
-                    left: 0,
-                    right: 0,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: GestureDetector(
-                        onTap: () {
-                          userRelation(uData.userrelation, userId, uData,
-                              setState, context);
-                        },
-                        child: Container(
-                          width: 125,
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            // color: Colors.pink,
-                            gradient: LinearGradient(
-                              colors: [
-                                const Color(0xFFEC008C),
-                                const Color(0xFFFC6767)
-                              ],
-                            ),
-                            border: Border.all(color: Colors.orange),
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                width: 20,
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  uData.relationImage,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  uData.relationData,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subtitle
-                                      .copyWith(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+                      onPressed: () {},
+                    )
+                        : Container()
+                  ],
+                ),
               ),
             ),
+            Positioned(
+              top: 270,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Text(
+                  "ID" + ' ' + (idhide == 1 ? "PRIVATE" : refrenceId),
+                  style: Theme.of(context)
+                      .textTheme
+                      .subtitle
+                      .copyWith(color: Colors.white),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 300,
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  // width: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                        decoration: BoxDecoration(
+                          color: Colors.pink,
+                          border: Border.all(color: Colors.orange),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        child: Row(children: <Widget>[
+                          Container(
+                            width: 20,
+                            alignment: Alignment.center,
+                            child: Icon(
+                              Icons.star,
+                              size: 18,
+                              color: Colors.orange,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              level,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle
+                                  .copyWith(
+                                color: Colors.white,
+                                // fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 400,
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  // width: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              "Age",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle
+                                  .copyWith(color: Colors.white),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              agehide == 1 ? "PRIVATE" : age.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle
+                                  .copyWith(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              "Gender",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle
+                                  .copyWith(color: Colors.white),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            genderhide == 1
+                                ? Text(
+                              "PRIVATE",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle
+                                  .copyWith(color: Colors.white),
+                            )
+                                : Image(
+                              image: AssetImage(
+                                "assets/images/audience/" + gender,
+                              ),
+                              width: 25,
+                              height: 25,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              "D.O.B",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle
+                                  .copyWith(color: Colors.white),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              dobhide == 1 ? "PRIVATE" : dob.toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle
+                                  .copyWith(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 50,
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.center,
+                child: GestureDetector(
+                  onTap: () {
+                    userRelation(uData.userrelation, userId, uData,
+                        setState, context);
+                  },
+                  child: Container(
+                    width: 125,
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      // color: Colors.pink,
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFFEC008C),
+                          const Color(0xFFFC6767)
+                        ],
+                      ),
+                      border: Border.all(color: Colors.orange),
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: 20,
+                          alignment: Alignment.center,
+                          child: Icon(
+                            uData.relationImage,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            uData.relationData,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle
+                                .copyWith(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

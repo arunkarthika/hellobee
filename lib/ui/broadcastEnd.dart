@@ -136,7 +136,7 @@ class EndPage extends State<BroadcastEnd> {
                           name,
                           style: Theme.of(context)
                               .textTheme
-                              .subtitle
+                              .subtitle1
                               .copyWith(color: Colors.white),
                         ),
                       ),
@@ -150,7 +150,7 @@ class EndPage extends State<BroadcastEnd> {
                           "ID" + ' ' + refrenceId + ' ' + "|" + ' ' + country,
                           style: Theme.of(context)
                               .textTheme
-                              .subtitle
+                              .subtitle1
                               .copyWith(color: Colors.white),
                         ),
                       ),
@@ -197,7 +197,7 @@ class EndPage extends State<BroadcastEnd> {
                                       level,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .subtitle
+                                          .subtitle1
                                           .copyWith(
                                             color: Colors.white,
                                             // fontSize: 12,
@@ -226,7 +226,7 @@ class EndPage extends State<BroadcastEnd> {
                                   "VIEWERS",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle
+                                      .subtitle1
                                       .copyWith(
                                         color: Colors.white,
                                       ),
@@ -242,7 +242,7 @@ class EndPage extends State<BroadcastEnd> {
                                   viewvers,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle
+                                      .subtitle1
                                       .copyWith(
                                         color: Colors.white,
                                       ),
@@ -258,7 +258,7 @@ class EndPage extends State<BroadcastEnd> {
                                   "LIKES",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle
+                                      .subtitle1
                                       .copyWith(
                                         color: Colors.white,
                                       ),
@@ -274,7 +274,7 @@ class EndPage extends State<BroadcastEnd> {
                                   like,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle
+                                      .subtitle1
                                       .copyWith(
                                         color: Colors.white,
                                       ),
@@ -290,7 +290,7 @@ class EndPage extends State<BroadcastEnd> {
                                   "B-GOLD",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle
+                                      .subtitle1
                                       .copyWith(
                                         color: Colors.white,
                                       ),
@@ -306,7 +306,7 @@ class EndPage extends State<BroadcastEnd> {
                                   gold,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle
+                                      .subtitle1
                                       .copyWith(color: Colors.white),
                                 ),
                               ],
@@ -326,7 +326,7 @@ class EndPage extends State<BroadcastEnd> {
                             broadTime,
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle
+                                .subtitle1
                                 .copyWith(color: Colors.white),
                           ),
                         ),
@@ -350,7 +350,7 @@ class EndPage extends State<BroadcastEnd> {
                             ),
                             child: Text(
                               "OK",
-                              style: Theme.of(context).textTheme.subtitle,
+                              style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ),
                         ),

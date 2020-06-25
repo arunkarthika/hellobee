@@ -4,36 +4,36 @@ import 'package:google_fonts/google_fonts.dart';
 class GridDashboard extends StatelessWidget {
   Items item1 = new Items(
       title: "தமிழ்",
-      subtitle: "Tamil",
+      subtitle1: "Tamil",
       event: "",
       img: "assets/broadcast/chair.png");
   Items item2 = new Items(
     title: "English",
-    subtitle: "english",
+    subtitle1: "english",
     event: "",
     img: "assets/broadcast/chair.png",
   );
   Items item3 = new Items(
     title: "हिन्दी",
-    subtitle: "Hindi",
+    subtitle1: "Hindi",
     event: "",
     img: "assets/broadcast/chair.png",
   );
   Items item4 = new Items(
     title: "Malayalam",
-    subtitle: "Rose favirited your Post",
+    subtitle1: "Rose favirited your Post",
     event: "",
     img: "assets/broadcast/chair.png",
   );
   Items item5 = new Items(
     title: "urdu",
-    subtitle: "urdu",
+    subtitle1: "urdu",
     event: "",
     img: "assets/broadcast/chair.png",
   );
   Items item6 = new Items(
     title: "Kannada",
-    subtitle: "kannada",
+    subtitle1: "kannada",
     event: "",
     img: "assets/broadcast/chair.png",
   );
@@ -75,7 +75,7 @@ class GridDashboard extends StatelessWidget {
                     height: 8,
                   ),
                   Text(
-                    data.subtitle,
+                    data.subtitle1,
                     style: GoogleFonts.openSans(
                         textStyle: TextStyle(
                             color: Colors.white38,
@@ -103,8 +103,8 @@ class GridDashboard extends StatelessWidget {
 
 class Items {
   String title;
-  String subtitle;
+  String subtitle1;
   String event;
   String img;
-  Items({this.title, this.subtitle, this.event, this.img});
+  Items({this.title, this.subtitle1, this.event, this.img});
 }

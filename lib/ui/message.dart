@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:honeybee/ui/chatui.dart';
+import 'package:honeybee/ui/chat.dart';
 import 'package:honeybee/utils/global.dart';
 
 class ChatHome extends StatelessWidget {
@@ -88,11 +88,11 @@ class ChatHome extends StatelessWidget {
                   style: !friendsList[i]['seen']
                       ? Theme.of(context)
                       .textTheme
-                      .subtitle
+                      .subtitle1
                       .apply(color: Colors.black87)
                       : Theme.of(context)
                       .textTheme
-                      .subtitle
+                      .subtitle1
                       .apply(color: Colors.black54),
                 ),
                 trailing: Container(

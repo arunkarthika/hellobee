@@ -37,7 +37,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Text(
                   "Online",
-                  style: Theme.of(context).textTheme.subtitle.apply(
+                  style: Theme.of(context).textTheme.subtitle1.apply(
                         color: myGreen,
                       ),
                 )

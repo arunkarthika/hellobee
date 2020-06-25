@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:device_id/device_id.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_ui/firebase_auth_ui.dart';
 import 'package:firebase_auth_ui/providers.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +21,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   BuildContext context;
 
+  String deviceid ="0";
+  String imei;
+  String meid;
   String phoneNo;
   String smsOTP;
   String verificationId;
   String errorMessage = '';
+  String gcmregistrationid;
   bool _visible = false;
 
   void callOldUser() {
@@ -35,7 +41,28 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void callNewUser(name, profilePic, domain, email, mobile) {
+  @override
+  void initState() {
+    deviceId();
+    super.initState();
+  }
+
+  Future<void> deviceId() async {
+    deviceid = await DeviceId.getID;
+    try {
+      imei = await DeviceId.getIMEI;
+      meid = await DeviceId.getMEID;
+    } on PlatformException catch (e) {
+      print(e.message);
+    }
+    if (!mounted) return;
+
+    setState(() {
+      //_deviceid = 'Your deviceid: $deviceid\nYour IMEI: $imei\nYour MEID: $meid';
+    });
+  }
+
+  void callNewUser(name, profilePic, domain, email, mobile,uid) {
     String profileName = name;
     String userName = name;
     String profilepic = profilePic;
@@ -50,16 +77,21 @@ class _LoginPageState extends State<LoginPage> {
             profilePic: profilepic,
             domain: loginDomain,
             userEmailId: emailId,
-            userMobile: mobile),
+            userMobile: mobile,
+            gcmregistrationid: gcmregistrationid,
+            uid: uid),
       ),
           (Route<dynamic> route) => false,
     );
   }
 
-  void dataProccessor(String name, String email, mobile, String profilePic, String domain) {
+  void dataProccessor(String name, String email, mobile, String profilePic, String uid,String domain,) {
     setState(() {
       _visible = true;
     });
+    FirebaseAuth.instance.currentUser().then((value) {
+      value.getIdToken().then((value1) {
+      gcmregistrationid = value1.token.toString();
     String endPoint = 'system/check';
     String params = "login_domain=" +
         domain +
@@ -67,7 +99,10 @@ class _LoginPageState extends State<LoginPage> {
         email +
         "&mobile=" +
         mobile +
-        "&device_id=0";
+        "&device_id=" + deviceid +
+        '&gcm_registration_id=' +
+        gcmregistrationid +
+        '&firebaseUID=' + uid;
     makeGetRequest(endPoint, params, 1,context).then((response) {
       setState(() {
         _visible = false;
@@ -79,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
       print(d2['message']);
       if (d2['status'] == 0) {
         if (d2['message'] == "New user") {
-          callNewUser(name, profilePic, domain, email, mobile);
+          callNewUser(name, profilePic, domain, email, mobile,uid);
         } else {
           var listData = d2['body']['message'];
           if (listData == "Already exsits") {
@@ -110,6 +145,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       }
+    });
+    });
     });
   }
 
@@ -181,6 +218,7 @@ class _LoginPageState extends State<LoginPage> {
                                 firebaseUser.email,
                                 "",
                                 firebaseUser.photoUri,
+                                firebaseUser.uid,
                                 "google");
                           });
                         }),
@@ -206,6 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                                  firebaseUser.email,
                                  "",
                                  firebaseUser.photoUri,
+                                 firebaseUser.uid,
                                  "facebook");
                           });
                         }),
@@ -279,6 +318,7 @@ class _LoginPageState extends State<LoginPage> {
                              firebaseUser.email,
                              "",
                              firebaseUser.photoUri,
+                             firebaseUser.uid,
                              "twitter");
                       }),
                       child: Container(
@@ -304,6 +344,7 @@ class _LoginPageState extends State<LoginPage> {
                               firebaseUser.email,
                               firebaseUser.phoneNumber,
                               firebaseUser.photoUri,
+                              firebaseUser.uid,
                               "mobile");
                         });
                       },

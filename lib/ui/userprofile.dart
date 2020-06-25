@@ -181,7 +181,7 @@ class _EditProfileState extends State<EditProfile>  {
                       ' ' +
                       "India",
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.subtitle.
+                      style: Theme.of(context).textTheme.subtitle1.
                       apply(color: Colors.orange)
                   )
                 ),

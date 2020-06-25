@@ -18,7 +18,7 @@ Widget broadDataLeft(context, common) {
             common.broadcasterProfileName,
             style: Theme.of(context)
                 .textTheme
-                .subtitle
+                .subtitle1
                 .copyWith(color: Colors.white, fontSize: 14),
             overflow: TextOverflow.ellipsis,
           ),
@@ -96,7 +96,7 @@ Widget broadDataLeft(context, common) {
                 common.gold.toString(),
                 style: Theme.of(context)
                     .textTheme
-                    .subtitle
+                    .subtitle1
                     .copyWith(color: Colors.orange, fontSize: 14),
               ),
             ],

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:honeybee/bubble_tabMenu.dart';
 import 'package:honeybee/ui/Language.dart';
 import 'package:honeybee/ui/loginpage.dart';
+import 'package:honeybee/utils/string.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:store_redirect/store_redirect.dart';
 
@@ -96,34 +97,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SettingsTile(
                   title: 'Terms of Service', leading: Icon(Icons.description),
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => LanguagesScreen()));
+                  Fluttertoast.showToast(msg: under_dev);
                 },
               ),
               SettingsTile(
                   title: 'Suggestions', leading: Icon(Icons.description),
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => LanguagesScreen()));
+                  Fluttertoast.showToast(msg: under_dev);
                 },
               ),
-              SettingsTile(
+              /*SettingsTile(
                   title: 'Clear Cache',
                   leading: Icon(Icons.collections_bookmark),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => LanguagesScreen()));
                 },
+              ),*/
+              SettingsTile(
+                title: 'Feedback',
+                leading: Icon(Icons.feedback),
+                onTap: () {
+                  Fluttertoast.showToast(msg: under_dev);
+                },
               ),
               SettingsTile(
                   title: 'About us',
                   leading: Icon(Icons.collections_bookmark),
                 onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute<Null>(
-                          builder: (BuildContext context) {
-                            return new BubbleTabMenu();//text: textToSend, webViewTitle: "History",
-                          }));
+                  Fluttertoast.showToast(msg: under_dev);
                 },
               ),
             ],

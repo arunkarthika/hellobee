@@ -77,7 +77,7 @@ class PrivacyPage extends State<Privacy> {
                 "Submit",
                 style: Theme.of(context)
                     .textTheme
-                    .subtitle
+                    .subtitle1
                     .copyWith(color: Colors.white),
               ),
             )

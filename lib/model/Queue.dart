@@ -69,22 +69,3 @@ class GuestData {
     };
   }
 }
-
-/*
-class AudienceList {
-  AudienceList(this.userId, this.profileName, this.username, this.profilePic);
-  String userId;
-  String profileName;
-  String username;
-  String profilePic;
-}
-
-class Chatmodel {
-  Chatmodel(this.level, this.gold, this.txtmsg, this.color,this.topic);
-  String level;
-  String txtmsg;
-  String gold;
-  String color;
-  String topic;
-}
-*/

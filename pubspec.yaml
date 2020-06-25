@@ -43,7 +43,7 @@ dependencies:
   swipedetector: ^1.2.0
   webview_flutter: ^0.3.4
   flutter_svg: ^0.17.4
-  image_picker: ^0.6.7
+  image_picker: ^0.6.3+4
   flutter_auth_buttons: ^0.8.0
   gradient_app_bar: ^0.0.1
   permission_handler: ^5.0.0+hotfix.1
@@ -56,15 +56,13 @@ dependencies:
   connectivity: ^0.4.8+6
   bubble_tab_indicator: "^0.1.4"
   outline_material_icons: ^0.1.0
+  file_picker_cross: ^2.1.0
+  card_settings: ^1.9.8
   timeago: ^2.0.14
   intl: ^0.16.1
   popup_menu: ^1.0.5
   screenshot: ^0.1.1
   base32: ^1.1.1
-
-
-
-
 
 dev_dependencies:
   flutter_test:
@@ -75,14 +73,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/groot1.jpg
-    - assets/images/groot2.jpg
-    - assets/images/groot3.jpg
-    - assets/images/groot4.jpg
-    - assets/images/groot5.jpg
-    - assets/images/groot6.jpg
-    - assets/images/groot7.jpg
     - assets/login/BG.jpg
+    - assets/twilight_sparkle.png
     - assets/login/Logo.png
     - assets/login/Logo_text.png
     - assets/login/Google.png
@@ -92,6 +84,7 @@ flutter:
     - assets/profile/diamond.png
     - assets/profile/Bgold.png
     - assets/profile/Medal.svg
+    - assets/profile/edit.png
     - assets/profile/Writing.svg
     - assets/profile/Statistics.svg
     - assets/profile/Setting.svg
@@ -132,7 +125,5 @@ flutter:
     - assets/dashboard/Toppers.png
     - assets/dashboard/Golive.png
     - assets/dashboard/ToppersSelected.png
-    - assets/images/audience/
-
 
 

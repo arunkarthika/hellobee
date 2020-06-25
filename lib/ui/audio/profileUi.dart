@@ -156,7 +156,7 @@ profileview1(id, context, common) {
                                       data['level'],
                                       style: Theme.of(context)
                                           .textTheme
-                                          .subtitle
+                                          .subtitle1
                                           .copyWith(
                                             color: Colors.white,
                                             fontSize: 12,
@@ -516,7 +516,7 @@ profileview1(id, context, common) {
                                           common.relationData,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .subtitle
+                                              .subtitle1
                                               .copyWith(
                                                 color: Colors.white,
                                                 fontSize: 18,

@@ -20,6 +20,8 @@ class NewUser extends StatefulWidget {
     this.domain,
     this.userEmailId,
     this.userMobile,
+    this.gcmregistrationid,
+    this.uid,
   }) : super(key: key);
 
   final String profileName;
@@ -28,6 +30,8 @@ class NewUser extends StatefulWidget {
   final String userEmailId;
   final String domain;
   final String userMobile;
+  final String gcmregistrationid;
+  final String uid;
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -40,7 +44,8 @@ class _MyAppState extends State<NewUser> {
   String deviceid;
   String imei;
   String meid;
-
+  String uid;
+  var gcmId;
   var _domain;
   var _email;
   var _mobile;
@@ -57,6 +62,8 @@ class _MyAppState extends State<NewUser> {
   void initDeviceId() {
     setState(() {
       deviceId();
+      uid = widget.uid;
+      gcmId = widget.gcmregistrationid;
       _domain = widget.domain;
       _email = widget.userEmailId;
       _mobile = widget.userMobile;
@@ -332,8 +339,9 @@ class _MyAppState extends State<NewUser> {
       "mobile": _mobile,
       "device_id": deviceid,
       "referral": referralcode,
-      "gcm_registration_id": "0",
+      "gcm_registration_id":gcmId.toString(),
       "profile_pic": "",
+      'firebaseUID': uid.toString(),
     };
 
     print(endPoint + jsonEncode(params));

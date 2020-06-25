@@ -63,7 +63,7 @@ class CircularButton extends StatelessWidget {
           ),
           Text(
             title,
-            style: Theme.of(context).textTheme.subtitle,
+            style: Theme.of(context).textTheme.subtitle1,
           )
         ],
       ),

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
-import 'package:honeybee/ui/audio/footer.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/utils/global.dart';
@@ -18,7 +17,7 @@ Widget audienceBroadShow(context, common, setState) {
   return Container(
     child: Row(
       children: <Widget>[
-        common.guestFlag == false &&common.userTypeGlob != 'broad'
+        common.guestFlag == false && common.broadcastType != 'pk'
             ? SizedBox(
                 width: 30,
                 height: 30, // specific value
@@ -55,9 +54,7 @@ Widget audienceBroadShow(context, common, setState) {
                 child: common.guestFlag == true&&common.userTypeGlob != 'broad'
                     ? RaisedButton(
                         onPressed: () {
-                          if (common.guestFlag == true) {
-                            common.removeGuest(common.userId, context);
-                          }
+                          common.removeGuest(common.userId, context);
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(80.0)),
@@ -2660,11 +2657,11 @@ Widget buildInfoList(common) {
                         GestureDetector(
                           onTap: () {
                             print("object");
-                          /*  profileviewAudience(
+                            profileviewAudience(
                                 common.chatlist[i].gold,
                                 context,
                                 common); //common.chatlist[i].gold, context, common
-                          */},
+                          },
                           child: Container(
                             constraints: BoxConstraints(
                                 maxWidth:
@@ -3504,6 +3501,48 @@ void onMicMute(common, setState) {
   });
 }
 
+class AnimatedCountSecond extends ImplicitlyAnimatedWidget {
+  final int count;
+
+  AnimatedCountSecond(
+      {Key key,
+        @required this.count,
+        @required Duration duration,
+        Curve curve = Curves.linear})
+      : super(duration: duration, curve: curve, key: key);
+
+  @override
+  ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() =>
+      _AnimatedCountSecondState();
+}
+class _AnimatedCountSecondState extends AnimatedWidgetBaseState<AnimatedCountSecond> {
+  IntTween _count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _count.evaluate(animation).toString(),
+      style: buildTextStyle(
+          context, 16, FontWeight.bold, Colors.amber, FontStyle.italic),
+    );
+  }
+
+  @override
+  void forEachTween(TweenVisitor visitor) {
+    _count = visitor(
+        _count, widget.count, (dynamic value) => IntTween(begin: value));
+  }
+
+  TextStyle buildTextStyle(BuildContext context, double size,
+      FontWeight fontWeight, Color color, FontStyle fontStyle) {
+    return Theme.of(context).textTheme.subtitle1.copyWith(
+        color: color,
+        fontSize: size,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle);
+  }
+}
+
 Widget multiGuestGift(context, common, setState) {
   return Container(
     height: 80,
@@ -3627,4 +3666,5 @@ Widget multiGuestGift(context, common, setState) {
       ],
     ),
   );
+
 }

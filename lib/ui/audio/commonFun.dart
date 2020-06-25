@@ -11,7 +11,6 @@ import 'package:honeybee/model/Queue.dart';
 import 'package:honeybee/model/sharedPreference.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:svgaplayer_flutter/svgaplayer_flutter.dart';
-import 'package:base32/base32.dart';
 
 class Common {
   String username = BliveConfig.instance.username;
@@ -195,8 +194,10 @@ class Common {
   }
 
   void publishMessage(String topic, String message) {
-    final builder = MqttClientPayloadBuilder();
+    print("inside");
+    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     builder.addString(message);
+    print('MQTTClientWrapper::Publishing message $message to topic $topic');
     client.publishMessage(topic, MqttQos.exactlyOnce, builder.payload);
   }
 }

@@ -50,7 +50,7 @@ Widget audio(context, setState, common) {
                       setState(() {
                         if (common.userTypeGlob == 'broad') {
 
-                           showDialog(
+                          showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
@@ -77,7 +77,7 @@ Widget audio(context, setState, common) {
                           );
 
 
-                          } else if (common.guestData.length > index &&
+                        } else if (common.guestData.length > index &&
                             common.userTypeGlob != 'broad') {
                           giftShow(context, common);
                           common.giftUserId = common.guestData[index].userId;
@@ -192,7 +192,7 @@ Widget audioold(context, setState, common) {
           fit: BoxFit.cover,
         ),
 
-       /* decoration: BoxDecoration(
+        /* decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -239,67 +239,67 @@ Widget audioold(context, setState, common) {
                     },
                     child: common.guestData.length > index
                         ? Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                  common.guestData[index].image,
-                                ),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          )
-                        : Container(
-                            width: 65,
-                            height: 65,
-                            decoration: BoxDecoration(
-                                color: const Color.fromRGBO(0, 0, 0, 0.5),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(50))),
-                            child: Image(
-                              image: AssetImage(
-                                "assets/broadcast/chair.png",
-                              ),
-                              fit: BoxFit.fill,
-                            ),
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(10)),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            common.guestData[index].image,
                           ),
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    )
+                        : Container(
+                      width: 65,
+                      height: 65,
+                      decoration: BoxDecoration(
+                          color: const Color.fromRGBO(0, 0, 0, 0.5),
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(50))),
+                      child: Image(
+                        image: AssetImage(
+                          "assets/broadcast/chair.png",
+                        ),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
                   common.guestData.length > index
                       ? Container(
-                          child: Text(
-                            common.guestData[index].name,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle
-                                .copyWith(color: Colors.white),
-                          ),
-                        )
+                    child: Text(
+                      common.guestData[index].name,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle
+                          .copyWith(color: Colors.white),
+                    ),
+                  )
                       : Container(
-                          child: Text((++index).toString()),
-                        ),
+                    child: Text((++index).toString()),
+                  ),
                   common.guestData.length > index
                       ? Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.star,
-                                color: Colors.orange,
-                              ),
-                              Text(
-                                common.guestData[index].points.toString(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .subtitle
-                                    .copyWith(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        )
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.star,
+                          color: Colors.orange,
+                        ),
+                        Text(
+                          common.guestData[index].points.toString(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle
+                              .copyWith(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  )
                       : Container(),
                 ],
               ),

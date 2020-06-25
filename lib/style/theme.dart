@@ -13,4 +13,5 @@ class Colors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
+
 }

@@ -117,7 +117,7 @@ class ListUser1 extends State<ListUser> {
             selected:true,
             leading: CircleAvatar(  child: Text("1"), ),
             title: Text("List Name 1"),
-            subtitle: Text("You can specify subtitle"),
+            subtitle1: Text("You can specify subtitle1"),
             trailing: Icon(Icons.keyboard_arrow_right),
           ),
         ],
