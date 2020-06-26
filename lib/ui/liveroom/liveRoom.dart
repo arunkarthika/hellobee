@@ -1951,6 +1951,10 @@ class RenderBroadcast extends State<LiveRoom>
   profileviewAudience(id, context, common) {
     print("userId" + id);
     var params = "";
+
+
+    var genderhide;
+    var idhide;
     if (id == common.userId)
       params = "action=quickProfile";
     else
@@ -1959,26 +1963,38 @@ class RenderBroadcast extends State<LiveRoom>
     makeGetRequest("user", params, 0, context).then((response) {
       var res = jsonDecode(response);
       var data = res['body'];
-      print('iyooooooooooooooooooo');
-      print(data);
-      print(data['profile_pic']);
-      /*var gender = "Female.png";
-      if (data['gender'] == "male") gender = "male.jpg";
-      common.userrelation = data['userRelationship'];
-      print('common.userrelation');
-      print(common.userrelation);
-      if (common.userrelation == null) common.userrelation = 0;
-      common.relationData = "Follow";
-      common.relationImage = "assets/images/audience/Fans.png";
+      var gender = 'Female.png';
+      genderhide = int.tryParse(data['is_the_gender_hide'].toString());
+      idhide = int.tryParse(data['is_the_user_id_hidden'].toString());
+      if (data['gender'] == 'male') gender = 'male.jpg';
+      common.userrelation = data['userRelation'];
+      common.userrelation ??= 0;
+      common.relationData = 'Follow';
+      common.relationImage = Icons.add;
       if (common.userrelation == 1) {
         common.relationData = 'Unfollow';
-        common.relationImage = "assets/images/audience/Followings.png";
+        common.relationImage = Icons.remove;
       } else if (common.userrelation == 3) {
-        common.relationImage = "assets/images/audience/Friends.png";
+        common.relationImage = Icons.swap_horiz;
         common.relationData = 'Friend';
       }
-      print('common.relationData');
-      print(common.relationData);*/
+      common.blockInt = data['block'];
+      common.blockIcon = Icons.block;
+      common.blockStatus = 'Block';
+      if (common.blockInt == 1) {
+        common.blockIcon = Icons.radio_button_unchecked;
+        common.blockStatus = 'Unblock';
+      }
+      common.textStatus = 'Text Mute';
+      common.textIcon = Icons.speaker_notes;
+      common.textInt = data['text'];
+      if (common.textInt == 1) {
+        common.textStatus = 'Text Unmute';
+        common.textIcon = Icons.speaker_notes_off;
+      }
+      setState(() {
+        common.loaderInside = false;
+      });
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -2246,7 +2262,9 @@ class RenderBroadcast extends State<LiveRoom>
                                           )),
                                     ],
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+
+                                  },
                                 ),
                               ],
                             ),
@@ -2277,6 +2295,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 size: 18,
                               ),
                               onPressed: () {
+                                Navigator.pop(context);
                                 common.publishMessage(
                                     data['username'],
                                     "£01GuestInvite01£*£" +
@@ -2309,6 +2328,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 size: 18,
                               ),
                               onPressed: () {
+                                Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -2326,15 +2346,18 @@ class RenderBroadcast extends State<LiveRoom>
                               splashColor: Colors.yellow[200],
                               animationDuration: Duration(seconds: 4),
                               label: Text(
-                                'Follow',
+                                common.relationData,
                                 style: TextStyle(color: Colors.white),
                               ),
                               icon: Icon(
-                                Icons.add,
+                                common.relationImage,
                                 color: Colors.white,
                                 size: 18,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                userRelation(common.userrelation, id, common,
+                                    setState, context);
+                              },
                             ),
                           ],
                         ),
@@ -2349,6 +2372,76 @@ class RenderBroadcast extends State<LiveRoom>
       );
     });
   }
+  void userRelation(type, id, common, setState, context) {
+    setState(() {
+      common.loaderInside = true;
+    });
+    var endPoint = 'user/userRelation';
+    var action = '';
+    var returnData = '';
+    var image = Icons.add;
+    var relationInt = 0;
+    switch (type) {
+      case 0:
+        action = 'follow';
+        image = Icons.remove;
+        returnData = 'Unfollow';
+        relationInt = 1;
+        break;
+      case 1:
+        action = 'unfollow';
+        image = Icons.add;
+        returnData = 'Follow';
+        relationInt = 0;
+        break;
+      case 2:
+        action = 'follow';
+        image = Icons.swap_horiz;
+        returnData = 'Friends';
+        relationInt = 3;
+        break;
+      case 3:
+        action = 'unfollow';
+        image = Icons.add;
+        returnData = 'Follow';
+        relationInt = 2;
+        break;
+      default:
+    }
+    var params = {
+      'action': action,
+      'user_id': id.toString(),
+    };
+    makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
+      var data = jsonDecode(response);
+      if (data['status'] == 0) {
+        var body = data['body'];
+        CommonFun().saveShare('friends', body['friends']);
+        CommonFun().saveShare('followers', body['followers']);
+        CommonFun().saveShare('fans', body['fans']);
+        if (id == common.broadcasterId) {
+          var msgString = '£01relationStatus01£*£' +
+              action +
+              '£*£' +
+              common.userId +
+              '£*£' +
+              common.name +
+              '£*£' +
+              common.username +
+              '£*£' +
+              common.profilePic;
+          common.publishMessage(common.broadcastUsername, msgString);
+        }
+        setState(() {
+          common.loaderInside = false;
+          common.relationData = returnData;
+          common.userrelation = relationInt;
+          common.relationImage = image;
+        });
+      }
+    });
+  }
+
 
   Future<Dialog> _asyncSimpleDialog(BuildContext context) async {
     return await showDialog<Dialog>(
