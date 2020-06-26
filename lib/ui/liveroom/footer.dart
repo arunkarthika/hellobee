@@ -373,7 +373,7 @@ void onBeautification(context, common) {
 
 void onInvitaion(context, common) {
   showModalBottomSheet(
-      backgroundColor: const Color.fromRGBO(0, 0, 0, 0.5),
+      backgroundColor: Colors.white,
       barrierColor: Colors.white.withOpacity(0.0),
       context: context,
       builder: (BuildContext context) {
@@ -381,6 +381,7 @@ void onInvitaion(context, common) {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return Container(
+            height: 200,
             padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -388,10 +389,11 @@ void onInvitaion(context, common) {
                 Container(
                   child: Text(
                     'Invitation Request',
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle1
-                        .copyWith(color: Colors.deepOrange),
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 SizedBox(
