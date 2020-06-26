@@ -391,7 +391,7 @@ void onInvitaion(context, common) {
                     style: Theme.of(context)
                         .textTheme
                         .subtitle1
-                        .copyWith(color: Colors.white),
+                        .copyWith(color: Colors.deepOrange),
                   ),
                 ),
                 SizedBox(
@@ -450,7 +450,7 @@ void onInvitaion(context, common) {
                                                     .textTheme
                                                     .subtitle1
                                                     .copyWith(
-                                                        color: Colors.white),
+                                                        color: Colors.deepOrange),
                                               ),
                                               Text(
                                                 common
@@ -459,7 +459,7 @@ void onInvitaion(context, common) {
                                                     .textTheme
                                                     .subtitle1
                                                     .copyWith(
-                                                        color: Colors.white),
+                                                        color: Colors.deepOrange),
                                               ),
                                             ],
                                           ),
@@ -495,7 +495,7 @@ void onInvitaion(context, common) {
                                             child: Icon(
                                               Icons.delete,
                                               size: 30,
-                                              color: Colors.white,
+                                              color: Colors.deepOrange,
                                             ),
                                           ),
                                         ),
@@ -554,7 +554,7 @@ void onInvitaion(context, common) {
                                             child: Icon(
                                               Icons.video_call,
                                               size: 30,
-                                              color: Colors.white,
+                                              color: Colors.deepOrange,
                                             ),
                                           ),
                                         ),
@@ -577,7 +577,7 @@ void onInvitaion(context, common) {
                               style: Theme.of(context)
                                   .textTheme
                                   .subtitle1
-                                  .copyWith(color: Colors.white),
+                                  .copyWith(color: Colors.deepOrange),
                             ),
                           ),
                         ),
