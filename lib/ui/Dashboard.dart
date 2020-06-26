@@ -753,7 +753,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                         width: 30,
                         alignment: Alignment.center,
                         child: Text(
-                          data['viewer_count'].toString(),
+                          data['viewer_count'].toString()=="null"?"0":data['viewer_count'].toString(),
                           style: Theme
                               .of(context)
                               .textTheme
