@@ -396,20 +396,6 @@ class ChatScreenState extends State<ChatScreen> {
                           ),
               ],
             ),
-//            isLastMessageLeft(index)
-//                ? Container(
-//                    child: Text(
-//                      DateFormat('dd MMM kk:mm').format(
-//                          DateTime.fromMillisecondsSinceEpoch(
-//                              int.parse(document['timestamp']))),
-//                      style: TextStyle(
-//                          color: greyColor,
-//                          fontSize: 12.0,
-//                          fontStyle: FontStyle.italic),
-//                    ),
-//                    margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
-//                  )
-//                : Container()
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
@@ -458,7 +444,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -516,6 +503,8 @@ class ChatScreenState extends State<ChatScreen> {
             buildLoading()
           ],
         ),
+      ),
+      onWillPop: onBackPress,
       );
   }
 
