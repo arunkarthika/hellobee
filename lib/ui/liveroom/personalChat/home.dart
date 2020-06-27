@@ -325,18 +325,20 @@ class HomeScreenState extends State<HomeScreen> {
                   child: GestureDetector(
                     onTap: () {
                       print(
-                          '------------------userid-----------------');
+                          '------------------userid-----------------'+filteredList[index]
+                              .firebaseId);
                       print(filteredList[index]
                           .firebaseId);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  Chat(
+                                  ChatScreen(
                                     peerId: filteredList[index]
                                         .firebaseId,
                                     peerAvatar: filteredList[index]
                                         .profilepic,
+                                    peerName: filteredList[index].personFirstName,
                                   )));
                     },
                     child: Container(
@@ -470,7 +472,7 @@ class HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        Chat(
+                        ChatScreen(
                           peerId: document.documentID,
                           peerAvatar: document['photoUrl'],
                         )));

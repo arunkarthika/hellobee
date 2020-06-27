@@ -1556,7 +1556,7 @@ class RenderBroadcast extends State<LiveRoom>
                           height: 50,
                           child: Image(
                             image: AssetImage(
-                              "assets/broadcast/Chair.png",
+                              "assets/broadcast/chair.png",
                             ),
                           ),
                         ),
@@ -1917,31 +1917,32 @@ class RenderBroadcast extends State<LiveRoom>
       itemCount: common.audiencelist.length,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () {
-            profileviewAudience(
-                common.audiencelist[index].userId, context, common);
-          },
-          child: Container(
-            margin: EdgeInsets.fromLTRB(1.5, 0, 1.5, 0),
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.all(Radius.circular(50)),
-              border: Border.all(
-                color: Colors.transparent,
-                width: 1.0,
+            onTap: () {
+              profileviewAudience(
+                  common.audiencelist[index].userId, context, common);
+            },
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: new LinearGradient(
+                    colors: [
+                      Colors.redAccent,Colors.orange[300]
+                    ],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp),
+                color: Colors.orange[800],
+                shape: BoxShape.circle,
               ),
-              image: DecorationImage(
-                alignment: Alignment.center,
-                image: NetworkImage(
-                  common.audiencelist[index].profilePic,
+              child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                child: MyCircleAvatar(
+                  imgUrl: 'https://i.pinimg.com/736x/0b/a9/63/0ba963472e12aefd5b6e903f673405c4.jpg',
                 ),
-                fit: BoxFit.fill,
               ),
-            ),
-          ),
-        );
+            ));
       },
     );
   }
@@ -2038,7 +2039,7 @@ class RenderBroadcast extends State<LiveRoom>
                             ),
                             onTap: () {
                               Navigator.pop(context);
-                              _asyncSimpleDialog(id,common,context);
+                              _asyncSimpleDialog(id, common, context);
                             },
                           )),
                       Positioned(
@@ -2531,7 +2532,7 @@ class RenderBroadcast extends State<LiveRoom>
     });
   }
 
-  Future<Dialog> _asyncSimpleDialog(id,common,BuildContext context) async {
+  Future<Dialog> _asyncSimpleDialog(id, common, BuildContext context) async {
     return await showDialog<Dialog>(
         context: context,
         barrierDismissible: true,
@@ -2550,37 +2551,31 @@ class RenderBroadcast extends State<LiveRoom>
                 },
                 child: const Text('Its inApproproate'),
               ),
-               common.userTypeGlob == 'broad'?
-               SimpleDialogOption(
-                 onPressed: () {
-                   Navigator.pop(context);
-                   userKick(
-                       common.blockInt,
-                       id,
-                       common,
-                       setState,
-                       context);
-
-                 },
-                 child:  Text('KickOut'),
-               ):Container()  ,
-               common.userTypeGlob == 'broad'?
-               SimpleDialogOption(
-                 onPressed: () {
-                   Navigator.pop(context);
-                   userTextRelation(
-                       common.textInt,
-                       id,
-                       common,
-                       setState,
-                       context);
-                 },
-                 child: Text(common.textStatus),
-               ):Container()
+              common.userTypeGlob == 'broad'
+                  ? SimpleDialogOption(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        userKick(
+                            common.blockInt, id, common, setState, context);
+                      },
+                      child: Text('KickOut'),
+                    )
+                  : Container(),
+              common.userTypeGlob == 'broad'
+                  ? SimpleDialogOption(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        userTextRelation(
+                            common.textInt, id, common, setState, context);
+                      },
+                      child: Text(common.textStatus),
+                    )
+                  : Container()
             ],
           );
         });
   }
+
   void userKick(type, id, common, setState, context) {
     setState(() {
       common.loaderInside = true;
@@ -2612,6 +2607,7 @@ class RenderBroadcast extends State<LiveRoom>
       });
     });
   }
+
   void userTextRelation(type, id, common, setState, context) {
     setState(() {
       common.loaderInside = true;

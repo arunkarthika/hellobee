@@ -19,6 +19,7 @@ import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
 import 'package:honeybee/ui/story.dart';
 import 'package:honeybee/utils/string.dart';
+import 'package:honeybee/widget/mycircleavatar.dart';
 import 'dart:async';
 import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:archive/archive.dart';
@@ -58,6 +59,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   int page = 1;
   int currentPage = 0;
   List oldList = [];
+  List storyList = [];
   var listData = {};
   var userName;
   var userId;
@@ -96,7 +98,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
       return;
     }
     var zippedFile =
-    await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
+        await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
 
     var bytes = zippedFile.readAsBytesSync();
     var archive = ZipDecoder().decodeBytes(bytes);
@@ -112,8 +114,8 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
     }
   }
 
-  Future<File> _downloadFile(String url, String filename,
-      String _appDocsDir) async {
+  Future<File> _downloadFile(
+      String url, String filename, String _appDocsDir) async {
     var req = await http.Client().get(Uri.parse(url));
     var file = File('$_appDocsDir/$filename');
     return file.writeAsBytes(req.bodyBytes);
@@ -173,7 +175,6 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         ZegoScenario.General,
         enablePlatformView: false);
     super.initState();
-
   }
 
   void dataGet() async {
@@ -220,7 +221,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               CommonFun().saveShare('giftVersion', d2['body']['giftVersion']);
               giftVersion = d2['body']['giftVersion'];
               makeGetRequest("user/List",
-                  "user_id=" + "100001" + "&action=giftList", 0, context)
+                      "user_id=" + "100001" + "&action=giftList", 0, context)
                   .then((response) {
                 var data = jsonDecode(response);
                 giftData = data['body']['giftList']['gift_list']['all'];
@@ -320,9 +321,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         primaryColor: Colors.orangeAccent,
         accentColor: Colors.deepOrangeAccent,
         textTheme: GoogleFonts.firaSansCondensedTextTheme(
-          Theme
-              .of(context)
-              .textTheme,
+          Theme.of(context).textTheme,
         ),
       ),
       routes: <String, WidgetBuilder>{'/dashboard': (context) => Dashboard()},
@@ -343,13 +342,12 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          LiveRoom(
-                              userId1: userId,
-                              broadcasterId1: userId,
-                              username1: userName,
-                              userType1: "broad",
-                              broadcastType1: "audio"),
+                      builder: (context) => LiveRoom(
+                          userId1: userId,
+                          broadcasterId1: userId,
+                          username1: userName,
+                          userType1: "broad",
+                          broadcastType1: "audio"),
                     ),
                   );
                 } else {
@@ -358,7 +356,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               },
             ),
             floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked,
+                FloatingActionButtonLocation.centerDocked,
             body: TabBarView(
               children: <Widget>[
                 Scaffold(
@@ -403,6 +401,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   body: Column(
                     children: <Widget>[
                       Story(),
+//                      storyListView(),
                       Container(
                         width: double.infinity,
                         height: 120,
@@ -411,9 +410,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(10),
                             image: DecorationImage(
                                 image: AssetImage('assets/images/one.jpg'),
-                                fit: BoxFit.cover
-                            )
-                        ),
+                                fit: BoxFit.cover)),
                         child: Card(
                           margin: EdgeInsets.only(top: 0.0),
                           shape: RoundedRectangleBorder(
@@ -430,13 +427,13 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 return Container(
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
                                     image: DecorationImage(
                                       image: NetworkImage(
                                         banner[i]['image'],
                                       ),
-                                      fit: BoxFit.fill,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 );
@@ -456,17 +453,17 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                       Container(
                         width: double.infinity,
                         height: 100,
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(
-                                child: ListView(
-                                  children: <Widget>[
-                                    offerDetails(85),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: ListView(
+                                children: <Widget>[
+                                  offerDetails(85),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                       Expanded(
                         child: TabBarView(
@@ -516,18 +513,18 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 0
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Home.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Home.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset('assets/dashboard/Home.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child: Image.asset('assets/dashboard/Home.png'),
+                            ),
                       width: bottomController.index == 0 ? 40 : 30,
                       height: bottomController.index == 0 ? 40 : 30,
                     ),
@@ -536,19 +533,19 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 1
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Toppers.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Toppers.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child:
-                        Image.asset('assets/dashboard/Toppers.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Toppers.png'),
+                            ),
                       width: bottomController.index == 1 ? 40 : 30,
                       height: bottomController.index == 1 ? 40 : 30,
                     ),
@@ -557,19 +554,19 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 2
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Toppers.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Toppers.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child:
-                        Image.asset('assets/dashboard/Toppers.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Toppers.png'),
+                            ),
                       width: bottomController.index == 2 ? 40 : 30,
                       height: bottomController.index == 2 ? 40 : 30,
                     ),
@@ -578,19 +575,19 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 3
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Profile.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Profile.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child:
-                        Image.asset('assets/dashboard/Profile.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Profile.png'),
+                            ),
                       width: bottomController.index == 3 ? 40 : 30,
                       height: bottomController.index == 3 ? 40 : 30,
                     ),
@@ -614,156 +611,189 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
+  Widget storyListView() {
+    return Expanded(
+        child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: 8,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+            onTap: () {},
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: new LinearGradient(
+                    colors: [Colors.redAccent, Colors.orange[300]],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp),
+                color: Colors.orange[800],
+                shape: BoxShape.circle,
+              ),
+              child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                child: MyCircleAvatar(
+                  imgUrl: "",
+                ),
+              ),
+            ));
+      },
+    ));
+  }
 
   Widget dispyActive(list, viewController) {
     return list.length != 0
         ? Container(
-      width: double.infinity,
-      height: double.infinity,
-      child: GridView.count(
-        controller: viewController,
-        padding: const EdgeInsets.all(2),
-        primary: false,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        crossAxisCount: 2,
-        children: List.generate(
-          list.length,
-              (index) {
-            var live = 'Live';
-            var data = list[index];
-            if (data['status'] == 0) {
-              live = 'offline';
-            }
-            return Container(
-              margin:
-              EdgeInsets.only(top: 1, bottom: 1, left: 1, right: 1),
-              width: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                image: DecorationImage(
-                  image: NetworkImage(data['profile_pic']),
-                  fit: BoxFit.cover,
-                ),
-                gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    stops: [
-                      0.3,
-                      0.9
-                    ],
-                    colors: [
-                      Colors.black,
-                      Colors.orangeAccent,
-                    ]),
-              ),
-              child: Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () async {
-                      var camstatus =
-                      await PermissionFun().cameraPermision();
-                      var micstatus =
-                      await PermissionFun().micPermision();
-                      if (camstatus.toString() ==
-                          "PermissionStatus.granted" &&
-                          micstatus.toString() ==
-                              "PermissionStatus.granted") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                LiveRoom(
-                                  userId1: userId,
-                                  broadcasterId1: data["user_id"].toString(),
-                                  username1: data["username"],
-                                  userType1: "audience",
-                                  broadcastType1: "none",
+            width: double.infinity,
+            height: double.infinity,
+            child: GridView.count(
+              controller: viewController,
+              padding: const EdgeInsets.all(2),
+              primary: false,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              crossAxisCount: 2,
+              children: List.generate(
+                list.length,
+                (index) {
+                  var live = 'Live';
+                  var data = list[index];
+                  if (data['status'] == 0) {
+                    live = 'offline';
+                  }
+                  return Container(
+                    margin:
+                        EdgeInsets.only(top: 1, bottom: 1, left: 1, right: 1),
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      image: DecorationImage(
+                        image: NetworkImage(data['profile_pic']),
+                        fit: BoxFit.cover,
+                      ),
+                      gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          stops: [
+                            0.3,
+                            0.9
+                          ],
+                          colors: [
+                            Colors.black,
+                            Colors.orangeAccent,
+                          ]),
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () async {
+                            var camstatus =
+                                await PermissionFun().cameraPermision();
+                            var micstatus =
+                                await PermissionFun().micPermision();
+                            if (camstatus.toString() ==
+                                    "PermissionStatus.granted" &&
+                                micstatus.toString() ==
+                                    "PermissionStatus.granted") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LiveRoom(
+                                    userId1: userId,
+                                    broadcasterId1: data["user_id"].toString(),
+                                    username1: data["username"],
+                                    userType1: "audience",
+                                    broadcastType1: "none",
+                                  ),
                                 ),
+                              );
+                            }
+                          },
+                        ),
+                        Positioned(
+                          left: 1,
+                          bottom: -2,
+                          right: 1,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    stops: [
+                                      0.1,
+                                      0.9
+                                    ],
+                                    colors: [
+                                      Colors.black,
+                                      Colors.transparent,
+                                    ])),
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(5, 10, 2, 10),
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                data['profileName'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.white, fontSize: 14),
+                              ),
+                            ),
                           ),
-                        );
-                      }
-                    },
-                  ),
-                  Positioned(
-                    left: 1,
-                    bottom: -2,
-                    right: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              stops: [
-                                0.1,
-                                0.9
-                              ],
-                              colors: [
-                                Colors.black,
-                                Colors.transparent,
-                              ])),
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(5, 10, 2, 10),
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          data['profileName'],
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle1
-                              .copyWith(
-                              color: Colors.white, fontSize: 14),
                         ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 2,
-                    left: 5,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent[100],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Container(
-                        width: 30,
-                        alignment: Alignment.center,
-                        child: Text(
-                          live,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle1
-                              .copyWith(
-                              color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold),
+                        Positioned(
+                          top: 2,
+                          left: 5,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent[100],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              width: 30,
+                              alignment: Alignment.center,
+                              child: Text(
+                                live,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 2,
-                    right: 10,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent[100],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Container(
-                        width: 30,
-                        alignment: Alignment.center,
-                        child: Text(
-                          data['viewer_count'].toString()=="null"?"0":data['viewer_count'].toString(),
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle1
-                              .copyWith(
-                              color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold),
+                        Positioned(
+                          top: 2,
+                          right: 10,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent[100],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              width: 30,
+                              alignment: Alignment.center,
+                              child: Text(
+                                data['viewer_count'].toString() == "null"
+                                    ? "0"
+                                    : data['viewer_count'].toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
 
 //                  Positioned( top: 2,
 //                    right: 15,
@@ -803,13 +833,13 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
 //                      ),
 //                    ),
 //                  ),
-                ],
+                      ],
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
-    )
+            ),
+          )
         : Container();
   }
 
@@ -874,10 +904,10 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
           ],
         ),
       ),
-
     );
   }
 }
+
 class ListItem extends StatelessWidget {
   final double sheetItemHeight;
   final Map mapVal;
@@ -901,10 +931,10 @@ class ListItem extends StatelessWidget {
       height: sheetItemHeight,
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.orange, Colors.deepOrangeAccent],
-          ),
-          color: Color(0xff8d7bef),
+        gradient: LinearGradient(
+          colors: [Colors.orange, Colors.deepOrangeAccent],
+        ),
+        color: Color(0xff8d7bef),
         borderRadius: BorderRadius.circular(15),
       ),
       //
@@ -915,9 +945,9 @@ class ListItem extends StatelessWidget {
           mapVal.keys.elementAt(0),
           isMap
               ? Text(innerMap.keys.elementAt(0),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white, letterSpacing: 1.2, fontSize: 11))
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white, letterSpacing: 1.2, fontSize: 11))
               : Container(),
           Text(
             innerMap.values.elementAt(0),
