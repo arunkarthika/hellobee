@@ -14,7 +14,6 @@ import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/constant/permision.dart';
 import 'package:honeybee/model/car.dart';
 import 'package:honeybee/model/gift.dart';
-import 'package:honeybee/ui/dashboardClass.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
@@ -369,7 +368,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                       leading: Padding(
                       padding: EdgeInsets.only(left: 8),
                       child: IconButton(
-                        icon: Icon(Icons.search,color: Colors.orange,),
+                        icon: Icon(Icons.search,color: Colors.deepOrange,),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -385,7 +384,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                       Padding(
                         padding: EdgeInsets.only(left: 8),
                         child: IconButton(
-                          icon: Icon(Icons.notifications,color: Colors.orange),
+                          icon: Icon(Icons.notifications,color: Colors.deepOrange),
                           onPressed: () {
                             print('Click leading');
                             Scaffold.of(context).openDrawer();

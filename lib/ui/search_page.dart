@@ -463,7 +463,8 @@ class _ListPersonPageState extends State<ListPersonPage> {
         items: [
           MenuItem(
               title: 'Male',
-              image: Image.asset('assets/images/audience/male.png')),
+              image: Image.asset('assets/images/audience/male.png')
+          ),
           MenuItem(
               title: 'Female',
               image: Image.asset('assets/images/audience/Female.png')),
