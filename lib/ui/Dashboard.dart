@@ -14,9 +14,11 @@ import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/constant/permision.dart';
 import 'package:honeybee/model/car.dart';
 import 'package:honeybee/model/gift.dart';
+import 'package:honeybee/ui/dashboardClass.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
+import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/ui/story.dart';
 import 'package:honeybee/utils/string.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
@@ -79,6 +81,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   String globalType = "all";
   String country = "";
   String city = "";
+
 
   int pageLength = 0;
 
@@ -363,12 +366,18 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   backgroundColor: Colors.orangeAccent[100],
                   appBar: new AppBar(
                     backgroundColor: Colors.orangeAccent[100],
-                    /*  leading: Padding(
+                      leading: Padding(
                       padding: EdgeInsets.only(left: 8),
                       child: IconButton(
-                        icon: Icon(Icons.search),
+                        icon: Icon(Icons.search,color: Colors.orange,),
                         onPressed: () {
-
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListPersonPage(
+                                  tosearch: 'Search BLive Users', touserid: userId),
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -376,14 +385,14 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                       Padding(
                         padding: EdgeInsets.only(left: 8),
                         child: IconButton(
-                          icon: Icon(Icons.notifications),
+                          icon: Icon(Icons.notifications,color: Colors.orange),
                           onPressed: () {
                             print('Click leading');
                             Scaffold.of(context).openDrawer();
                           },
                         ),
                       ),
-                    ],*/
+                    ],
                     title: new TabBar(
                       isScrollable: true,
                       unselectedLabelColor: Colors.grey,

@@ -9,7 +9,6 @@ final double newZoom = 15.8746;
 // });
 
 final String defaultMarkerId = "1";
-
 final String serverUri = "phalcon.sjhinfotech.com";
 final int port = 1883;
 final String topicName = "Dart/Mqtt_client/testtopic";

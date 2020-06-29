@@ -56,6 +56,7 @@ class ChatScreenState extends State<ChatScreen> {
     super.initState();
     focusNode.addListener(onFocusChange);
 
+
     groupChatId = '';
 
     isLoading = false;
@@ -87,7 +88,9 @@ class ChatScreenState extends State<ChatScreen> {
         .document(id)
         .setData({'chattingWith': peerId});
 
-    setState(() {});
+    setState(() {
+
+    });
   }
 
   Future getImage() async {

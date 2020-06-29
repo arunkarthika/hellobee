@@ -73,8 +73,19 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void registerNotification() {
+  void registerNotification() async{
     firebaseMessaging.requestNotificationPermissions();
+    print(currentUserId+"success");
+    await Firestore.instance.collection('messages').where(
+        '100',
+        isEqualTo: 'users'
+    ).getDocuments().then((event) {
+      print('success'+event.documents.length.toString());
+      if (event.documents.isNotEmpty) {
+        Map<String, dynamic> documentData = event.documents.single.data;//if it is a single document
+
+      }
+    }).catchError((e)=> print("error fetching data: $e"));
 
     firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
       Platform.isAndroid
@@ -87,11 +98,11 @@ class HomeScreenState extends State<HomeScreen> {
       return;
     });
     firebaseMessaging.getToken().then((token) {
-      print(token);
-      Firestore.instance
-          .collection('users')
-          .document(currentUserId)
-          .setData({'pushToken': token});
+      print("token"+token);
+//      Firestore.instance
+//          .collection('users')
+//          .document(currentUserId)
+//          .setData({'pushToken': token});
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
     });
@@ -611,6 +622,7 @@ class HomeScreenState extends State<HomeScreen> {
                     builder: (context) => ChatScreen(
                           peerId: document.documentID,
                           peerAvatar: document['photoUrl'],
+                      peerName: 'name',
                         )));
           },
           color: Colors.orange,

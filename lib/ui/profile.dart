@@ -29,6 +29,7 @@ class Profilepage extends State<Profile> {
   var profilePic="";
   var diamond="";
   var bGold="";
+  var gcm_registration_id="";
   var friends="";
   bool loader = false;
 
@@ -65,6 +66,7 @@ class Profilepage extends State<Profile> {
     diamond = await CommonFun().getStringData('diamond');
     bGold = await CommonFun().getStringData('over_all_gold');
     friends = await CommonFun().getStringData('friends');
+    gcm_registration_id = await CommonFun().getStringData('gcm_registration_id');
 
     setState(() {
       loader = true;
@@ -98,7 +100,7 @@ class Profilepage extends State<Profile> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HomeScreen(currentUserId: 'common.firebaseId'),
+                        builder: (context) => HomeScreen(currentUserId: gcm_registration_id),
                       ),
                     );
                   },
