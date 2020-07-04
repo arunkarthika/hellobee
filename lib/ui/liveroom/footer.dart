@@ -3419,8 +3419,7 @@ toggleSendChannelMessage(text, common) async {
   }
   try {
     var message = common.level + common.userId + common.name + " : " + text;
-    print("message");
-    print(message);
+    print("message"+message);
     common.publishMessage(common.broadcastUsername, message);
 
     // await _channel.sendMessage(AgoraRtmMessage.fromText(message))

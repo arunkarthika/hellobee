@@ -138,7 +138,6 @@ class RenderBroadcast extends State<LiveRoom>
           });
           setState(() {
             common.gift = false;
-            common.camera = true;
             common.loader = false;
             common.guestFlag = true;
           });
@@ -776,7 +775,7 @@ class RenderBroadcast extends State<LiveRoom>
         onWillPopOffline();
         return false;
       }
-      print(common.connectionState);
+      print("connect"+common.connectionState.toString());
       if (common.connectionState != MqttCurrentConnectionState.CONNECTED) {
         prepareMqttClient();
       }
@@ -1077,6 +1076,7 @@ class RenderBroadcast extends State<LiveRoom>
   }
 
   void onMessage() {
+
     common.c++;
     common.client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage recMess = c[0].payload;
@@ -1466,6 +1466,7 @@ class RenderBroadcast extends State<LiveRoom>
           }
           break;
         default:
+          print("CHATRECEIEVE"+tmpmsg);
           if (!tmpmsg.contains('£*£')) {
             buildchatzone(tmpmsg, 'white', receivedTopic);
           }
@@ -1680,13 +1681,12 @@ class RenderBroadcast extends State<LiveRoom>
     if (common.client.connectionStatus.state == MqttConnectionState.connected) {
       common.connectionState = MqttCurrentConnectionState.CONNECTED;
       print("=========username==============");
-      print(common.username);
-      subscribeToTopic(common.username);
-      if (common.username != broadcastUsername) {
-        subscribeToTopic(broadcastUsername);
-      }
+      print("connecttothemqtt"+"------"+common.username+"-------"+broadcastUsername+"-----"+userType);
       if (userType != "broad") {
+        subscribeToTopic(broadcastUsername);
         audienceArrive();
+      }else{
+        subscribeToTopic(common.username);
       }
     } else {
       print(

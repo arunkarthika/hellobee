@@ -206,24 +206,22 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   dataProccessor(loader, type) {
-    String endPoint = "user/liveStatus";
+    String endPoint = "user/liveAudioStatus";
     String params = "type=" +
         "audio" +
         "&page=" +
         page.toString() +
         "&length=10&&geo=all&country=India&city=Erode";
-    makeGetRequest(endPoint, params, 0, context).then((response) {
+    makeGetRequest(endPoint, "", 0, context).then((response) {
       var data = (response).trim();
       var d2 = jsonDecode(data);
       if (d2['status'] == 0) {
-        int bodyLength = d2['body']['active_user_details'].length;
+        int bodyLength = d2['body']['audioList'].length;
         if (bodyLength != 0) {
           setState(() {
-            if (type == "audio") {
               activeList = List.from(activeList)
-                ..addAll(d2['body']['active_user_details']['audioLists']);
+                ..addAll(d2['body']['audioList']);
               pageLength = d2['body']['last_page'];
-            }
             merge = 1;
           });
         }
@@ -753,7 +751,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                               padding: EdgeInsets.fromLTRB(5, 10, 2, 10),
                               alignment: Alignment.bottomLeft,
                               child: Text(
-                                data['profileName'],
+                                data['name'],
                                 style: Theme.of(context)
                                     .textTheme
                                     .subtitle1

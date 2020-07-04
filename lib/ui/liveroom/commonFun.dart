@@ -556,39 +556,35 @@ class Common {
           level = value;
           CommonFun().getStringData('username').then((value) {
             username = value;
-            CommonFun().getStringData('diamond').then((value) {
-              diamond = int.tryParse(value);
-              CommonFun().getStringData('dpEffects').then((value) {
-                dbEffect = value;
-                CommonFun().getStringData('entranceEffect').then((value) {
-                  entranceEffect = value;
-                  CommonFun().getStringData('broadcastUsername').then((value) {
-                    broadcastUsername = value;
-                    CommonFun().getStringData('userType').then((value) {
-                      userTypeGlob = value;
-                      CommonFun().getStringData('user_id').then((value) {
-                        userId = value;
+//              CommonFun().getStringData('dpEffects').then((value) {
+//                dbEffect = value;
+            CommonFun().getStringData('entranceEffect').then((value) {
+              entranceEffect = value;
+              CommonFun().getStringData('broadcastUsername').then((value) {
+                broadcastUsername = value;
+                CommonFun().getStringData('userType').then((value) {
+                  userTypeGlob = value;
+                  CommonFun().getStringData('user_id').then((value) {
+                    userId = value;
+                    CommonFun().getStringData('broadcasterId').then((value) {
+                      broadcasterId = value;
+                      giftUserId = value;
+                      if (userTypeGlob == 'broad') {
+                        broadcasterProfileName = name;
+                        broadprofilePic = profilePic;
                         CommonFun()
-                            .getStringData('broadcasterId')
+                            .getStringData('over_all_gold')
                             .then((value) {
-                          broadcasterId = value;
-                          giftUserId = value;
-                          if (userTypeGlob == 'broad') {
-                            broadcasterProfileName = name;
-                            broadprofilePic = profilePic;
-                            CommonFun()
-                                .getStringData('over_all_gold')
-                                .then((value) {
-                              gold = int.tryParse(value);
-                            });
-                          }
-                          giftGet();
+                          gold = int.tryParse(value);
                         });
-                      });
+                      }
+                      giftGet();
                     });
                   });
                 });
               });
+
+//              });
             });
           });
         });
@@ -692,6 +688,7 @@ class Common {
   }
 
   void publishMessage(String topic, String message) {
+    print("topic" + topic + message);
     final builder = MqttClientPayloadBuilder();
     builder.addString(message);
     client.publishMessage(topic, MqttQos.exactlyOnce, builder.payload);
@@ -762,8 +759,10 @@ class Common {
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment(0.8, 0.0), // 10% of the width, so there are ten blinds.
-          colors: [Colors.red, Colors.orangeAccent], // whitish to gray
+          end: Alignment(0.8, 0.0),
+          // 10% of the width, so there are ten blinds.
+          colors: [Colors.red, Colors.orangeAccent],
+          // whitish to gray
           tileMode: TileMode.repeated, // repeats the gradient over the canvas
         ),
         borderRadius: BorderRadius.all(Radius.circular(80.0)),
