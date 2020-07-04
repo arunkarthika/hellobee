@@ -16,6 +16,8 @@ import 'package:honeybee/ui/Dashboard.dart';
 import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/liveroom/personalChat/settings.dart';
 import 'package:honeybee/utils/global.dart';
+import 'package:http/http.dart' as http;
+
 
 import 'const.dart';
 
@@ -56,6 +58,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    sendNotification('receiver','msg');
     CommonFun().getStringData('user_id').then((value) {
       userId = value;
       listData();
@@ -72,6 +75,54 @@ class HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+  static Future<void> sendNotification(receiver,msg)async{
+
+    var token = 'cYoMvZctbiA:APA91bE0lqgwXLBxT6eim_aj5FcjuRZN1xb0ln2UW_fOSJ-pTRedNrpdSIR_hi3Kl5x9kjcvh1FVxilGIhWwyPmAgl1qlYDHr3uc_6Lxk3NRTHjui56oQ1PSumZgSFmeQGY9wwz3JHJq';
+    print('token : $token');
+
+    final data = {
+      "notification": {"body": msg, "title": "Message From $receiver"},
+      "priority": "high",
+      "data": {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "id": "1",
+        "status": "done"
+      },
+      "to": "$token"
+    };
+
+    final headers = {
+      'content-type': 'application/json',
+      'Authorization': 'key=AAAAykcMHoI:APA91bEW9Bh9ysmmZS2hfFzK679_maREiia6IPfzdphBJHIRDz1K7Db2j5PXIpFC8HmcG9dIfFap8HsMC5gWqOJQ1TvKCdLmhTEuNy1hIPiCiVOrbIo4MLB1ACSADznlwLo_5OnVW9gh'
+    };
+
+    final postUrl = 'https://fcm.googleapis.com/fcm/send';
+
+
+
+
+    try {
+      final response = await http.post(postUrl,
+          body: json.encode(data),
+          encoding: Encoding.getByName('utf-8'),
+          headers: headers);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: 'Request Sent To Driver');
+      } else {
+        Fluttertoast.showToast(msg: 'notification sending failed');
+        print('notification sending failed');
+        // on failure do sth
+      }
+    }
+    catch(e){
+      print('exception $e');
+    }
+
+
+
+
+  }
+
 
   void registerNotification() async{
     firebaseMessaging.requestNotificationPermissions();
@@ -88,13 +139,18 @@ class HomeScreenState extends State<HomeScreen> {
     }).catchError((e)=> print("error fetching data: $e"));
 
     firebaseMessaging.configure(onMessage: (Map<String, dynamic> message) {
+      print(message);
       Platform.isAndroid
           ? showNotification(message['notification'])
           : showNotification(message['aps']['alert']);
       return;
     }, onResume: (Map<String, dynamic> message) {
+      print(message);
+
       return;
     }, onLaunch: (Map<String, dynamic> message) {
+      print(message);
+
       return;
     });
     firebaseMessaging.getToken().then((token) {

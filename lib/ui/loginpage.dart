@@ -13,7 +13,6 @@ import 'package:honeybee/ui/adminblock.dart';
 import 'package:honeybee/ui/newuser.dart';
 
 class LoginPage extends StatefulWidget {
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -21,7 +20,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   BuildContext context;
 
-  String deviceid ="0";
+  String deviceid = "0";
   String imei;
   String meid;
   String phoneNo;
@@ -37,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       MaterialPageRoute(
         builder: (context) => Dashboard(),
       ),
-          (Route<dynamic> route) => false,
+      (Route<dynamic> route) => false,
     );
   }
 
@@ -62,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void callNewUser(name, profilePic, domain, email, mobile,uid) {
+  void callNewUser(name, profilePic, domain, email, mobile, uid) {
     String profileName = name;
     String userName = name;
     String profilepic = profilePic;
@@ -81,72 +80,84 @@ class _LoginPageState extends State<LoginPage> {
             gcmregistrationid: gcmregistrationid,
             uid: uid),
       ),
-          (Route<dynamic> route) => false,
+      (Route<dynamic> route) => false,
     );
   }
 
-  void dataProccessor(String name, String email, mobile, String profilePic, String uid,String domain,) {
+  void dataProccessor(
+    String name,
+    String email,
+    mobile,
+    String profilePic,
+    String uid,
+    String domain,
+  ) {
     setState(() {
       _visible = true;
     });
     FirebaseAuth.instance.currentUser().then((value) {
+      var user=value.uid;
+
       value.getIdToken().then((value1) {
-      gcmregistrationid = value1.token.toString();
-    String endPoint = 'system/check';
-    String params = "login_domain=" +
-        domain +
-        "&email=" +
-        email +
-        "&mobile=" +
-        mobile +
-        "&device_id=" + deviceid +
-        '&gcm_registration_id=' +
-        gcmregistrationid +
-        '&firebaseUID=' + uid;
-    makeGetRequest(endPoint, params, 1,context).then((response) {
-      setState(() {
-        _visible = false;
-      });
-      print("object" + response);
-      var data = (response).trim();
-      var d2 = jsonDecode(data);
-      print(d2);
-      print(d2['message']);
-      if (d2['status'] == 0) {
-        if (d2['message'] == "New user") {
-          callNewUser(name, profilePic, domain, email, mobile,uid);
-        } else {
-          var listData = d2['body']['message'];
-          if (listData == "Already exsits") {
-            print(d2['body']);
-            var body = d2['body'];
-            var entryList = body.entries.toList();
-            for (int j = 0; j < entryList.length; j++) {
-              CommonFun()
-                  .saveShare(entryList[j].key, entryList[j].value.toString());
-            }
-            CommonFun().saveShare('bearer', d2['body']['activation_code']);
-            callOldUser();
-          } else if (listData == "Admin_BlocKEd") {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AdminBlock(),
-              ),
+        gcmregistrationid = value1.token.toString();
+
+        String endPoint = 'system/check';
+        String params = "login_domain=" +
+            domain +
+            "&email=" +
+            email +
+            "&mobile=" +
+            mobile +
+            "&device_id=" +
+            deviceid +
+            '&firebaseUID=' +
+            uid+
+            '&gcm_registration_id=' +
+            gcmregistrationid ;
+        makeGetRequest(endPoint, params, 1, context).then((response) {
+          setState(() {
+            _visible = false;
+          });
+          print("object" + params + response);
+          var data = (response).trim();
+          var d2 = jsonDecode(data);
+          print(d2);
+          print(d2['message']);
+          if (d2['status'] == 0) {
+            if (d2['message'] == "New user") {
+              callNewUser(name, profilePic, domain, email, mobile, uid);
+            } else {
+              var listData = d2['body']['message'];
+              if (listData == "Already exsits") {
+                print(d2['body']);
+                var body = d2['body'];
+                var entryList = body.entries.toList();
+                for (int j = 0; j < entryList.length; j++) {
+                  CommonFun().saveShare(
+                      entryList[j].key, entryList[j].value.toString());
+                }
+                CommonFun().saveShare('bearer', d2['body']['activation_code']);
+                callOldUser();
+              } else if (listData == "Admin_BlocKEd") {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AdminBlock(),
+                  ),
                   (Route<dynamic> route) => false,
+                );
+              }
+            }
+            return Scaffold();
+          } else {
+            return Scaffold(
+              body: Center(
+                child: Text('Loading ...'),
+              ),
             );
           }
-        }
-        return Scaffold();
-      } else {
-        return Scaffold(
-          body: Center(
-            child: Text('Loading ...'),
-          ),
-        );
-      }
-    });
-    });
+        });
+      });
     });
   }
 
@@ -175,15 +186,14 @@ class _LoginPageState extends State<LoginPage> {
                 overflow: Overflow.visible,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(top: 50.0),
-                    child: Image(
-                      width: 160.0,
-                      height: 160.0,
-                      image: AssetImage(
-                        'assets/login/Logo.png',
-                      ),
-                    )
-                  ),
+                      margin: EdgeInsets.only(top: 50.0),
+                      child: Image(
+                        width: 160.0,
+                        height: 160.0,
+                        image: AssetImage(
+                          'assets/login/Logo.png',
+                        ),
+                      )),
                   Container(
                       margin: EdgeInsets.only(top: 140.0),
                       child: Image(
@@ -192,13 +202,12 @@ class _LoginPageState extends State<LoginPage> {
                         image: AssetImage(
                           'assets/login/Logo_text.png',
                         ),
-                      )
-                  ),
+                      )),
                 ],
               ),
               Padding(
                 padding: EdgeInsets.only(top: 50.0),
-                child:  Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     GoogleSignInButton(
@@ -226,10 +235,10 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: 5.0,
                         text: "Log in with facebook",
                         textStyle: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                         onPressed: () {
                           FirebaseAuthUi.instance().launchAuth([
                             AuthProvider.facebook(),
@@ -239,13 +248,13 @@ class _LoginPageState extends State<LoginPage> {
                             print(firebaseUser.email);
                             print(firebaseUser.phoneNumber);
                             print(firebaseUser.photoUri);
-                             dataProccessor(
-                                 firebaseUser.displayName,
-                                 firebaseUser.email,
-                                 "",
-                                 firebaseUser.photoUri,
-                                 firebaseUser.uid,
-                                 "facebook");
+                            dataProccessor(
+                                firebaseUser.displayName,
+                                firebaseUser.email,
+                                "",
+                                firebaseUser.photoUri,
+                                firebaseUser.uid,
+                                "facebook");
                           });
                         }),
                   ],
@@ -303,9 +312,10 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(top: 20.0, right: 40.0,left: 10.0),
+                    padding:
+                        EdgeInsets.only(top: 20.0, right: 40.0, left: 10.0),
                     child: GestureDetector(
-                      onTap: () =>   FirebaseAuthUi.instance().launchAuth([
+                      onTap: () => FirebaseAuthUi.instance().launchAuth([
                         AuthProvider.twitter(),
                       ]).then((firebaseUser) {
                         print("firebaseUser");
@@ -313,23 +323,22 @@ class _LoginPageState extends State<LoginPage> {
                         print(firebaseUser.email);
                         print(firebaseUser.phoneNumber);
                         print(firebaseUser.photoUri);
-                         dataProccessor(
-                             firebaseUser.displayName,
-                             firebaseUser.email,
-                             "",
-                             firebaseUser.photoUri,
-                             firebaseUser.uid,
-                             "twitter");
+                        dataProccessor(
+                            firebaseUser.displayName,
+                            firebaseUser.email,
+                            "",
+                            firebaseUser.photoUri,
+                            firebaseUser.uid,
+                            "twitter");
                       }),
                       child: Container(
                           child: Image(
-                            width: 40.0,
-                            height: 40.0,
-                            image: AssetImage(
-                              'assets/login/Twitter.png',
-                            ),
-                          )
-                      ),
+                        width: 40.0,
+                        height: 40.0,
+                        image: AssetImage(
+                          'assets/login/Twitter.png',
+                        ),
+                      )),
                     ),
                   ),
                   Padding(
@@ -350,19 +359,18 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Container(
                           child: Image(
-                            width: 40.0,
-                            height: 40.0,
-                            image: AssetImage(
-                              'assets/login/Mobile.png',
-                            ),
-                          )
-                      ),
+                        width: 40.0,
+                        height: 40.0,
+                        image: AssetImage(
+                          'assets/login/Mobile.png',
+                        ),
+                      )),
                     ),
                   ),
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(top:80.0,left: 15.0, right: 15.0),
+                padding: EdgeInsets.only(top: 80.0, left: 15.0, right: 15.0),
                 child: Text(
                   "By Continuing You agree to \n the Terms & Condition",
                   style: TextStyle(
@@ -377,5 +385,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
 }

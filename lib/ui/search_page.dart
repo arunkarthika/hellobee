@@ -273,7 +273,7 @@ class _ListPersonPageState extends State<ListPersonPage> {
                                       colors: [Colors.red, Colors.orangeAccent],
                                       // whitish to gray
                                       tileMode: TileMode
-                                          .repeated, // repeats the gradient over the canvas
+                                          .mirror, // repeats the gradient over the canvas
                                     ),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(80.0)),

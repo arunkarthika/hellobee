@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -39,6 +40,7 @@ class Dashboard extends StatefulWidget {
 class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   String api = 'https://blive.s3.ap-south-1.amazonaws.com';
   String _appDocsDir;
+
 
   TabController controller, bottomController;
 
@@ -144,6 +146,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   @override
   void initState() {
     Wakelock.disable();
+    inputData();
     path();
     dataGet();
 
@@ -192,6 +195,14 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
 
   void _handleTabSelection() {
     setState(() {});
+  }
+  void inputData() async {
+    var auth=FirebaseAuth.instance;
+
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    print('firebaseUID'+uid.toString());
+    // here you write the codes to input the data into firestore
   }
 
   dataProccessor(loader, type) {

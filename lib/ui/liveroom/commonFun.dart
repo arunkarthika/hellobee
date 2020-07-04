@@ -758,7 +758,6 @@ class Common {
   }
 
   Widget gradient(IconData iconData) {
-
     return Ink(
       decoration: const BoxDecoration(
         gradient: LinearGradient(

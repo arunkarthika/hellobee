@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/ui/liveroom/personalChat/const.dart';
 import 'package:honeybee/ui/liveroom/personalChat/full_photo.dart';
@@ -13,6 +16,15 @@ import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -41,6 +53,11 @@ class ChatScreenState extends State<ChatScreen> {
   var listMessage;
   String groupChatId;
   SharedPreferences prefs;
+  final Firestore _db = Firestore.instance;
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+  final FirebaseMessaging _fcm = FirebaseMessaging();
 
   File imageFile;
   bool isLoading;
@@ -51,19 +68,16 @@ class ChatScreenState extends State<ChatScreen> {
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
 
+
   @override
   void initState() {
     super.initState();
     focusNode.addListener(onFocusChange);
-
-
     groupChatId = '';
-
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
-
-    readLocal();
+    inputData();
   }
 
   void onFocusChange() {
@@ -75,9 +89,142 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void registerNotification() async{
+    _fcm.requestNotificationPermissions();
+
+
+    _fcm.configure(onMessage: (Map<String, dynamic> message) {
+      Platform.isAndroid
+          ? showNotification(message['notification'])
+          : showNotification(message['aps']['alert']);
+      return;
+    }, onResume: (Map<String, dynamic> message) {
+
+      return;
+    }, onLaunch: (Map<String, dynamic> message) {
+      return;
+    });
+    _fcm.getToken().then((token) {
+      print("token"+token);
+//      Firestore.instance
+//          .collection('users')
+//          .document(currentUserId)
+//          .setData({'pushToken': token});
+    }).catchError((err) {
+      Fluttertoast.showToast(msg: err.message.toString());
+    });
+  }
+  void showNotification(message) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      Platform.isAndroid
+          ? 'com.dfa.flutterchatdemo'
+          : 'com.duytq.flutterchatdemo',
+      'Flutter chat demo',
+      'your channel description',
+      playSound: true,
+      enableVibration: true,
+      importance: Importance.Max,
+      priority: Priority.High,
+    );
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(0, message['title'].toString(),
+        message['body'].toString(), platformChannelSpecifics,
+        payload: json.encode(message));
+  }
+
+  void inputData() async {
+    var auth=FirebaseAuth.instance;
+
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    print('firebaseUID'+uid.toString());
+    id=uid;
+    readLocal();
+    _saveDeviceToken();
+    sendNotification('receiver', 'msg');
+    // here you write the codes to input the data into firestore
+  }
+  _saveDeviceToken() async {
+    // Get the current user
+    String uid = 'jeffd23';
+    // FirebaseUser user = await _auth.currentUser();
+
+    // Get the token for this device
+    String fcmToken = await _fcm.getToken();
+    print('fcmtoken'+fcmToken);
+
+    // Save it to Firestore
+    if (fcmToken != null) {
+      var tokens = _db
+          .collection('users')
+          .document(uid)
+          .collection('tokens')
+          .document(fcmToken);
+
+      await tokens.setData({
+        'token': fcmToken,
+        'createdAt': FieldValue.serverTimestamp(), // optional
+        'platform': Platform.operatingSystem // optional
+      });
+    }
+  }
+
+
+  static Future<void> sendNotification(receiver,msg)async{
+
+    var token = 'cYoMvZctbiA:APA91bE0lqgwXLBxT6eim_aj5FcjuRZN1xb0ln2UW_fOSJ-pTRedNrpdSIR_hi3Kl5x9kjcvh1FVxilGIhWwyPmAgl1qlYDHr3uc_6Lxk3NRTHjui56oQ1PSumZgSFmeQGY9wwz3JHJq';
+    print('token : $token');
+
+    final data = {
+      "notification": {"body": msg, "title": "Message From $receiver"},
+      "priority": "high",
+      "data": {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "id": "1",
+        "status": "done"
+      },
+      "to": "$token"
+    };
+
+    final headers = {
+      'content-type': 'application/json',
+      'Authorization': 'key=AAAAykcMHoI:APA91bEW9Bh9ysmmZS2hfFzK679_maREiia6IPfzdphBJHIRDz1K7Db2j5PXIpFC8HmcG9dIfFap8HsMC5gWqOJQ1TvKCdLmhTEuNy1hIPiCiVOrbIo4MLB1ACSADznlwLo_5OnVW9gh'
+    };
+
+    final postUrl = 'https://fcm.googleapis.com/fcm/send';
+
+
+
+
+    try {
+      final response = await http.post(postUrl,
+          body: json.encode(data),
+          encoding: Encoding.getByName('utf-8'),
+          headers: headers);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(msg: 'Request Sent To Driver');
+      } else {
+        Fluttertoast.showToast(msg: 'notification sending failed');
+        print('notification sending failed');
+        // on failure do sth
+      }
+    }
+    catch(e){
+      print('exception $e');
+    }
+
+
+
+
+  }
+
   dynamic readLocal() async {
     prefs = await SharedPreferences.getInstance();
-    id = prefs.getString('firebaseUID') ?? '';
+    id = prefs.getString('firebaseUID') ?? id;
+    print('firebaseuid'+id.toString());
     if (id.hashCode <= peerId.hashCode) {
       groupChatId = '$id-$peerId';
     } else {
@@ -158,6 +305,7 @@ class ChatScreenState extends State<ChatScreen> {
       });
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+      sendNotification(peerName, content);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send');
     }
@@ -482,15 +630,22 @@ class ChatScreenState extends State<ChatScreen> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.phone),
-              onPressed: () {},
+              onPressed: () {
+                Fluttertoast.showToast(msg: 'Coming Soon');
+              },
             ),
             IconButton(
               icon: Icon(Icons.videocam),
-              onPressed: () {},
+              onPressed: () {
+                Fluttertoast.showToast(msg: 'Coming Soon');
+
+              },
             ),
             IconButton(
               icon: Icon(Icons.more_vert),
-              onPressed: () {},
+              onPressed: () {
+
+              },
             ),
           ],
         ),
