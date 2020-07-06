@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:honeybee/constant/http.dart';
+import 'package:honeybee/model/Queue.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 
 import '../footer.dart';
+
 Widget audio(context, setState, common) {
   return Stack(
     children: <Widget>[
@@ -23,7 +29,6 @@ Widget audio(context, setState, common) {
             stops: [0.1, 1],
           ),
         ),*/
-
       ),
       Container(
         margin: EdgeInsets.only(top: 120),
@@ -49,34 +54,77 @@ Widget audio(context, setState, common) {
                     onTap: () {
                       setState(() {
                         if (common.userTypeGlob == 'broad') {
-
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content: Text('Do you want to Go to?'),
-                                actions: <Widget>[
-                                  new FlatButton(
-                                    onPressed: () {
+                          if (common.guestData.length > index) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  content: Text('Do you want to Go to?'),
+                                  actions: <Widget>[
+                                    new FlatButton(
+                                      onPressed: () {
 //                                      Navigator.pop(context);
-                                      profileviewAudience(common.guestData[index].userId, context, common);
-                                    },
-                                    child: Text('ViewProfile'),
-                                  ),
-                                  FlatButton(
-                                    onPressed: () {
-                                      Navigator.pop(context,true);
-                                      common.giftUserId = common.guestData[index].userId;
-                                      giftShow(context, common);
-                                    },
-                                    child: Text('Gift'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                                        profileviewAudience(
+                                            common.guestData[index].userId,
+                                            context,
+                                            common);
+                                      },
+                                      child: Text('ViewProfile'),
+                                    ),
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                        common.giftUserId =
+                                            common.guestData[index].userId;
+                                        giftShow(context, common);
+                                      },
+                                      child: Text('Gift'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } else {
+                            Fluttertoast.showToast(msg: 'Seat Lock is on the way');
 
 
+                            setState(() {
+                              common.loaderInside = true;
+                            });
+                            var params = {
+                              'action': 'addGuest',
+                              'guest_id': common.userId,
+                              'position': index.toString(),
+                              'broadcast_id': common.broadcasterId
+                            };
+                            makePostRequest('user/guest', jsonEncode(params), 0, context)
+                                .then((response) {
+                              var data = jsonDecode(response);
+                              if (data['status'] == 0) {
+//                                common.guestFlag = true;
+                                common.loaderInside = false;
+                                common.publishMessage(
+                                    common.broadcastUsername,
+                                    '£01'
+                                        'refreshAudience01£*£' +
+                                        common.userId +
+                                        '£*£' +
+                                        common.name +
+                                        '£*£' +
+                                        common.username +
+                                        '£*£' +
+                                        common.profilePic +
+                                        '£*£' +
+                                        common.level);
+                                var gData = GuestData("userId", common.name, common.username,
+                                    "common.profilePic", common.level, 0, 0);
+                                setState(() {
+                                  common.guestData.add(gData);
+                                });
+                              }
+                            });
+
+                          }
                         } else if (common.guestData.length > index &&
                             common.userTypeGlob != 'broad') {
                           giftShow(context, common);
@@ -200,7 +248,6 @@ Widget audioold(context, setState, common) {
             stops: [0.1, 1],
           ),
         ),*/
-
       ),
       Container(
         margin: EdgeInsets.only(top: 120),

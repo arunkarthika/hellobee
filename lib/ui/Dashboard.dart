@@ -225,9 +225,9 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         int bodyLength = d2['body']['audioList'].length;
         if (bodyLength != 0) {
           setState(() {
-              activeList = List.from(activeList)
-                ..addAll(d2['body']['audioList']);
-              pageLength = d2['body']['last_page'];
+            activeList = List.from(activeList)
+              ..addAll(d2['body']['audioList']);
+            pageLength = d2['body']['last_page'];
             merge = 1;
           });
         }
@@ -238,7 +238,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               CommonFun().saveShare('giftVersion', d2['body']['giftVersion']);
               giftVersion = d2['body']['giftVersion'];
               makeGetRequest("user/List",
-                      "user_id=" + "100001" + "&action=giftList", 0, context)
+                  "user_id=" + "100001" + "&action=giftList", 0, context)
                   .then((response) {
                 var data = jsonDecode(response);
                 giftData = data['body']['giftList']['gift_list']['all'];
@@ -396,7 +396,6 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   ),
                   body: Column(
                     children: <Widget>[
-//                      Story(),
                       Container(
                         width: double.infinity,
                         height: 50,

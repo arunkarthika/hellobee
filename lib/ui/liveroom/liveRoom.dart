@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_beautiful_popup/main.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/music/main_1.dart';
 import 'package:honeybee/ui/liveroom/constants.dart' as Constants;
 import 'package:honeybee/constant/common.dart';
@@ -14,10 +15,8 @@ import 'package:honeybee/model/Queue.dart';
 import 'package:flutter/material.dart';
 import 'package:base32/base32.dart';
 import 'package:flutter/services.dart';
-import 'package:honeybee/ui/meprofile.dart';
-import 'package:honeybee/ui/message.dart';
+import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/search_page.dart';
-import 'package:honeybee/ui/userprofile.dart';
 import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
 import 'package:image_picker/image_picker.dart';
@@ -53,12 +52,12 @@ class LiveRoom extends StatefulWidget {
   final String broadcasterId1;
 
   RenderBroadcast createState() => RenderBroadcast(
-        userId: userId1,
-        broadcastUsername: username1,
-        userType: userType1,
-        broadcastType: broadcastType1,
-        broadcasterId: broadcasterId1,
-      );
+    userId: userId1,
+    broadcastUsername: username1,
+    userType: userType1,
+    broadcastType: broadcastType1,
+    broadcasterId: broadcasterId1,
+  );
 }
 
 class RenderBroadcast extends State<LiveRoom>
@@ -271,42 +270,42 @@ class RenderBroadcast extends State<LiveRoom>
       child: SafeArea(
         child: common.loader == true
             ? Container(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        )
             : WillPopScope(
-                onWillPop: userType != "broad" ? onWillPopOffline : onWillPop,
-                child: SwipeDetector(
-                  child: Scaffold(
-                    body: Stack(
-                      children: common.swipeup
-                          ? <Widget>[body()]
-                          : <Widget>[body(), header(), footer()],
-                    ),
-                  ),
-                  onSwipeUp: () {
-                    print("up");
-                    /* switchToAnother(common.prevUserId, common.prevUsername);*/
-                  },
-                  onSwipeDown: () {
-                    /* switchToAnother(common.nextUserId, common.nextUsername);*/
-                    print("down");
-                  },
-                  onSwipeLeft: () {
-                    print("left");
-                    setState(() {
-                      common.swipeup = false;
-                    });
-                  },
-                  onSwipeRight: () {
-                    print("right");
-                    setState(() {
-                      common.swipeup = true;
-                    });
-                  },
-                ),
+          onWillPop: userType != "broad" ? onWillPopOffline : onWillPop,
+          child: SwipeDetector(
+            child: Scaffold(
+              body: Stack(
+                children: common.swipeup
+                    ? <Widget>[body()]
+                    : <Widget>[body(), header(), footer()],
               ),
+            ),
+            onSwipeUp: () {
+              print("up");
+              switchToAnother(common.prevUserId, common.prevUsername);
+            },
+            onSwipeDown: () {
+              switchToAnother(common.nextUserId, common.nextUsername);
+              print("down");
+            },
+            onSwipeLeft: () {
+              print("left");
+              setState(() {
+                common.swipeup = false;
+              });
+            },
+            onSwipeRight: () {
+              print("right");
+              setState(() {
+                common.swipeup = true;
+              });
+            },
+          ),
+        ),
       ),
     );
   }
@@ -404,20 +403,20 @@ class RenderBroadcast extends State<LiveRoom>
           left: 130.0,
           child: common.userTypeGlob == 'broad' || common.guestFlag == true
               ? SizedBox(
-                  width: 30,
-                  height: 30, // specific value
+            width: 30,
+            height: 30, // specific value
 
-                  child: RaisedButton(
-                      onPressed: () {
-                        onMicMute(common, setState);
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(80.0)),
-                      padding: const EdgeInsets.all(0.0),
-                      child: common.gradient(
-                        common.zego.isUseMic ? Icons.mic : Icons.mic_off,
-                      )),
-                )
+            child: RaisedButton(
+                onPressed: () {
+                  onMicMute(common, setState);
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(80.0)),
+                padding: const EdgeInsets.all(0.0),
+                child: common.gradient(
+                  common.zego.isUseMic ? Icons.mic : Icons.mic_off,
+                )),
+          )
               : Container(),
         ),
         Positioned(
@@ -463,23 +462,23 @@ class RenderBroadcast extends State<LiveRoom>
 
   Future<bool> onWillPop() async {
     return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            content: Text('Quit BroadCast?'),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text('No'),
-              ),
-              FlatButton(
-                onPressed: () {
-                  exit(context);
-                },
-                child: Text('Yes'),
-              ),
-            ],
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text('Quit BroadCast?'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('No'),
           ),
-        )) ??
+          FlatButton(
+            onPressed: () {
+              exit(context);
+            },
+            child: Text('Yes'),
+          ),
+        ],
+      ),
+    )) ??
         false;
   }
 
@@ -665,16 +664,16 @@ class RenderBroadcast extends State<LiveRoom>
         print(userType);
         userType == "broad"
             ? Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BroadcastEnd(
-                      broadcastTime: actualBroadcastingTime.toString(),
-                      viewvers: common.audiencelist.length.toString(),
-                      like: common.like.toString(),
-                      gold: common.bgold.toString(),
-                      userId: broadcasterId),
-                ),
-              )
+          context,
+          MaterialPageRoute(
+            builder: (context) => BroadcastEnd(
+                broadcastTime: actualBroadcastingTime.toString(),
+                viewvers: common.audiencelist.length.toString(),
+                like: common.like.toString(),
+                gold: common.bgold.toString(),
+                userId: broadcasterId),
+          ),
+        )
             : Navigator.of(context).pop();
       });
     }
@@ -699,7 +698,7 @@ class RenderBroadcast extends State<LiveRoom>
             common.audiencelist.insert(0, audList);
           }
           common.broadcasterProfileName =
-              pic['body']['broadCastList']['profileName'];
+          pic['body']['broadCastList']['profileName'];
           common.broadcastType = pic['body']['broadCastList']['broadcast_type'];
           common.gold =
               int.tryParse(pic['body']['broadCastList']['over_all_gold']);
@@ -777,7 +776,7 @@ class RenderBroadcast extends State<LiveRoom>
         onWillPopOffline();
         return false;
       }
-      print("connect"+common.connectionState.toString());
+      print("connect" + common.connectionState.toString());
       if (common.connectionState != MqttCurrentConnectionState.CONNECTED) {
         prepareMqttClient();
       }
@@ -792,23 +791,23 @@ class RenderBroadcast extends State<LiveRoom>
           common.prevUserId = pic['body']['prevUserId'].toString();
           common.nextUserId = pic['body']['nextUserId'].toString();
           common.prevUserId = common.prevUserId == null ||
-                  common.prevUserId == '' ||
-                  common.prevUserId == 'false'
+              common.prevUserId == '' ||
+              common.prevUserId == 'false'
               ? ''
               : common.prevUserId;
           common.nextUserId = common.nextUserId == null ||
-                  common.nextUserId == '' ||
-                  common.nextUserId == 'false'
+              common.nextUserId == '' ||
+              common.nextUserId == 'false'
               ? ''
               : common.nextUserId;
           common.prevUsername = pic['body']['prevUser'] == null ||
-                  pic['body']['prevUser'] == '' ||
-                  pic['body']['prevUser'] == false
+              pic['body']['prevUser'] == '' ||
+              pic['body']['prevUser'] == false
               ? ''
               : pic['body']['prevUser'];
           common.nextUsername = pic['body']['nextUser'] == null ||
-                  pic['body']['nextUser'] == '' ||
-                  pic['body']['nextUser'] == false
+              pic['body']['nextUser'] == '' ||
+              pic['body']['nextUser'] == false
               ? ''
               : pic['body']['nextUser'];
           if (pic['body']['broadCastList']['status'] == 'INACTIVE') {
@@ -823,7 +822,7 @@ class RenderBroadcast extends State<LiveRoom>
             }
             temp['textMuteList'] = temp['textMuteList'] ?? [];
             if (temp['textMuteList']
-                    .indexWhere((item) => item == common.userId) !=
+                .indexWhere((item) => item == common.userId) !=
                 -1) {
               common.textMute = true;
             }
@@ -895,196 +894,195 @@ class RenderBroadcast extends State<LiveRoom>
     print('=======================common.arrivedMessageController==========');
     print(common.arrivedMessageController);
     common.arrivedMessageAnimation =
-        Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
       parent: common.arrivedMessageController,
       curve: Curves.easeIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.arrivedStatus = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.arrivedStatus = false;
-              });
-              common.arrivedMessageController.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.arrivedStatus = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.arrivedStatus = false;
+          });
+          common.arrivedMessageController.stop();
+        }
+      });
     print("=======bullet1controller==============");
     common.bullet1controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet1animation =
-        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet1controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.animation1Status = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.animation1Status = false;
-              });
-              common.bullet1controller.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.animation1Status = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.animation1Status = false;
+          });
+          common.bullet1controller.stop();
+        }
+      });
     print("=======bullet2controller==============");
     common.bullet2controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet2animation =
-        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet2controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.animation2Status = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.animation2Status = false;
-              });
-              common.bullet2controller.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.animation2Status = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.animation2Status = false;
+          });
+          common.bullet2controller.stop();
+        }
+      });
     print("=======bullet3controller==============");
     common.bullet3controller =
         AnimationController(duration: Duration(seconds: 15), vsync: this);
     common.bullet3animation =
-        Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
+    Tween(begin: 1.0, end: -1.0).animate(CurvedAnimation(
       parent: common.bullet3controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.animation3Status = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.animation3Status = false;
-              });
-              common.bullet3controller.stop();
-            }
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.animation3Status = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.animation3Status = false;
+          });
+          common.bullet3controller.stop();
+        }
+      });
     print("=======normalleft1controller==============");
     common.normalleft1controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalleft1animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalleft1controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading1 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading1 = false;
-              });
-              common.normalleft1controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading1 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading1 = false;
+          });
+          common.normalleft1controller.stop();
+        }
+      });
     print("=======normalleft2controller==============");
     common.normalleft2controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalleft2animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalleft2controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading3 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading3 = false;
-              });
-              common.normalleft2controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading3 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading3 = false;
+          });
+          common.normalleft2controller.stop();
+        }
+      });
     print("=======normalright1controller==============");
     common.normalright1controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalright1animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalright1controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading2 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading2 = false;
-              });
-              common.normalright1controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading2 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading2 = false;
+          });
+          common.normalright1controller.stop();
+        }
+      });
     print("=======normalright2controller==============");
     common.normalright2controller =
         AnimationController(duration: Duration(seconds: 10), vsync: this);
     common.normalright2animation = Tween<Offset>(
-            begin: Offset.zero, end: Offset(0.0, -6.0))
+        begin: Offset.zero, end: Offset(0.0, -6.0))
         .animate(CurvedAnimation(
       parent: common.normalright2controller,
       curve: Curves.fastOutSlowIn,
     ))
-          ..addStatusListener((status) {
-            print("========================= normal status===================");
-            print(status);
+      ..addStatusListener((status) {
+        print("========================= normal status===================");
+        print(status);
 
-            if (status == AnimationStatus.forward) {
-              setState(() {
-                common.loading4 = true;
-              });
-            }
-            if (status == AnimationStatus.completed) {
-              setState(() {
-                common.loading4 = false;
-              });
-              common.normalright2controller.stop();
-            }
+        if (status == AnimationStatus.forward) {
+          setState(() {
+            common.loading4 = true;
           });
+        }
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            common.loading4 = false;
+          });
+          common.normalright2controller.stop();
+        }
+      });
   }
 
   void onMessage() {
-
     common.c++;
     common.client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage recMess = c[0].payload;
       var receivedTopic = c[0].topic;
       var locationJson =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
       var tmpmsg = locationJson;
       var arrData = tmpmsg.split('£*£');
@@ -1095,7 +1093,7 @@ class RenderBroadcast extends State<LiveRoom>
         case '£01AudArrive01':
           if (!tmpmsg.contains(userId)) {
             var audList =
-                AudienceList(arrData[1], arrData[2], arrData[3], arrData[4]);
+            AudienceList(arrData[1], arrData[2], arrData[3], arrData[4]);
             common.audiencelist.insert(0, audList);
             var giftqueue = Arrivedqueue(arrData[2], arrData[6]);
             common.arrivedqueuelist.add(giftqueue);
@@ -1270,12 +1268,12 @@ class RenderBroadcast extends State<LiveRoom>
             var content = arrData[3] + '  Has Sent You Request';
             if (userType == 'broad') {
               if (common.inviteRequest
-                          .indexWhere((item) => item.userId == arrData[1])
-                          .toString() ==
-                      '-1' &&
+                  .indexWhere((item) => item.userId == arrData[1])
+                  .toString() ==
+                  '-1' &&
                   common.guestData
-                          .indexWhere((item) => item.userId == arrData[1])
-                          .toString() ==
+                      .indexWhere((item) => item.userId == arrData[1])
+                      .toString() ==
                       '-1') {
                 var queue = InviteRequest(
                     arrData[3], arrData[5], arrData[6], arrData[1], arrData[4]);
@@ -1315,7 +1313,7 @@ class RenderBroadcast extends State<LiveRoom>
               arrData[4] + arrData[1] + arrData[2] + ' has sent ' + arrData[3];
           if (arrData[5] == 'normal') {
             var giftqueue =
-                NormalGiftqueue(arrData[2], arrData[3], arrData[6], arrData[7]);
+            NormalGiftqueue(arrData[2], arrData[3], arrData[6], arrData[7]);
             common.normalgiftqueuelist.add(giftqueue);
             loadNormal(setState, common);
             if (int.tryParse(arrData[7]) != 1) {
@@ -1468,7 +1466,7 @@ class RenderBroadcast extends State<LiveRoom>
           }
           break;
         default:
-          print("CHATRECEIEVE"+tmpmsg);
+          print("CHATRECEIEVE" + tmpmsg);
           if (!tmpmsg.contains('£*£')) {
             buildchatzone(tmpmsg, 'white', receivedTopic);
           }
@@ -1490,143 +1488,143 @@ class RenderBroadcast extends State<LiveRoom>
   Future<bool> _invitationPopUp(inviteString, id, type, topic) async {
     print("okoko");
     return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: Colors.transparent,
-            content: Builder(builder: (context) {
-              return Container(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 8,
-                      child: Text(
-                        inviteString,
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle
-                            .copyWith(color: Colors.white),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: GestureDetector(
-                        onTap: () {
-                          var msgString;
-                          switch (type) {
-                            case "guest":
-                              msgString =
-                                  "£01GuestInviteResponse01£*£Accepted£*£" +
-                                      id +
-                                      "£*£" +
-                                      common.name +
-                                      "£*£" +
-                                      common.username +
-                                      "£*£" +
-                                      common.profilePic;
-                              break;
-                            case "pk":
-                              msgString =
-                                  "£01PKInviteResponse01£*£Accepted£*£" +
-                                      id +
-                                      "£*£" +
-                                      common.name +
-                                      "£*£" +
-                                      common.username +
-                                      "£*£" +
-                                      common.profilePic +
-                                      "£*£" +
-                                      common.broadcastUsername;
-                              break;
-                            default:
-                              msgString =
-                                  "£01GuestInviteResponse01£*£Accepted£*£" +
-                                      id +
-                                      "£*£" +
-                                      common.name +
-                                      "£*£" +
-                                      common.username +
-                                      "£*£" +
-                                      common.profilePic;
-                              break;
-                          }
-                          common.publishMessage(topic, msgString);
-                          Navigator.of(context).pop(false);
-                        },
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          child: Image(
-                            image: AssetImage(
-                              "assets/broadcast/chair.png",
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: GestureDetector(
-                        onTap: () {
-                          var msgString;
-                          switch (type) {
-                            case "guest":
-                              msgString =
-                                  "£01GuestInviteResponse01£*£Rejected£*£" +
-                                      id +
-                                      "£*£" +
-                                      common.name +
-                                      "£*£" +
-                                      common.username +
-                                      "£*£" +
-                                      common.profilePic;
-                              break;
-                            case "pk":
-                              msgString =
-                                  "£01PKInviteResponse01£*£Rejected£*£" +
-                                      id +
-                                      "£*£" +
-                                      common.name +
-                                      "£*£" +
-                                      common.username +
-                                      "£*£" +
-                                      common.profilePic +
-                                      "£*£" +
-                                      common.broadcastUsername;
-                              break;
-                            default:
-                              msgString =
-                                  "£01GuestInviteResponse01£*£Rejected£*£" +
-                                      id +
-                                      "£*£" +
-                                      common.name +
-                                      "£*£" +
-                                      common.username +
-                                      "£*£" +
-                                      common.profilePic;
-                              break;
-                          }
-                          common.publishMessage(topic, msgString);
-                          Navigator.of(context).pop(false);
-                        },
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          child: Image(
-                            image: AssetImage(
-                              "assets/broadcast/Close.png",
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.transparent,
+        content: Builder(builder: (context) {
+          return Container(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  flex: 8,
+                  child: Text(
+                    inviteString,
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle
+                        .copyWith(color: Colors.white),
+                  ),
                 ),
-              );
-            }),
-          ),
-        )) ??
+                Expanded(
+                  flex: 2,
+                  child: GestureDetector(
+                    onTap: () {
+                      var msgString;
+                      switch (type) {
+                        case "guest":
+                          msgString =
+                              "£01GuestInviteResponse01£*£Accepted£*£" +
+                                  id +
+                                  "£*£" +
+                                  common.name +
+                                  "£*£" +
+                                  common.username +
+                                  "£*£" +
+                                  common.profilePic;
+                          break;
+                        case "pk":
+                          msgString =
+                              "£01PKInviteResponse01£*£Accepted£*£" +
+                                  id +
+                                  "£*£" +
+                                  common.name +
+                                  "£*£" +
+                                  common.username +
+                                  "£*£" +
+                                  common.profilePic +
+                                  "£*£" +
+                                  common.broadcastUsername;
+                          break;
+                        default:
+                          msgString =
+                              "£01GuestInviteResponse01£*£Accepted£*£" +
+                                  id +
+                                  "£*£" +
+                                  common.name +
+                                  "£*£" +
+                                  common.username +
+                                  "£*£" +
+                                  common.profilePic;
+                          break;
+                      }
+                      common.publishMessage(topic, msgString);
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      child: Image(
+                        image: AssetImage(
+                          "assets/broadcast/chair.png",
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: GestureDetector(
+                    onTap: () {
+                      var msgString;
+                      switch (type) {
+                        case "guest":
+                          msgString =
+                              "£01GuestInviteResponse01£*£Rejected£*£" +
+                                  id +
+                                  "£*£" +
+                                  common.name +
+                                  "£*£" +
+                                  common.username +
+                                  "£*£" +
+                                  common.profilePic;
+                          break;
+                        case "pk":
+                          msgString =
+                              "£01PKInviteResponse01£*£Rejected£*£" +
+                                  id +
+                                  "£*£" +
+                                  common.name +
+                                  "£*£" +
+                                  common.username +
+                                  "£*£" +
+                                  common.profilePic +
+                                  "£*£" +
+                                  common.broadcastUsername;
+                          break;
+                        default:
+                          msgString =
+                              "£01GuestInviteResponse01£*£Rejected£*£" +
+                                  id +
+                                  "£*£" +
+                                  common.name +
+                                  "£*£" +
+                                  common.username +
+                                  "£*£" +
+                                  common.profilePic;
+                          break;
+                      }
+                      common.publishMessage(topic, msgString);
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      child: Image(
+                        image: AssetImage(
+                          "assets/broadcast/Close.png",
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    )) ??
         false;
   }
 
@@ -1643,12 +1641,12 @@ class RenderBroadcast extends State<LiveRoom>
         .then((response) {
       var data = jsonDecode(response);
       if (data['status'] == 0) {
-        common.camera = true;
         common.guestFlag = true;
         common.loaderInside = false;
         common.publishMessage(
             broadcastUsername,
-            '£01refreshAudience01£*£' +
+            '£01'
+                'refreshAudience01£*£' +
                 common.userId +
                 '£*£' +
                 common.name +
@@ -1658,7 +1656,6 @@ class RenderBroadcast extends State<LiveRoom>
                 common.profilePic +
                 '£*£' +
                 common.level);
-        common.zego.setPreview(setState, common.userId, common.broadcastType);
         common.zego.startPublish(userId);
         var gData = GuestData(userId, common.name, common.username,
             common.profilePic, common.level, 0, 0);
@@ -1683,11 +1680,17 @@ class RenderBroadcast extends State<LiveRoom>
     if (common.client.connectionStatus.state == MqttConnectionState.connected) {
       common.connectionState = MqttCurrentConnectionState.CONNECTED;
       print("=========username==============");
-      print("connecttothemqtt"+"------"+common.username+"-------"+broadcastUsername+"-----"+userType);
+      print("connecttothemqtt" +
+          "------" +
+          common.username +
+          "-------" +
+          broadcastUsername +
+          "-----" +
+          userType);
       if (userType != "broad") {
         subscribeToTopic(broadcastUsername);
         audienceArrive();
-      }else{
+      } else {
         subscribeToTopic(common.username);
       }
     } else {
@@ -1821,7 +1824,7 @@ class RenderBroadcast extends State<LiveRoom>
         common.chatList[0].txtmsg);
     Timer(
         Duration(milliseconds: 100),
-        () => common.mesagecontroller
+            () => common.mesagecontroller
             .jumpTo(common.mesagecontroller.position.maxScrollExtent));
     return ListView.builder(
       itemCount: common.chatList.length,
@@ -1852,61 +1855,61 @@ class RenderBroadcast extends State<LiveRoom>
           alignment: Alignment.centerLeft,
           child: common.chatList[i].level != ""
               ? Container(
-                  margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.fromLTRB(5, 5, 10, 5),
-                  child: Row(
-                    children: <Widget>[
-                      MyCircleAvatar(
-                        imgUrl: messages1[i]['contactImgUrl'],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () {
-                              print("object");
-                              profileviewAudience(
-                                  common.chatList[i].gold,
-                                  context,
-                                  common); //common.chatList[i].gold, context, common
-                            },
-                            child: Container(
-                              constraints: BoxConstraints(
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * .6),
-                              padding: const EdgeInsets.all(15.0),
-                              decoration: BoxDecoration(
-                                color: Color(0xfff9f9f9),
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(25),
-                                  bottomLeft: Radius.circular(25),
-                                  bottomRight: Radius.circular(25),
-                                ),
-                              ),
-                              child: Text(
-                                common.chatList[i].txtmsg,
-                                style: Theme.of(context).textTheme.body1.apply(
-                                      color: Colors.black87,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 15),
-                    ],
-                  ),
-                )
-              : Container(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    common.chatList[i].txtmsg,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle
-                        .copyWith(color: Colors.white, fontSize: 12),
-                  ),
+            margin: EdgeInsets.only(bottom: 10),
+            padding: EdgeInsets.fromLTRB(5, 5, 10, 5),
+            child: Row(
+              children: <Widget>[
+                MyCircleAvatar(
+                  imgUrl: messages1[i]['contactImgUrl'],
                 ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        print("object");
+                        profileviewAudience(
+                            common.chatList[i].gold,
+                            context,
+                            common); //common.chatList[i].gold, context, common
+                      },
+                      child: Container(
+                        constraints: BoxConstraints(
+                            maxWidth:
+                            MediaQuery.of(context).size.width * .6),
+                        padding: const EdgeInsets.all(15.0),
+                        decoration: BoxDecoration(
+                          color: Color(0xfff9f9f9),
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(25),
+                            bottomLeft: Radius.circular(25),
+                            bottomRight: Radius.circular(25),
+                          ),
+                        ),
+                        child: Text(
+                          common.chatList[i].txtmsg,
+                          style: Theme.of(context).textTheme.body1.apply(
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 15),
+              ],
+            ),
+          )
+              : Container(
+            padding: EdgeInsets.only(bottom: 10),
+            child: Text(
+              common.chatList[i].txtmsg,
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle
+                  .copyWith(color: Colors.white, fontSize: 12),
+            ),
+          ),
         );
       },
     );
@@ -1928,9 +1931,7 @@ class RenderBroadcast extends State<LiveRoom>
               height: 50,
               decoration: BoxDecoration(
                 gradient: new LinearGradient(
-                    colors: [
-                      Colors.redAccent,Colors.orange[300]
-                    ],
+                    colors: [Colors.redAccent, Colors.orange[300]],
                     begin: const FractionalOffset(0.0, 0.0),
                     end: const FractionalOffset(1.0, 0.0),
                     stops: [0.0, 1.0],
@@ -1941,7 +1942,8 @@ class RenderBroadcast extends State<LiveRoom>
               child: CircleAvatar(
                 backgroundColor: Colors.transparent,
                 child: MyCircleAvatar(
-                  imgUrl: 'https://i.pinimg.com/736x/0b/a9/63/0ba963472e12aefd5b6e903f673405c4.jpg',
+                  imgUrl:
+                  'https://i.pinimg.com/736x/0b/a9/63/0ba963472e12aefd5b6e903f673405c4.jpg',
                 ),
               ),
             ));
@@ -2023,7 +2025,7 @@ class RenderBroadcast extends State<LiveRoom>
                                     children: <Widget>[
                                       Container(
                                           padding:
-                                              const EdgeInsets.only(left: 3),
+                                          const EdgeInsets.only(left: 3),
                                           child: Icon(Icons.report,
                                               color: Colors.black)),
                                       Text(
@@ -2049,33 +2051,33 @@ class RenderBroadcast extends State<LiveRoom>
                           left: 22,
                           child: common.userTypeGlob == 'broad'
                               ? Container(
-                                  child: Row(
-                                    children: <Widget>[
-                                      Container(
-                                        padding: const EdgeInsets.only(left: 3),
-                                        child: Icon(
-                                          common.blockIcon,
-                                          size: 30,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                          child: Text(
-                                            " " + common.blockStatus,
-                                            style: TextStyle(
-                                              fontSize: 16.0,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            userBlockRelation(common.blockInt,
-                                                id, common, setState, context);
-                                          }),
-                                    ],
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  padding: const EdgeInsets.only(left: 3),
+                                  child: Icon(
+                                    common.blockIcon,
+                                    size: 30,
+                                    color: Colors.black,
                                   ),
-                                )
+                                ),
+                                GestureDetector(
+                                    child: Text(
+                                      " " + common.blockStatus,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      userBlockRelation(common.blockInt,
+                                          id, common, setState, context);
+                                    }),
+                              ],
+                            ),
+                          )
                               : Container()),
                       Positioned(
                         top: 25,
@@ -2089,7 +2091,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserEditProfile(
+                                    builder: (context) => EditProfile(
                                       touserid: id,
                                     ),
                                   ),
@@ -2119,7 +2121,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UserEditProfile(
+                                    builder: (context) => EditProfile(
                                       touserid: id,
                                     ),
                                   ),
@@ -2192,7 +2194,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 margin: const EdgeInsets.only(right: 5),
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(20, 5, 20, 4),
+                                  const EdgeInsets.fromLTRB(20, 5, 20, 4),
                                   child: Text(
                                     tags[index],
                                     style: TextStyle(color: Colors.black),
@@ -2313,39 +2315,39 @@ class RenderBroadcast extends State<LiveRoom>
                           children: <Widget>[
                             common.userTypeGlob == 'broad'
                                 ? RaisedButton.icon(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(18.0),
-                                      side: BorderSide(color: Colors.white),
-                                    ),
-                                    color: Colors.white,
-                                    label: Text(
-                                      'Call',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    icon: Icon(
-                                      Icons.call,
-                                      color: Colors.green,
-                                      size: 18,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      common.publishMessage(
-                                          data['username'],
-                                          "£01GuestInvite01£*£" +
-                                              id +
-                                              "£*£" +
-                                              common.broadcasterId.toString() +
-                                              "£*£" +
-                                              data['profileName'] +
-                                              "£*£" +
-                                              data['username'] +
-                                              "£*£" +
-                                              data['profile_pic'] +
-                                              "£*£" +
-                                              data['level']);
-                                    },
-                                  )
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                new BorderRadius.circular(18.0),
+                                side: BorderSide(color: Colors.white),
+                              ),
+                              color: Colors.white,
+                              label: Text(
+                                'Call',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              icon: Icon(
+                                Icons.call,
+                                color: Colors.green,
+                                size: 18,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                common.publishMessage(
+                                    data['username'],
+                                    "£01GuestInvite01£*£" +
+                                        id +
+                                        "£*£" +
+                                        common.broadcasterId.toString() +
+                                        "£*£" +
+                                        data['profileName'] +
+                                        "£*£" +
+                                        data['username'] +
+                                        "£*£" +
+                                        data['profile_pic'] +
+                                        "£*£" +
+                                        data['level']);
+                              },
+                            )
                                 : Container(),
                             RaisedButton.icon(
                               shape: RoundedRectangleBorder(
@@ -2367,7 +2369,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChatHome(),
+                                    builder: (context) => ChatScreen(peerId:"0",peerAvatar:data['profile_pic'],peerName:data['profileName']),
                                   ),
                                 );
                               },
@@ -2390,6 +2392,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 size: 18,
                               ),
                               onPressed: () {
+                                Navigator.pop(context);
                                 userRelation(common.userrelation, id, common,
                                     setState, context);
                               },
@@ -2454,6 +2457,7 @@ class RenderBroadcast extends State<LiveRoom>
         var body = data['body'];
         var message = data['body'];
         toast(message, Colors.black);
+        Fluttertoast.showToast(msg: message);
 
         CommonFun().saveShare('friends', body['friends']);
         CommonFun().saveShare('followers', body['followers']);
@@ -2477,6 +2481,7 @@ class RenderBroadcast extends State<LiveRoom>
           common.userrelation = relationInt;
           common.relationImage = image;
         });
+
       }
     });
   }
@@ -2555,23 +2560,23 @@ class RenderBroadcast extends State<LiveRoom>
               ),
               common.userTypeGlob == 'broad'
                   ? SimpleDialogOption(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        userKick(
-                            common.blockInt, id, common, setState, context);
-                      },
-                      child: Text('KickOut'),
-                    )
+                onPressed: () {
+                  Navigator.pop(context);
+                  userKick(
+                      common.blockInt, id, common, setState, context);
+                },
+                child: Text('KickOut'),
+              )
                   : Container(),
               common.userTypeGlob == 'broad'
                   ? SimpleDialogOption(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        userTextRelation(
-                            common.textInt, id, common, setState, context);
-                      },
-                      child: Text(common.textStatus),
-                    )
+                onPressed: () {
+                  Navigator.pop(context);
+                  userTextRelation(
+                      common.textInt, id, common, setState, context);
+                },
+                child: Text(common.textStatus),
+              )
                   : Container()
             ],
           );
@@ -2687,7 +2692,7 @@ class RenderBroadcast extends State<LiveRoom>
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    "ID 125005",
+                    "ID "+common.broadcasterId.toString(),
                     style: Theme.of(context)
                         .textTheme
                         .subtitle
@@ -2991,17 +2996,17 @@ class RenderBroadcast extends State<LiveRoom>
                           final text =
                               'Flutter is Google’s portable UI toolkit for building beautiful, natively-compiled applications for mobile, web, and desktop from a single codebase.';
                           final result =
-                              await SocialSharePlugin.shareToTwitterLink(
-                                  text: text,
-                                  url: url,
-                                  onSuccess: (_) {
-                                    print('TWITTER SUCCESS');
-                                    return;
-                                  },
-                                  onCancel: () {
-                                    print('TWITTER CANCELLED');
-                                    return;
-                                  });
+                          await SocialSharePlugin.shareToTwitterLink(
+                              text: text,
+                              url: url,
+                              onSuccess: (_) {
+                                print('TWITTER SUCCESS');
+                                return;
+                              },
+                              onCancel: () {
+                                print('TWITTER CANCELLED');
+                                return;
+                              });
                           print(result);
                         },
                       ),
@@ -3019,7 +3024,7 @@ class RenderBroadcast extends State<LiveRoom>
                           final quote =
                               'Flutter is Google’s portable UI toolkit for building beautiful, natively-compiled applications for mobile, web, and desktop from a single codebase.';
                           final result =
-                              await SocialSharePlugin.shareToFeedFacebookLink(
+                          await SocialSharePlugin.shareToFeedFacebookLink(
                             quote: quote,
                             url: url,
                             onSuccess: (_) {
@@ -3104,7 +3109,7 @@ class RenderBroadcast extends State<LiveRoom>
                     padding: EdgeInsets.only(right: 10),
                     child: Row(
                       mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween, // added line
+                      MainAxisAlignment.spaceBetween, // added line
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         GestureDetector(
@@ -3199,13 +3204,15 @@ class RenderBroadcast extends State<LiveRoom>
   }
 
   dynamic stopAnimation() {
-    common.animationController.stop();
-    common.normalleft1controller.stop();
-    common.normalleft2controller.stop();
-    common.bullet1controller.stop();
-    common.bullet2controller.stop();
-    common.bullet3controller.stop();
-    common.arrivedMessageController.stop();
-    common.timerController.stop();
+    try {
+      common.animationController.stop();
+      common.normalleft1controller.stop();
+      common.normalleft2controller.stop();
+      common.bullet1controller.stop();
+      common.bullet2controller.stop();
+      common.bullet3controller.stop();
+      common.arrivedMessageController.stop();
+      common.timerController.stop();
+    } catch (e) {}
   }
 }
