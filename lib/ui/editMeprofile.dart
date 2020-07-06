@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:card_settings/helpers/converter_functions.dart';
 import 'package:card_settings/widgets/action_fields/card_settings_button.dart';
@@ -16,8 +17,11 @@ import 'package:card_settings/widgets/text_fields/card_settings_text.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:honeybee/constant/common.dart';
+import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/model/model.dart';
 import 'package:honeybee/model/results.dart';
+import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:intl/intl.dart';
 
 typedef LabelledValueChanged<T, U> = void Function(T label, U value);
@@ -38,11 +42,80 @@ class EditProfileState extends State<EditProfile> {
 
   final String touserid;
 
+  var profileName="";
+  var referenceId="";
+  var userid="";
+
+  UserData uData = UserData();
+  var name = "";
+  var gender = "Female.png";
+  var level = "";
+  var fans = "";
+  var overallgold = "";
+  var friends = "";
+  var followers = "";
+  var country = "India";
+  bool loader = true;
+  var profilePic = "";
+  var refrenceId = "";
+  var status = "";
+  var agehide;
+  var genderhide;
+  var dobhide;
+  var dob;
+  var age;
+  var idhide;
+
   PonyModel _ponyModel;
   bool loaded = false;
 
   @override
   void initState() {
+
+    dataGet();
+
+    var params = "action=fullProfile&user_id=" + touserid.toString();
+    makeGetRequest("user", params, 0, context).then((response) {
+      var res = jsonDecode(response);
+      var data = res['body'];
+      print(data);
+      setState(() {
+        status = data['status'];
+        dob = data['date_of_birth'];
+        age = data['age'];
+        agehide = data['is_the_age_hidden'];
+        genderhide = data['is_the_gender_hide'];
+        dobhide = data['is_the_dob_hidden'];
+        idhide = data['is_the_user_id_hidden'];
+        profilePic = data['profile_pic'];
+        name = data['profileName'];
+        friends = data['friends'];
+        followers = data['followers'];
+        fans = data['fans'];
+        overallgold = data['over_all_gold'];
+        gender = "Female.png";
+        level = data['level'];
+        age = data['age'];
+        name = data['profileName'];
+        if (data['gender'] == "male") gender = "male.jpg";
+        country = data['country'];
+        profilePic = data['profile_pic'];
+        refrenceId = data['reference_user_id'];
+        if (data['gender'] == "male") gender = "male.jpg";
+        uData.userrelation = data['userRelationship'];
+        if (uData.userrelation == null) uData.userrelation = 0;
+        uData.relationData = "Follow";
+        uData.relationImage = Icons.add;
+        if (uData.userrelation == 1) {
+          uData.relationData = 'Unfollow';
+          uData.relationImage = Icons.remove;
+        } else if (uData.userrelation == 3) {
+          uData.relationImage = Icons.swap_horiz;
+          uData.relationData = 'Friend';
+        }
+        loader = false;
+      });
+    });
     super.initState();
 
     initModel();
@@ -70,6 +143,19 @@ class EditProfileState extends State<EditProfile> {
 
   final FocusNode _nameNode = FocusNode();
   final FocusNode _descriptionNode = FocusNode();
+
+  void dataGet() async {
+    print(await CommonFun().getStringData('profile_pic'));
+    profileName = await CommonFun().getStringData('profileName');
+    referenceId = await CommonFun().getStringData('reference_user_id');
+    userid = await CommonFun().getStringData('user_id');
+    level = await CommonFun().getStringData('level');
+    profilePic = await CommonFun().getStringData('profile_pic');
+
+    setState(() {
+      loader = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +337,7 @@ class EditProfileState extends State<EditProfile> {
     return CardSettingsParagraph(
       key: _descriptionlKey,
       label: 'Description',
-      initialValue: _ponyModel.description,
+      initialValue: profileName,
       numberOfLines: lines,
       focusNode: _descriptionNode,
       onSaved: (value) => _ponyModel.description = value,
@@ -295,7 +381,7 @@ class EditProfileState extends State<EditProfile> {
       key: _nameKey,
       label: 'Name',
       hintText: 'something cute...',
-      initialValue: _ponyModel.name,
+      initialValue: profileName,
       requiredIndicator: Text('*', style: TextStyle(color: Colors.red)),
       autovalidate: _autoValidate,
       focusNode: _nameNode,
@@ -305,12 +391,11 @@ class EditProfileState extends State<EditProfile> {
         if (value == null || value.isEmpty) return 'Name is required.';
         return null;
       },
-      onSaved: (value) => _ponyModel.name = value,
+      onSaved: (value) => name = value,
       onChanged: (value) {
         setState(() {
-          _ponyModel.name = value;
+          name = value;
         });
-
       },
     );
   }

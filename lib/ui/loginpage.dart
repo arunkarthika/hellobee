@@ -230,8 +230,8 @@ class _LoginPageState extends State<LoginPage> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                        onPressed: () {
-                          FirebaseAuthUi.instance().launchAuth([
+                        onPressed: () async  {
+                          await FirebaseAuthUi.instance().launchAuth([
                             AuthProvider.facebook(),
                           ]).then((firebaseUser) {
                             print("firebaseUser");
@@ -305,7 +305,8 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: EdgeInsets.only(top: 20.0, right: 40.0,left: 10.0),
                     child: GestureDetector(
-                      onTap: () =>   FirebaseAuthUi.instance().launchAuth([
+                    onTap: () async {
+                      await FirebaseAuthUi.instance().launchAuth([
                         AuthProvider.twitter(),
                       ]).then((firebaseUser) {
                         print("firebaseUser");
@@ -313,14 +314,15 @@ class _LoginPageState extends State<LoginPage> {
                         print(firebaseUser.email);
                         print(firebaseUser.phoneNumber);
                         print(firebaseUser.photoUri);
-                         dataProccessor(
-                             firebaseUser.displayName,
-                             firebaseUser.email,
-                             "",
-                             firebaseUser.photoUri,
-                             firebaseUser.uid,
-                             "twitter");
-                      }),
+                        dataProccessor(
+                            firebaseUser.displayName,
+                            firebaseUser.email,
+                            "",
+                            firebaseUser.photoUri,
+                            firebaseUser.uid,
+                            "twitter");
+                      });
+                    },
                       child: Container(
                           child: Image(
                             width: 40.0,

@@ -1,0 +1,7 @@
+<resources>
+ <string name="app_name">Hello Bee</string>
+ <string name="facebook_application_id" translatable="false" >1515524751939285</string>
+ <string name="fb_login_protocol_scheme" translatable="false">fb1515524751939285</string>
+ <string name="twitter_consumer_key" translatable="false">Pxs3CpZ3sQlKDYAJtxh9CjEtC</string>
+ <string name="twitter_consumer_secret" translatable="false">NEcJhoAJs6TVFlsBJihh5pjcGkcv8v1uBhmFP3JiqMGDmLxR8u</string>
+</resources>

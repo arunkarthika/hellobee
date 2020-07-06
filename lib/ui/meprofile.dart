@@ -15,7 +15,6 @@ class MeProfile extends StatefulWidget {
       : super(key: key);
 
   final String touserid;
-
   _EditProfileState createState() => _EditProfileState( touserid: touserid);
 
 }
@@ -96,6 +95,8 @@ class _EditProfileState extends State<MeProfile>  {
         loader = false;
       });
     });
+
+
     super.initState();
   }
 
@@ -471,6 +472,7 @@ class _EditProfileState extends State<MeProfile>  {
       ),
     );
   }
+
   _showMoreOption(BuildContext context) {
     showDialog<Dialog>(
         context: context,

@@ -213,7 +213,7 @@ void onBeautification(context, common) {
                         "None",
                         style: Theme.of(context)
                             .textTheme
-                            .subtitle1
+                            .subtitle
                             .copyWith(color: Colors.white),
                       ),
                     ),
@@ -232,7 +232,7 @@ void onBeautification(context, common) {
                         "Sharpen",
                         style: Theme.of(context)
                             .textTheme
-                            .subtitle1
+                            .subtitle
                             .copyWith(color: Colors.white),
                       ),
                     ),
@@ -251,7 +251,7 @@ void onBeautification(context, common) {
                         "Polish",
                         style: Theme.of(context)
                             .textTheme
-                            .subtitle1
+                            .subtitle
                             .copyWith(color: Colors.white),
                       ),
                     ),
@@ -270,7 +270,7 @@ void onBeautification(context, common) {
                         "Whiten",
                         style: Theme.of(context)
                             .textTheme
-                            .subtitle1
+                            .subtitle
                             .copyWith(color: Colors.white),
                       ),
                     ),
@@ -289,7 +289,7 @@ void onBeautification(context, common) {
                         "SkinWhiten",
                         style: Theme.of(context)
                             .textTheme
-                            .subtitle1
+                            .subtitle
                             .copyWith(color: Colors.white),
                       ),
                     ),
@@ -323,7 +323,7 @@ void onInvitaion(context, common) {
                     "Ivitation Request",
                     style: Theme.of(context)
                         .textTheme
-                        .subtitle1
+                        .subtitle
                         .copyWith(color: Colors.white),
                   ),
                 ),
@@ -382,7 +382,7 @@ void onInvitaion(context, common) {
                                                     .inviteRequest[index].name,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .subtitle1
+                                                    .subtitle
                                                     .copyWith(
                                                         color: Colors.white),
                                               ),
@@ -391,7 +391,7 @@ void onInvitaion(context, common) {
                                                     .inviteRequest[index].level,
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .subtitle1
+                                                    .subtitle
                                                     .copyWith(
                                                         color: Colors.white),
                                               ),
@@ -489,7 +489,7 @@ void onInvitaion(context, common) {
                               "No Invitation",
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle1
+                                  .subtitle
                                   .copyWith(color: Colors.white),
                             ),
                           ),
@@ -530,7 +530,7 @@ void giftShow(context, common) {
                                 "Animation GIFTS",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1
+                                    .subtitle
                                     .copyWith(
                                       color: Colors.white,
                                       fontSize: 14,
@@ -542,7 +542,7 @@ void giftShow(context, common) {
                                 "Sticker GIFTS",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1
+                                    .subtitle
                                     .copyWith(
                                       color: Colors.white,
                                       fontSize: 14,
@@ -696,7 +696,7 @@ void giftShow(context, common) {
                                             data['name'],
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .subtitle1
+                                                .subtitle
                                                 .copyWith(color: Colors.amber),
                                           ),
                                           SizedBox(
@@ -721,7 +721,7 @@ void giftShow(context, common) {
                                                 data['price'],
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .subtitle1
+                                                    .subtitle
                                                     .copyWith(
                                                       color: const Color(
                                                           0xFF00DFAB),
@@ -826,7 +826,7 @@ void giftShow(context, common) {
                                             data['name'],
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .subtitle1
+                                                .subtitle
                                                 .copyWith(color: Colors.amber),
                                           ),
                                           SizedBox(
@@ -851,7 +851,7 @@ void giftShow(context, common) {
                                                 data['price'],
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .subtitle1
+                                                    .subtitle
                                                     .copyWith(
                                                       color: const Color(
                                                           0xFF00DFAB),
@@ -909,7 +909,7 @@ void giftShow(context, common) {
                                       common.diamond.toString(),
                                       style: Theme.of(context)
                                           .textTheme
-                                          .subtitle1
+                                          .subtitle
                                           .copyWith(
                                             color: const Color(0xFF00DFAB),
                                             fontSize: 14,
@@ -955,7 +955,7 @@ void giftShow(context, common) {
                                               },
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .subtitle1
+                                                  .subtitle
                                                   .copyWith(
                                                       color: Colors.white),
                                               value:
@@ -995,7 +995,7 @@ void giftShow(context, common) {
                                           "SEND",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .subtitle1
+                                              .subtitle
                                               .copyWith(
                                                   color: Colors.white,
                                                   fontSize: 14),
@@ -1099,7 +1099,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList1[1],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 14),
                           ),
                           SizedBox(
@@ -1111,7 +1111,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList1[2],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 16),
                           )
                         ],
@@ -1143,7 +1143,7 @@ Widget showNormalGift(context, common) {
                         common.normalList1.length == 0
                             ? "x0"
                             : "x" + common.normalList1[4],
-                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        style: Theme.of(context).textTheme.subtitle.copyWith(
                             color: const Color(0xFFF4CD3A),
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
@@ -1214,7 +1214,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList3[1],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 14),
                           ),
                           SizedBox(
@@ -1226,7 +1226,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList3[2],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 16),
                           )
                         ],
@@ -1259,7 +1259,7 @@ Widget showNormalGift(context, common) {
                         common.normalList3.length == 0
                             ? "x0"
                             : "x" + common.normalList3[4],
-                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        style: Theme.of(context).textTheme.subtitle.copyWith(
                             color: const Color(0xFFF4CD3A),
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
@@ -1308,7 +1308,7 @@ Widget showNormalGift(context, common) {
                         common.normalList2.length == 0
                             ? "0x"
                             : common.normalList2[4] + "x",
-                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        style: Theme.of(context).textTheme.subtitle.copyWith(
                             color: const Color(0xFFF4CD3A),
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
@@ -1347,7 +1347,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList2[1],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 14),
                           ),
                           SizedBox(
@@ -1359,7 +1359,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList2[2],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 16),
                           )
                         ],
@@ -1425,7 +1425,7 @@ Widget showNormalGift(context, common) {
                         common.normalList4.length == 0
                             ? "0x"
                             : common.normalList4[4] + "x",
-                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        style: Theme.of(context).textTheme.subtitle.copyWith(
                             color: const Color(0xFFF4CD3A),
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
@@ -1464,7 +1464,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList4[1],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 14),
                           ),
                           SizedBox(
@@ -1476,7 +1476,7 @@ Widget showNormalGift(context, common) {
                                 : common.normalList4[2],
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1
+                                .subtitle
                                 .copyWith(color: Colors.white, fontSize: 16),
                           )
                         ],
@@ -1563,7 +1563,7 @@ Widget arrivedShow(common) {
                                         "\n\n has Arrived",
                                     style: Theme.of(context)
                                         .textTheme
-                                        .subtitle1
+                                        .subtitle
                                         .copyWith(
                                             color: Colors.white, fontSize: 14),
                                   ),
@@ -1654,7 +1654,7 @@ Widget buildInfoList(common) {
                                 common.chatlist[i].level,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1
+                                    .subtitle
                                     .copyWith(
                                         color: Colors.white, fontSize: 12),
                               ),
@@ -1672,7 +1672,7 @@ Widget buildInfoList(common) {
                         textAlign: TextAlign.start,
                         style: Theme.of(context)
                             .textTheme
-                            .subtitle1
+                            .subtitle
                             .copyWith(color: Colors.white, fontSize: 14),
                         overflow: TextOverflow.clip,
                       ),
@@ -1686,7 +1686,7 @@ Widget buildInfoList(common) {
                   common.chatlist[i].txtmsg,
                   style: Theme.of(context)
                       .textTheme
-                      .subtitle1
+                      .subtitle
                       .copyWith(color: Colors.white, fontSize: 12),
                 ),
               ),
@@ -1694,6 +1694,49 @@ Widget buildInfoList(common) {
     },
   );
 }
+class AnimatedCountSecond extends ImplicitlyAnimatedWidget {
+  final int count;
+
+  AnimatedCountSecond(
+      {Key key,
+        @required this.count,
+        @required Duration duration,
+        Curve curve = Curves.linear})
+      : super(duration: duration, curve: curve, key: key);
+
+  @override
+  ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() =>
+      _AnimatedCountSecondState();
+}
+class _AnimatedCountSecondState
+    extends AnimatedWidgetBaseState<AnimatedCountSecond> {
+  IntTween _count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _count.evaluate(animation).toString(),
+      style: buildTextStyle(
+          context, 16, FontWeight.bold, Colors.amber, FontStyle.italic),
+    );
+  }
+
+  @override
+  void forEachTween(TweenVisitor visitor) {
+    _count = visitor(
+        _count, widget.count, (dynamic value) => IntTween(begin: value));
+  }
+
+  TextStyle buildTextStyle(BuildContext context, double size,
+      FontWeight fontWeight, Color color, FontStyle fontStyle) {
+    return Theme.of(context).textTheme.subtitle1.copyWith(
+        color: color,
+        fontSize: size,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle);
+  }
+}
+
 
 void sendGift(
     giftName, message, giftValue, giftCount, setState, context, common) {
@@ -2077,7 +2120,7 @@ Widget bulletMessageShow(common) {
                                   : common.bullet1List[1],
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle1
+                                  .subtitle
                                   .copyWith(color: Colors.white, fontSize: 14),
                             ),
                             SizedBox(
@@ -2089,7 +2132,7 @@ Widget bulletMessageShow(common) {
                                   : common.bullet1List[2],
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle1
+                                  .subtitle
                                   .copyWith(color: Colors.white, fontSize: 16),
                             )
                           ],
@@ -2148,7 +2191,7 @@ Widget bulletMessageShow(common) {
                                     : common.bullet2List[1],
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1
+                                    .subtitle
                                     .copyWith(
                                         color: Colors.white, fontSize: 12),
                               ),
@@ -2161,7 +2204,7 @@ Widget bulletMessageShow(common) {
                                     : common.bullet2List[2],
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1
+                                    .subtitle
                                     .copyWith(
                                         color: Colors.white, fontSize: 16),
                               )
@@ -2221,7 +2264,7 @@ Widget bulletMessageShow(common) {
                                     : common.bullet3List[1],
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1
+                                    .subtitle
                                     .copyWith(
                                         color: Colors.white, fontSize: 12),
                               ),
@@ -2234,7 +2277,7 @@ Widget bulletMessageShow(common) {
                                     : common.bullet3List[2],
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1
+                                    .subtitle
                                     .copyWith(
                                         color: Colors.white, fontSize: 16),
                               )
