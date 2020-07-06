@@ -500,9 +500,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               controller: bottomController,
             ),
             bottomNavigationBar: BottomAppBar(
-//              color: Colors.orangeAccent[100],
               elevation: 40.0,
-//              shape: CircularNotchedRectangle(),
               child: TabBar(
                 tabs: [
                   Tab(
