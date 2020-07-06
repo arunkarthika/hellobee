@@ -45,7 +45,7 @@ class Common {
   int diamond = BliveConfig.instance.diamond;
   int c = 0;
   int userrelation = 0;
-  int broadcasterId = 0;
+  String broadcasterId = "0";
 
   double widthScreen;
 
@@ -126,36 +126,84 @@ class Common {
   List bullet2List = [];
   List bullet3List = [];
   List guestData=<GuestData>[];
+
+  String giftUserId="";
   Common() {
     print(name);
   }
-  void dataGet() async {
-    print("===============first 2==================");
-    name = await CommonFun().getStringData('profileName');
-    profilePic = await CommonFun().getStringData('profile_pic');
-    level = await CommonFun().getStringData('level');
-    username = await CommonFun().getStringData('username');
-    diamond = int.tryParse(await CommonFun().getStringData("diamond"));
-    entranceEffect = await CommonFun().getStringData('entranceEffect');
-    broadcastUsername = await CommonFun().getStringData('broadcastUsername');
-    userTypeGlob = await CommonFun().getStringData('userType');
-    userId = await CommonFun().getStringData('user_id');
-    broadcasterId =
-        int.tryParse(await CommonFun().getStringData('broadcasterId'));
-
-    print(
-        '---------------------- listData broadcastUsername-------------------------');
-    print(broadcastUsername);
-    print(
-        '---------------------- listData entranceEffect-------------------------');
-    print(userTypeGlob);
-    if (userTypeGlob == "broad") {
-      broadcasterProfileName = name;
-      broadprofilePic = profilePic;
-      gold = int.tryParse(await CommonFun().getStringData('over_all_gold'));
-    }
-    print("===============first 3==================");
+  void dataGet() {
+    CommonFun().getStringData('profileName').then((value) {
+      name = value;
+      CommonFun().getStringData('profile_pic').then((value) {
+        profilePic = value;
+        CommonFun().getStringData('level').then((value) {
+          level = value;
+          CommonFun().getStringData('username').then((value) {
+            username = value;
+            CommonFun().getStringData('diamond').then((value) {
+              diamond = int.tryParse(value);
+                CommonFun().getStringData('entranceEffect').then((value) {
+                  entranceEffect = value;
+                  CommonFun().getStringData('broadcastUsername').then((value) {
+                    broadcastUsername = value;
+                    CommonFun().getStringData('userType').then((value) {
+                      userTypeGlob = value;
+                      CommonFun().getStringData('user_id').then((value) {
+                        userId = value;
+                        CommonFun()
+                            .getStringData('broadcasterId')
+                            .then((value) {
+                          broadcasterId = value;
+                          giftUserId = value;
+                          if (userTypeGlob == 'broad') {
+                            broadcasterProfileName = name;
+                            broadprofilePic = profilePic;
+                            CommonFun()
+                                .getStringData('over_all_gold')
+                                .then((value) {
+                              gold = int.tryParse(value);
+                            });
+                          }
+                          giftGet();
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
   }
+
+//  void dataGet() async {
+//    print("===============first 2==================");
+//    name = await CommonFun().getStringData('profileName');
+//    profilePic = await CommonFun().getStringData('profile_pic');
+//    level = await CommonFun().getStringData('level');
+//    username = await CommonFun().getStringData('username');
+//    diamond = int.tryParse(await CommonFun().getStringData("diamond"));
+//    entranceEffect = await CommonFun().getStringData('entranceEffect');
+//    broadcastUsername = await CommonFun().getStringData('broadcastUsername');
+//    userTypeGlob = await CommonFun().getStringData('userType');
+//    userId = await CommonFun().getStringData('user_id');
+//    broadcasterId =
+//        int.tryParse(await CommonFun().getStringData('broadcasterId'));
+//
+//    print(
+//        '---------------------- listData broadcastUsername-------------------------');
+//    print(broadcastUsername);
+//    print(
+//        '---------------------- listData entranceEffect-------------------------');
+//    print(userTypeGlob);
+//    if (userTypeGlob == "broad") {
+//      broadcasterProfileName = name;
+//      broadprofilePic = profilePic;
+//      gold = int.tryParse(await CommonFun().getStringData('over_all_gold'));
+//    }
+//    print("===============first 3==================");
+//  }
 
   giftGet() {
     print("===============first 4==================");

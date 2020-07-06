@@ -90,7 +90,7 @@ class AudioStory extends StatelessWidget {
                     image: NetworkImage(
                       img,
                     ),
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -124,7 +124,7 @@ class AudioStory extends StatelessWidget {
                     image: NetworkImage(
                       img,
                     ),
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

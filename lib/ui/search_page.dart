@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
+import 'package:popup_menu/popup_menu.dart';
 
 class ListPersonPage extends StatefulWidget {
   ListPersonPage({Key key, @required this.tosearch, @required this.touserid})
@@ -29,6 +31,10 @@ class _ListPersonPageState extends State<ListPersonPage> {
   int page = 1;
   int lastpage = 0;
   var userId;
+  String gender = 'all';
+  var types = 'searchList';
+  GlobalKey btnKey = GlobalKey();
+  var menu = PopupMenu();
   final Shader linearGradient = LinearGradient(
     colors: <Color>[Colors.pink, Colors.green],
   ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));
@@ -51,7 +57,6 @@ class _ListPersonPageState extends State<ListPersonPage> {
     print(touserid);
     appBarTitle = Text(tosearch);
     userId = touserid.toString();
-    var types = "searchList";
     switch (tosearch) {
       case 'Fans':
         types = "fans";
@@ -65,6 +70,10 @@ class _ListPersonPageState extends State<ListPersonPage> {
       case 'Audiences':
         types = "audience";
         break;
+      case 'Block List':
+        types = 'blocked';
+        break;
+
       default:
         break;
     }
@@ -89,6 +98,9 @@ class _ListPersonPageState extends State<ListPersonPage> {
             case 'Audiences':
               types = "audience";
               break;
+            case 'Block List':
+              types = 'blocked';
+              break;
 
             default:
               break;
@@ -104,44 +116,56 @@ class _ListPersonPageState extends State<ListPersonPage> {
 
   @override
   Widget build(BuildContext context) {
+    PopupMenu.context = context;
     return Scaffold(
       appBar: AppBar(
         elevation: 0.1,
+        backgroundColor: Colors.deepOrange,
         title: appBarTitle,
         actions: <Widget>[
-          IconButton(
-            icon: actionIcon,
-            onPressed: () {
-              setState(() {
-                if (this.actionIcon.icon == Icons.search) {
-                  this.actionIcon = Icon(Icons.close);
-                  this.appBarTitle = TextField(
-                    onEditingComplete: () {
-                      _filteredList.clear();
-                      listData("searchList", page);
-                    },
-                    controller: controller,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search, color: Colors.white),
-                      hintText: "Search...",
-                      hintStyle: TextStyle(color: Colors.white),
-                    ),
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                    autofocus: true,
-                    cursorColor: Colors.white,
-                  );
-                } else {
-                  this.actionIcon = Icon(Icons.search);
-                  this.appBarTitle = Text(tosearch);
-                  _filteredList.clear();
-                  controller.clear();
-                  listData("searchList", 1);
-                }
-              });
-            },
-          ),
+          types == 'searchList'
+              ? IconButton(
+                  icon: actionIcon,
+                  onPressed: () {
+                    setState(() {
+                      if (actionIcon.icon == Icons.search) {
+                        actionIcon = Icon(Icons.close);
+                        appBarTitle = TextField(
+                          onEditingComplete: () {
+                            _filteredList = [];
+                            listData('searchList', page);
+                          },
+                          controller: controller,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.search, color: Colors.white),
+                            hintText: 'Search...',
+                            hintStyle: TextStyle(color: Colors.white),
+                          ),
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                          autofocus: true,
+                          cursorColor: Colors.white,
+                        );
+                      } else {
+                        actionIcon = Icon(Icons.search);
+                        appBarTitle = Text(tosearch);
+                        _filteredList = [];
+                        controller.text = '';
+                        page = 1;
+                        listData('searchList', page);
+                      }
+                    });
+                  },
+                )
+              : Container(),
+          types == 'searchList'
+              ? IconButton(
+                  key: btnKey,
+                  onPressed: customBackground,
+                  icon: Icon(Icons.filter_list, color: Colors.white),
+                )
+              : Container(),
         ],
       ),
       body: !isLoading
@@ -220,10 +244,20 @@ class _ListPersonPageState extends State<ListPersonPage> {
                               ),
                               RaisedButton(
                                 onPressed: () {
-                                  userRelation(
+                                  if (types == 'blocked') {
+                                    userBlockRelation(
+                                        _filteredList[index].userrelation,
+                                        _filteredList[index].userid,
+                                        index,
+                                        setState,
+                                        context);
+                                  } else {
+                                    userRelation(
                                       _filteredList[index].userrelation,
                                       _filteredList[index].userid,
-                                      index);
+                                      index,
+                                    );
+                                  }
                                 },
                                 textColor: Colors.white,
                                 padding: const EdgeInsets.all(0.0),
@@ -232,15 +266,18 @@ class _ListPersonPageState extends State<ListPersonPage> {
                                 child: Container(
                                   width: 100,
                                   decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: <Color>[
-                                          Color(0xFF0D47A1),
-                                          Color(0xFF1976D2),
-                                          Color(0xFF42A5F5),
-                                        ],
-                                      ),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(80.0))),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment(0.8, 0.0),
+                                      // 10% of the width, so there are ten blinds.
+                                      colors: [Colors.red, Colors.orangeAccent],
+                                      // whitish to gray
+                                      tileMode: TileMode
+                                          .mirror, // repeats the gradient over the canvas
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(80.0)),
+                                  ),
                                   padding:
                                       const EdgeInsets.fromLTRB(20, 10, 20, 10),
                                   child: Row(
@@ -250,7 +287,7 @@ class _ListPersonPageState extends State<ListPersonPage> {
                                         color: Colors.white,
                                       ),
                                       Text(
-                                        "Unblock",
+                                        _filteredList[index].relationName,
                                         style: TextStyle(
                                             fontSize: 8, color: Colors.white),
                                       ),
@@ -273,48 +310,55 @@ class _ListPersonPageState extends State<ListPersonPage> {
     );
   }
 
-  listData(type, page) {
-    // _filteredList.clear();
-    String endPoint = "user/List";
-    String params =
-        "length=10&page=$page&user_id=" + userId + "&action=" + type;
-    print(type);
-    if (type == "searchList") {
-      print("==========controller.text=====================");
-      print(controller.text);
-      var search = controller.text == "" || controller.text == null
-          ? "1"
+  void onClickMenu(MenuItemProvider item) {
+    controller.text = '';
+    gender = item.menuTitle;
+    _filteredList = [];
+    page = 1;
+    listData('searchList', page);
+  }
+
+  dynamic listData(type, page) {
+    var endPoint = 'user/List';
+    var params = 'length=10&page=$page&user_id=' + userId + '&action=' + type;
+    if (type == 'searchList') {
+      var search = controller.text == '' || controller.text == null
+          ? '1'
           : controller.text;
-      endPoint = "user/search";
-      params = "length=10&page=$page&gender=all&searchTerm=" + search;
-      // print(type);
+      endPoint = 'user/search';
+      params =
+          'length=10&page=$page&gender=' + gender + '&searchTerm=' + search;
     }
-    print(params);
     makeGetRequest(endPoint, params, 0, context).then((response) {
       var data = (response).trim();
       var pic = json.decode(data);
-      lastpage = pic['body']["last_page"];
+      lastpage = pic['body']['last_page'];
       var res = pic['body'][type];
-      if (type == "audience") {
-        res = pic['body']['audience']['viewers_list'];
-      }
       if (res.length > 0) {
+        var indexData = 1;
         for (dynamic v in res) {
-          var relation = v['userRelation'];
-          relation = relation == null ? 0 : relation;
-          IconData icon = Icons.add;
-          var name = "Unblock";
-          print("relation");
-          print(relation);
-          if (relation == 1) {
-            name = "Unfollow";
-            icon = Icons.remove;
-          } else if (relation == 3) {
-            name = "Friend";
-            icon = Icons.swap_horiz;
+          indexData = 1;
+          var icon = Icons.add;
+          var name = 'Follow';
+          if (type == 'blocked') {
+            icon = Icons.radio_button_unchecked;
+            name = 'Unblock';
+          } else {
+            var relation = v['userRelation'];
+            indexData = v['userRelation'];
+            relation = relation ?? 0;
+            icon = Icons.add;
+            name = 'Follow';
+            if (relation == 1) {
+              name = 'Unfollow';
+              icon = Icons.remove;
+            } else if (relation == 3) {
+              name = 'Friend';
+              icon = Icons.swap_horiz;
+            }
           }
-          Person person = Person(v["profileName"], v["user_id"], v["level"],
-              v['userRelation'], v['profile_pic'], name, icon);
+          var person = Person(v['profileName'], v['user_id'], v['level'],
+              indexData, v['profile_pic'], name, icon);
           _filteredList.add(person);
         }
       }
@@ -323,6 +367,40 @@ class _ListPersonPageState extends State<ListPersonPage> {
           isLoading = true;
         });
       }
+    });
+  }
+
+  void userBlockRelation(type, id, index, setState, context) {
+    var endPoint = 'user/userRelation';
+    var action = '';
+    var returnData = '';
+    var image = Icons.add;
+    var relationInt = 0;
+    switch (type) {
+      case 0:
+        action = 'block';
+        image = Icons.radio_button_unchecked;
+        returnData = 'Unblock';
+        relationInt = 1;
+        break;
+      case 1:
+        action = 'unblock';
+        image = Icons.block;
+        returnData = 'Block';
+        relationInt = 0;
+        break;
+      default:
+    }
+    var params = {
+      'action': action,
+      'user_id': id.toString(),
+    };
+    makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
+      setState(() {
+        _filteredList[index].relationName = returnData;
+        _filteredList[index].userrelation = relationInt;
+        _filteredList[index].icon = image;
+      });
     });
   }
 
@@ -378,6 +456,31 @@ class _ListPersonPageState extends State<ListPersonPage> {
       // userrelation = relationInt;
     });
   }
+
+  void customBackground() {
+    menu = PopupMenu(
+        maxColumn: 3,
+        items: [
+          MenuItem(
+              title: 'Male',
+              image: Image.asset('assets/images/audience/male.png')
+          ),
+          MenuItem(
+              title: 'Female',
+              image: Image.asset('assets/images/audience/Female.png')),
+          MenuItem(
+              title: 'All',
+              image: Image.asset('assets/images/audience/maleandfemale.png')),
+        ],
+        onClickMenu: onClickMenu,
+        stateChanged: stateChanged,
+        onDismiss: onDismiss);
+    menu.show(widgetKey: btnKey);
+  }
+
+  void stateChanged(bool isShow) {}
+
+  void onDismiss() {}
 }
 
 class Person {

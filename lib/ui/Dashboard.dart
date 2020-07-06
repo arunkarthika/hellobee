@@ -3,6 +3,7 @@ import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -22,7 +23,10 @@ import 'package:honeybee/ui/liveroom/liveRoom.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
+import 'package:honeybee/ui/search_page.dart';
+import 'package:honeybee/ui/story.dart';
 import 'package:honeybee/utils/string.dart';
+import 'package:honeybee/widget/mycircleavatar.dart';
 import 'dart:async';
 import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:archive/archive.dart';
@@ -41,6 +45,7 @@ class Dashboard extends StatefulWidget {
 class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   String api = 'https://blive.s3.ap-south-1.amazonaws.com';
   String _appDocsDir;
+
 
   TabController controller, bottomController;
 
@@ -118,8 +123,8 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
     }
   }
 
-  Future<File> _downloadFile(String url, String filename,
-      String _appDocsDir) async {
+  Future<File> _downloadFile(
+      String url, String filename, String _appDocsDir) async {
     var req = await http.Client().get(Uri.parse(url));
     var file = File('$_appDocsDir/$filename');
     return file.writeAsBytes(req.bodyBytes);
@@ -146,6 +151,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   @override
   void initState() {
     Wakelock.disable();
+    inputData();
     path();
     dataGet();
     story();
@@ -180,7 +186,6 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         ZegoScenario.General,
         enablePlatformView: false);
     super.initState();
-
   }
 
   void dataGet() async {
@@ -197,26 +202,32 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   void _handleTabSelection() {
     setState(() {});
   }
+  void inputData() async {
+    var auth=FirebaseAuth.instance;
+
+    final FirebaseUser user = await auth.currentUser();
+    final uid = user.uid;
+    print('firebaseUID'+uid.toString());
+    // here you write the codes to input the data into firestore
+  }
 
   dataProccessor(loader, type) {
-    String endPoint = "user/liveStatus";
+    String endPoint = "user/liveAudioStatus";
     String params = "type=" +
         "audio" +
         "&page=" +
         page.toString() +
         "&length=10&&geo=all&country=India&city=Erode";
-    makeGetRequest(endPoint, params, 0, context).then((response) {
+    makeGetRequest(endPoint, "", 0, context).then((response) {
       var data = (response).trim();
       var d2 = jsonDecode(data);
       if (d2['status'] == 0) {
-        int bodyLength = d2['body']['active_user_details'].length;
+        int bodyLength = d2['body']['audioList'].length;
         if (bodyLength != 0) {
           setState(() {
-            if (type == "audio") {
               activeList = List.from(activeList)
-                ..addAll(d2['body']['active_user_details']['audioLists']);
+                ..addAll(d2['body']['audioList']);
               pageLength = d2['body']['last_page'];
-            }
             merge = 1;
           });
         }
@@ -227,7 +238,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               CommonFun().saveShare('giftVersion', d2['body']['giftVersion']);
               giftVersion = d2['body']['giftVersion'];
               makeGetRequest("user/List",
-                  "user_id=" + "100001" + "&action=giftList", 0, context)
+                      "user_id=" + "100001" + "&action=giftList", 0, context)
                   .then((response) {
                 var data = jsonDecode(response);
                 giftData = data['body']['giftList']['gift_list']['all'];
@@ -327,9 +338,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         primaryColor: Colors.orangeAccent,
         accentColor: Colors.deepOrangeAccent,
         textTheme: GoogleFonts.firaSansCondensedTextTheme(
-          Theme
-              .of(context)
-              .textTheme,
+          Theme.of(context).textTheme,
         ),
       ),
       routes: <String, WidgetBuilder>{'/dashboard': (context) => Dashboard()},
@@ -350,13 +359,12 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          LiveRoom(
-                              userId1: userId,
-                              broadcasterId1: userId,
-                              username1: userName,
-                              userType1: "broad",
-                              broadcastType1: "audio"),
+                      builder: (context) => LiveRoom(
+                          userId1: userId,
+                          broadcasterId1: userId,
+                          username1: userName,
+                          userType1: "broad",
+                          broadcastType1: "audio"),
                     ),
                   );
                 } else {
@@ -421,7 +429,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                       image: CachedNetworkImageProvider(
                                         banner[i]['image'],
                                       ),
-                                      fit: BoxFit.fill,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 );
@@ -441,17 +449,17 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                       Container(
                         width: double.infinity,
                         height: 100,
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(
-                                child: ListView(
-                                  children: <Widget>[
-                                    offerDetails(85),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: ListView(
+                                children: <Widget>[
+                                  offerDetails(85),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                       Expanded(
                         child: TabBarView(
@@ -603,152 +611,154 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   Widget dispyActive(list, viewController) {
     return list.length != 0
         ? Container(
-      width: double.infinity,
-      height: double.infinity,
-      child: GridView.count(
-        controller: viewController,
-        padding: const EdgeInsets.all(2),
-        primary: false,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        crossAxisCount: 2,
-        children: List.generate(
-          list.length,
-              (index) {
-            var live = 'Live';
-            var data = list[index];
-            if (data['status'] == 0) {
-              live = 'offline';
-            }
-            return Container(
-              margin:
-              EdgeInsets.only(top: 1, bottom: 1, left: 1, right: 1),
-              width: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                image: DecorationImage(
-                  image: NetworkImage(data['profile_pic']),
-                  fit: BoxFit.cover,
-                ),
-                gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    stops: [
-                      0.3,
-                      0.9
-                    ],
-                    colors: [
-                      Colors.black,
-                      Colors.orangeAccent,
-                    ]),
-              ),
-              child: Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () async {
-                      var camstatus =
-                      await PermissionFun().cameraPermision();
-                      var micstatus =
-                      await PermissionFun().micPermision();
-                      if (camstatus.toString() ==
-                          "PermissionStatus.granted" &&
-                          micstatus.toString() ==
-                              "PermissionStatus.granted") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                LiveRoom(
-                                  userId1: userId,
-                                  broadcasterId1: data["user_id"].toString(),
-                                  username1: data["username"],
-                                  userType1: "audience",
-                                  broadcastType1: "none",
+            width: double.infinity,
+            height: double.infinity,
+            child: GridView.count(
+              controller: viewController,
+              padding: const EdgeInsets.all(2),
+              primary: false,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              crossAxisCount: 2,
+              children: List.generate(
+                list.length,
+                (index) {
+                  var live = 'Live';
+                  var data = list[index];
+                  if (data['status'] == 0) {
+                    live = 'offline';
+                  }
+                  return Container(
+                    margin:
+                        EdgeInsets.only(top: 1, bottom: 1, left: 1, right: 1),
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      image: DecorationImage(
+                        image: NetworkImage(data['profile_pic']),
+                        fit: BoxFit.cover,
+                      ),
+                      gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          stops: [
+                            0.3,
+                            0.9
+                          ],
+                          colors: [
+                            Colors.black,
+                            Colors.orangeAccent,
+                          ]),
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () async {
+                            var camstatus =
+                                await PermissionFun().cameraPermision();
+                            var micstatus =
+                                await PermissionFun().micPermision();
+                            if (camstatus.toString() ==
+                                    "PermissionStatus.granted" &&
+                                micstatus.toString() ==
+                                    "PermissionStatus.granted") {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LiveRoom(
+                                    userId1: userId,
+                                    broadcasterId1: data["user_id"].toString(),
+                                    username1: data["username"],
+                                    userType1: "audience",
+                                    broadcastType1: "none",
+                                  ),
                                 ),
+                              );
+                            }
+                          },
+                        ),
+                        Positioned(
+                          left: 1,
+                          bottom: -2,
+                          right: 1,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    stops: [
+                                      0.1,
+                                      0.9
+                                    ],
+                                    colors: [
+                                      Colors.black,
+                                      Colors.transparent,
+                                    ])),
+                            child: Container(
+                              padding: EdgeInsets.fromLTRB(5, 10, 2, 10),
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                data['name'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.white, fontSize: 14),
+                              ),
+                            ),
                           ),
-                        );
-                      }
-                    },
-                  ),
-                  Positioned(
-                    left: 1,
-                    bottom: -2,
-                    right: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              stops: [
-                                0.1,
-                                0.9
-                              ],
-                              colors: [
-                                Colors.black,
-                                Colors.transparent,
-                              ])),
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(5, 10, 2, 10),
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          data['profileName'],
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle1
-                              .copyWith(
-                              color: Colors.white, fontSize: 14),
                         ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 2,
-                    left: 5,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent[100],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Container(
-                        width: 30,
-                        alignment: Alignment.center,
-                        child: Text(
-                          live,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle1
-                              .copyWith(
-                              color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold),
+                        Positioned(
+                          top: 2,
+                          left: 5,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent[100],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              width: 30,
+                              alignment: Alignment.center,
+                              child: Text(
+                                live,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 2,
-                    right: 10,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Colors.orangeAccent[100],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      child: Container(
-                        width: 30,
-                        alignment: Alignment.center,
-                        child: Text(
-                          data['viewer_count'].toString()=="null"?"0":data['viewer_count'].toString(),
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subtitle1
-                              .copyWith(
-                              color: Colors.black, fontSize: 12,fontWeight: FontWeight.bold),
+                        Positioned(
+                          top: 2,
+                          right: 10,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent[100],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: Container(
+                              width: 30,
+                              alignment: Alignment.center,
+                              child: Text(
+                                data['viewer_count'].toString() == "null"
+                                    ? "0"
+                                    : data['viewer_count'].toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1
+                                    .copyWith(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
 
 //                  Positioned( top: 2,
 //                    right: 15,
@@ -788,13 +798,13 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
 //                      ),
 //                    ),
 //                  ),
-                ],
+                      ],
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
-    )
+            ),
+          )
         : Container();
   }
 
@@ -859,7 +869,6 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
           ],
         ),
       ),
-
     );
   }
 
@@ -1282,9 +1291,9 @@ class ListItem extends StatelessWidget {
           mapVal.keys.elementAt(0),
           isMap
               ? Text(innerMap.keys.elementAt(0),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white, letterSpacing: 1.2, fontSize: 11))
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white, letterSpacing: 1.2, fontSize: 11))
               : Container(),
           Text(
             innerMap.values.elementAt(0),

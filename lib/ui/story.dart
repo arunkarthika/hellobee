@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:honeybee/utils/colors.dart';
 import 'package:honeybee/utils/string.dart';
+import 'package:honeybee/widget/mycircleavatar.dart';
 
 class Story extends StatelessWidget {
   final widgets = [
@@ -13,6 +13,7 @@ class Story extends StatelessWidget {
     storyOffline(userProfileUrl1),
     storyOnline(userProfileUrl2),
   ];
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -35,18 +36,25 @@ class Story extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
+              gradient: new LinearGradient(
+                  colors: [
+                    const Color(0xFF3366FF),
+                    const Color(0xFF00CCFF),
+                  ],
+                  begin: const FractionalOffset(0.0, 0.0),
+                  end: const FractionalOffset(1.0, 0.0),
+                  stops: [0.0, 1.0],
+                  tileMode: TileMode.clamp),
               color: Colors.orange[800],
               shape: BoxShape.circle,
             ),
-            child:  IconButton(
-                icon: Image.asset(
-                  'assets/login/Logo.png',
-                  fit: BoxFit.cover,
-                ),
-                onPressed: () => {
-
-                },
+            child: IconButton(
+              icon: Image.asset(
+                'assets/login/Logo.png',
+                fit: BoxFit.cover,
               ),
+              onPressed: () => {},
+            ),
           ),
         ],
       ),
@@ -65,12 +73,22 @@ class Story extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
+                  gradient: new LinearGradient(
+                      colors: [
+                        const Color(0xFF3366FF),
+                        const Color(0xFF00CCFF),
+                      ],
+                      begin: const FractionalOffset(0.0, 0.0),
+                      end: const FractionalOffset(1.0, 0.0),
+                      stops: [0.0, 1.0],
+                      tileMode: TileMode.clamp),
+                  color: Colors.orange[800],
                   shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      img,
-                    ),
-                    fit: BoxFit.fill,
+                ),
+                child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  child: MyCircleAvatar(
+                    imgUrl: img,
                   ),
                 ),
               ),
@@ -109,13 +127,10 @@ class Story extends StatelessWidget {
               Container(
                 width: 50,
                 height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      img,
-                    ),
-                    fit: BoxFit.fill,
+                child: CircleAvatar(
+                  backgroundColor: Colors.orange[800],
+                  child: MyCircleAvatar(
+                    imgUrl: img,
                   ),
                 ),
               ),

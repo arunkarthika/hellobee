@@ -29,6 +29,7 @@ class Profilepage extends State<Profile> {
   var profilePic="";
   var diamond="";
   var bGold="";
+  var gcm_registration_id="";
   var friends="";
   var gcm_registration_id="";
   bool loader = false;

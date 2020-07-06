@@ -2313,14 +2313,14 @@ toggleSendChannelMessage(text, common) async {
   }
   try {
     var message = common.level + common.userId + common.name + " : " + text;
-    print("message");
     print(message);
+    print("messsssssssage"+message);
     common.publishMessage(common.broadcastUsername, message);
 
     // await _channel.sendMessage(AgoraRtmMessage.fromText(message))
     // _log('Send channel message success.');
   } catch (errorCode) {
-    // _log('Send channel message error: ' + errorCode.toString());
+     print('Send channel message error: ' + errorCode.toString());
   }
 }
 

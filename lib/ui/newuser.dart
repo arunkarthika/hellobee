@@ -339,12 +339,13 @@ class _MyAppState extends State<NewUser> {
       "mobile": _mobile,
       "device_id": deviceid,
       "referral": referralcode,
+      "firebaseUID": uid.toString(),
       "gcm_registration_id":gcmId.toString(),
-      "profile_pic": "",
-      'firebaseUID': uid.toString(),
+      "profile_pic": ""
     };
 
     print(endPoint + jsonEncode(params));
+    print("FCMUID"+endPoint + uid.toString());
     makePostRequest(endPoint, jsonEncode(params), 1, context).then((response) {
       setState(() {
         _visible = false;
