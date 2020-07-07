@@ -19,12 +19,11 @@ Widget audienceBroadShow(context, common, setState) {
       children: <Widget>[
         common.guestFlag == false && common.broadcastType != 'pk'
             ? SizedBox(
-          width: 30,
-          height: 30, // specific value
+                width: 30,
+                height: 30, // specific value
 
                 child: RaisedButton(
                     onPressed: () {
-                      print(common.level);
                       if (int.tryParse(common.level) < 10) {
                         toast('Sorry!! You must reach level 10', Colors.red);
                       } else {
@@ -49,62 +48,20 @@ Widget audienceBroadShow(context, common, setState) {
                     padding: const EdgeInsets.all(0.0),
                     child: common.gradient(Icons.video_call)),
               )
-          child: RaisedButton(
-              onPressed: () {
-                print(common.level);
-                if (int.tryParse(common.level) < 10) {
-                  toast('Sorry!! You must reach level 10', Colors.red);
-                } else {
-                  common.publishMessage(
-                      common.broadcastUsername,
-                      '£01GuestInvite01£*£' +
-                          common.userId +
-                          '£*£' +
-                          common.broadcasterId +
-                          '£*£' +
-                          common.name +
-                          '£*£' +
-                          common.username +
-                          '£*£' +
-                          common.profilePic +
-                          '£*£' +
-                          common.level);
-                }
-              },
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0)),
-              padding: const EdgeInsets.all(0.0),
-              child: common.gradient(Icons.video_call)),
-        )
             : SizedBox(
                 width: 30,
                 height: 30, // specific value
-                child:
-                    common.guestFlag == true && common.userTypeGlob != 'broad'
-                        ? RaisedButton(
-                            onPressed: () {
-                              common.removeGuest(common.userId, context);
-                            },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(80.0)),
-                            padding: const EdgeInsets.all(0.0),
-                            child: common.gradient(Icons.call_end))
-                        : Container(),
+                child: common.guestFlag == true&&common.userTypeGlob != 'broad'
+                    ? RaisedButton(
+                        onPressed: () {
+                          common.removeGuest(common.userId, context);
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(80.0)),
+                        padding: const EdgeInsets.all(0.0),
+                        child: common.gradient(Icons.call_end))
+                    : Container(),
               ),
-          width: 30,
-          height: 30, // specific value
-          child:
-          common.guestFlag == true && common.userTypeGlob != 'broad'
-              ? RaisedButton(
-              onPressed: () {
-                common.removeGuest(common.userId, context);
-              },
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0)),
-              padding: const EdgeInsets.all(0.0),
-              child: common.gradient(Icons.call_end))
-              : Container(),
-        ),
         SizedBox(
           width: 5,
         ),

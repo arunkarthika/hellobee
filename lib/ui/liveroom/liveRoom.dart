@@ -15,6 +15,7 @@ import 'package:honeybee/model/Queue.dart';
 import 'package:flutter/material.dart';
 import 'package:base32/base32.dart';
 import 'package:flutter/services.dart';
+import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';

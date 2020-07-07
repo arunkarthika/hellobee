@@ -20,8 +20,8 @@ import 'package:honeybee/ui/editMeprofile.dart';
 import 'package:honeybee/ui/insta/main12.dart';
 import 'package:honeybee/ui/liveroom/commonFun.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
+import 'package:honeybee/ui/liveroom/personalChat/home.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
-import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/ui/story.dart';
@@ -493,7 +493,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   ),
                 ),
                 Center(child: Fluttergram()),
-                Center(child: ChatHome()),
+                Center(child: HomeScreen()),
                 Center(child: Profile()),
               ],
               controller: bottomController,
@@ -1172,7 +1172,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChatHome(
+                                    builder: (context) => HomeScreen(
                                     ),
                                   ),
                                 );

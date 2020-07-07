@@ -58,13 +58,13 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    sendNotification('receiver','msg');
+//    sendNotification('receiver','msg');
     CommonFun().getStringData('user_id').then((value) {
       userId = value;
       listData();
     });
-    registerNotification();
-    configLocalNotification();
+//    registerNotification();
+//    configLocalNotification();
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
