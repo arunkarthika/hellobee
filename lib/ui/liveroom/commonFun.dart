@@ -409,7 +409,7 @@ class Common {
   int giftCount;
   int giftValue;
   int currentIndex = 0;
-  int diamond = 0;
+  var diamond;
   int c = 0;
   int userrelation = 0;
   int blockInt = 0;
@@ -579,12 +579,20 @@ class Common {
                         });
                       }
                       giftGet();
+
+                      CommonFun().getStringData('diamond').then((value) {
+                        try {
+                          diamond = int.tryParse(value);
+                        } catch (e) {
+                          diamond = 0;
+                        }
+                      });
                     });
                   });
                 });
-              });
 
 //              });
+              });
             });
           });
         });
@@ -594,7 +602,7 @@ class Common {
 
   dynamic giftGet() {
     db.getGift().then((onValueres) {
-      print(onValueres);
+      print("onvalues"+onValueres[0].length.toString());
       normalGift = onValueres[0];
       animationGift = onValueres[1];
       for (var i = 0; i < normalGift.length; i++) {

@@ -16,7 +16,7 @@ import 'package:honeybee/constant/permision.dart';
 import 'package:honeybee/model/car.dart';
 import 'package:honeybee/model/gift.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
-import 'package:honeybee/ui/message.dart';
+import 'package:honeybee/ui/liveroom/personalChat/home.dart';
 import 'package:honeybee/ui/profile.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/ui/story.dart';
@@ -514,7 +514,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Center(child: ChatHome()),
+                Center(child: HomeScreen()),
                 Center(child: Profile()),
                 Center(child: Profile()),
               ],

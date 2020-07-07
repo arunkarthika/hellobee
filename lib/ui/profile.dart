@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/ui/meprofile.dart';
-import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/ui/setting.dart';
 import 'package:honeybee/ui/webView.dart';

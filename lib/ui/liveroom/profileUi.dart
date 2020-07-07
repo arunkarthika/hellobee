@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:honeybee/constant/http.dart';
-import 'package:honeybee/ui/message.dart';
+import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 
 import '../editMeprofile.dart';
 
@@ -303,8 +303,8 @@ profileviewAudience(id, context, common) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatHome(
-                                  ),
+                                  builder: (context) => ChatScreen(peerId:"0",peerAvatar:data['profile_pic'],peerName:data['profileName']),
+
                                 ),
                               );
                             },
