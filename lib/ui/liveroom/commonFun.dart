@@ -657,8 +657,8 @@ class Common {
               .then((res) {
             if (res) {
               final bytes =
-                  io.File(animationGift[i]['giftIconLocal'].toString())
-                      .readAsBytesSync();
+              io.File(animationGift[i]['giftIconLocal'].toString())
+                  .readAsBytesSync();
               displayanimaionIcon[animationGift[i]['name']] =
                   base64Encode(bytes);
             } else {

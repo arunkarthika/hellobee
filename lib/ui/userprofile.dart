@@ -9,8 +9,8 @@ import 'package:honeybee/utils/string.dart';
 
 import 'liveroom/profileUi.dart';
 
-class EditProfile extends StatefulWidget {
-  EditProfile({Key key, @required this.touserid})
+class UserEditProfile extends StatefulWidget {
+  UserEditProfile({Key key, @required this.touserid})
       : super(key: key);
 
   final String touserid;
@@ -19,7 +19,7 @@ class EditProfile extends StatefulWidget {
 
 }
 
-class _EditProfileState extends State<EditProfile>  {
+class _EditProfileState extends State<UserEditProfile>  {
   _EditProfileState({Key key, @required this.touserid});
 
   final String touserid;

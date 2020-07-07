@@ -15,7 +15,6 @@ import 'package:honeybee/model/Queue.dart';
 import 'package:flutter/material.dart';
 import 'package:base32/base32.dart';
 import 'package:flutter/services.dart';
-import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
@@ -286,10 +285,10 @@ class RenderBroadcast extends State<LiveRoom>
                   ),
                   onSwipeUp: () {
                     print("up");
-                    switchToAnother(common.prevUserId, common.prevUsername);
+                    /* switchToAnother(common.prevUserId, common.prevUsername);*/
                   },
                   onSwipeDown: () {
-                    switchToAnother(common.nextUserId, common.nextUsername);
+                    /* switchToAnother(common.nextUserId, common.nextUsername);*/
                     print("down");
                   },
                   onSwipeLeft: () {
@@ -776,7 +775,7 @@ class RenderBroadcast extends State<LiveRoom>
         onWillPopOffline();
         return false;
       }
-      print("connect" + common.connectionState.toString());
+      print("connect"+common.connectionState.toString());
       if (common.connectionState != MqttCurrentConnectionState.CONNECTED) {
         prepareMqttClient();
       }
@@ -1077,6 +1076,7 @@ class RenderBroadcast extends State<LiveRoom>
   }
 
   void onMessage() {
+
     common.c++;
     common.client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage recMess = c[0].payload;
@@ -1466,7 +1466,7 @@ class RenderBroadcast extends State<LiveRoom>
           }
           break;
         default:
-          print("CHATRECEIEVE" + tmpmsg);
+          print("CHATRECEIEVE"+tmpmsg);
           if (!tmpmsg.contains('£*£')) {
             buildchatzone(tmpmsg, 'white', receivedTopic);
           }
@@ -1641,12 +1641,12 @@ class RenderBroadcast extends State<LiveRoom>
         .then((response) {
       var data = jsonDecode(response);
       if (data['status'] == 0) {
+        common.camera = true;
         common.guestFlag = true;
         common.loaderInside = false;
         common.publishMessage(
             broadcastUsername,
-            '£01'
-                'refreshAudience01£*£' +
+            '£01refreshAudience01£*£' +
                 common.userId +
                 '£*£' +
                 common.name +
@@ -1656,6 +1656,7 @@ class RenderBroadcast extends State<LiveRoom>
                 common.profilePic +
                 '£*£' +
                 common.level);
+        common.zego.setPreview(setState, common.userId, common.broadcastType);
         common.zego.startPublish(userId);
         var gData = GuestData(userId, common.name, common.username,
             common.profilePic, common.level, 0, 0);
@@ -1680,17 +1681,11 @@ class RenderBroadcast extends State<LiveRoom>
     if (common.client.connectionStatus.state == MqttConnectionState.connected) {
       common.connectionState = MqttCurrentConnectionState.CONNECTED;
       print("=========username==============");
-      print("connecttothemqtt" +
-          "------" +
-          common.username +
-          "-------" +
-          broadcastUsername +
-          "-----" +
-          userType);
+      print("connecttothemqtt"+"------"+common.username+"-------"+broadcastUsername+"-----"+userType);
       if (userType != "broad") {
         subscribeToTopic(broadcastUsername);
         audienceArrive();
-      } else {
+      }else{
         subscribeToTopic(common.username);
       }
     } else {
@@ -1931,7 +1926,9 @@ class RenderBroadcast extends State<LiveRoom>
               height: 50,
               decoration: BoxDecoration(
                 gradient: new LinearGradient(
-                    colors: [Colors.redAccent, Colors.orange[300]],
+                    colors: [
+                      Colors.redAccent,Colors.orange[300]
+                    ],
                     begin: const FractionalOffset(0.0, 0.0),
                     end: const FractionalOffset(1.0, 0.0),
                     stops: [0.0, 1.0],
@@ -1942,8 +1939,7 @@ class RenderBroadcast extends State<LiveRoom>
               child: CircleAvatar(
                 backgroundColor: Colors.transparent,
                 child: MyCircleAvatar(
-                  imgUrl:
-                      'https://i.pinimg.com/736x/0b/a9/63/0ba963472e12aefd5b6e903f673405c4.jpg',
+                  imgUrl: 'https://i.pinimg.com/736x/0b/a9/63/0ba963472e12aefd5b6e903f673405c4.jpg',
                 ),
               ),
             ));
@@ -2392,7 +2388,6 @@ class RenderBroadcast extends State<LiveRoom>
                                 size: 18,
                               ),
                               onPressed: () {
-                                Navigator.pop(context);
                                 userRelation(common.userrelation, id, common,
                                     setState, context);
                               },
@@ -2457,7 +2452,6 @@ class RenderBroadcast extends State<LiveRoom>
         var body = data['body'];
         var message = data['body'];
         toast(message, Colors.black);
-        Fluttertoast.showToast(msg: message);
 
         CommonFun().saveShare('friends', body['friends']);
         CommonFun().saveShare('followers', body['followers']);
@@ -2481,7 +2475,6 @@ class RenderBroadcast extends State<LiveRoom>
           common.userrelation = relationInt;
           common.relationImage = image;
         });
-
       }
     });
   }
@@ -2692,7 +2685,7 @@ class RenderBroadcast extends State<LiveRoom>
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    "ID "+common.broadcasterId.toString(),
+                    "ID 125005",
                     style: Theme.of(context)
                         .textTheme
                         .subtitle
@@ -3204,15 +3197,13 @@ class RenderBroadcast extends State<LiveRoom>
   }
 
   dynamic stopAnimation() {
-    try {
-      common.animationController.stop();
-      common.normalleft1controller.stop();
-      common.normalleft2controller.stop();
-      common.bullet1controller.stop();
-      common.bullet2controller.stop();
-      common.bullet3controller.stop();
-      common.arrivedMessageController.stop();
-      common.timerController.stop();
-    } catch (e) {}
+    common.animationController.stop();
+    common.normalleft1controller.stop();
+    common.normalleft2controller.stop();
+    common.bullet1controller.stop();
+    common.bullet2controller.stop();
+    common.bullet3controller.stop();
+    common.arrivedMessageController.stop();
+    common.timerController.stop();
   }
 }

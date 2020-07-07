@@ -19,8 +19,8 @@ Widget audienceBroadShow(context, common, setState) {
       children: <Widget>[
         common.guestFlag == false && common.broadcastType != 'pk'
             ? SizedBox(
-                width: 30,
-                height: 30, // specific value
+          width: 30,
+          height: 30, // specific value
 
                 child: RaisedButton(
                     onPressed: () {
@@ -49,6 +49,33 @@ Widget audienceBroadShow(context, common, setState) {
                     padding: const EdgeInsets.all(0.0),
                     child: common.gradient(Icons.video_call)),
               )
+          child: RaisedButton(
+              onPressed: () {
+                print(common.level);
+                if (int.tryParse(common.level) < 10) {
+                  toast('Sorry!! You must reach level 10', Colors.red);
+                } else {
+                  common.publishMessage(
+                      common.broadcastUsername,
+                      '£01GuestInvite01£*£' +
+                          common.userId +
+                          '£*£' +
+                          common.broadcasterId +
+                          '£*£' +
+                          common.name +
+                          '£*£' +
+                          common.username +
+                          '£*£' +
+                          common.profilePic +
+                          '£*£' +
+                          common.level);
+                }
+              },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(80.0)),
+              padding: const EdgeInsets.all(0.0),
+              child: common.gradient(Icons.video_call)),
+        )
             : SizedBox(
                 width: 30,
                 height: 30, // specific value
@@ -64,6 +91,20 @@ Widget audienceBroadShow(context, common, setState) {
                             child: common.gradient(Icons.call_end))
                         : Container(),
               ),
+          width: 30,
+          height: 30, // specific value
+          child:
+          common.guestFlag == true && common.userTypeGlob != 'broad'
+              ? RaisedButton(
+              onPressed: () {
+                common.removeGuest(common.userId, context);
+              },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(80.0)),
+              padding: const EdgeInsets.all(0.0),
+              child: common.gradient(Icons.call_end))
+              : Container(),
+        ),
         SizedBox(
           width: 5,
         ),
@@ -454,8 +495,7 @@ void onInvitaion(context, common) {
                                                     .textTheme
                                                     .subtitle1
                                                     .copyWith(
-                                                        color:
-                                                            Colors.deepOrange),
+                                                        color: Colors.deepOrange),
                                               ),
                                               Text(
                                                 common
@@ -464,8 +504,7 @@ void onInvitaion(context, common) {
                                                     .textTheme
                                                     .subtitle1
                                                     .copyWith(
-                                                        color:
-                                                            Colors.deepOrange),
+                                                        color: Colors.deepOrange),
                                               ),
                                             ],
                                           ),
@@ -511,11 +550,17 @@ void onInvitaion(context, common) {
                                         child: GestureDetector(
                                           onTap: () {
                                             if ((common.broadcastType ==
-                                                        'audio' &&
+                                                        'solo' &&
                                                     common.guestData.length <
-                                                        9) &&
-                                                int.tryParse(common.level) >=
-                                                    10) {
+                                                        2) ||
+                                                (common.broadcastType ==
+                                                            'audio' &&
+                                                        common.guestData
+                                                                .length <
+                                                            9) &&
+                                                    int.tryParse(
+                                                            common.level) >=
+                                                        10) {
                                               common.publishMessage(
                                                 common.broadcastUsername,
                                                 '£01GuestInviteResponse01£*£Accepted£*£' +
@@ -783,7 +828,7 @@ void giftShow(context, common) {
                                                 width: 5,
                                               ),
                                               Text(
-                                                data['price'].toString(),
+                                                data['price'],
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .subtitle1
@@ -3417,7 +3462,7 @@ toggleSendChannelMessage(text, common) async {
   }
   try {
     var message = common.level + common.userId + common.name + " : " + text;
-    print("message" + message);
+    print("message"+message);
     common.publishMessage(common.broadcastUsername, message);
 
     // await _channel.sendMessage(AgoraRtmMessage.fromText(message))
@@ -3505,18 +3550,16 @@ class AnimatedCountSecond extends ImplicitlyAnimatedWidget {
 
   AnimatedCountSecond(
       {Key key,
-      @required this.count,
-      @required Duration duration,
-      Curve curve = Curves.linear})
+        @required this.count,
+        @required Duration duration,
+        Curve curve = Curves.linear})
       : super(duration: duration, curve: curve, key: key);
 
   @override
   ImplicitlyAnimatedWidgetState<ImplicitlyAnimatedWidget> createState() =>
       _AnimatedCountSecondState();
 }
-
-class _AnimatedCountSecondState
-    extends AnimatedWidgetBaseState<AnimatedCountSecond> {
+class _AnimatedCountSecondState extends AnimatedWidgetBaseState<AnimatedCountSecond> {
   IntTween _count;
 
   @override
@@ -3667,4 +3710,5 @@ Widget multiGuestGift(context, common, setState) {
       ],
     ),
   );
+
 }

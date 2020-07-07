@@ -121,8 +121,9 @@ flutter:
     - assets/liveroom/heart.svg
     - assets/dashboard/Home.png
     - assets/dashboard/HomeSelected.png
-    - assets/dashboard/PKSelected.png
     - assets/dashboard/Profile.png
+    - assets/dashboard/Message.png
+    - assets/dashboard/Photo.png
     - assets/dashboard/ProfileSelected.png
     - assets/dashboard/Toppers.png
     - assets/dashboard/Golive.png
