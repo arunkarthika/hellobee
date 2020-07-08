@@ -270,7 +270,7 @@ class _BLockListPersonPageState extends State<BLockListPersonPage> {
       }
       if (res.length > 0) {
         for (dynamic v in res) {
-          var relation = v['userRelation'];
+          var relation = v['F'];
           relation = relation == null ? 0 : relation;
           IconData icon = Icons.add;
           var name = "Follow";

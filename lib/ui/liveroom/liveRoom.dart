@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:base32/base32.dart';
 import 'package:flutter/services.dart';
 import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
+import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
@@ -2799,6 +2800,7 @@ class RenderBroadcast extends State<LiveRoom>
         Positioned(
           top: 20,
           left: 165,
+         child: GestureDetector(
           child: Container(
             padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
             decoration: BoxDecoration(
@@ -2834,10 +2836,484 @@ class RenderBroadcast extends State<LiveRoom>
               ],
             ),
           ),
+            onTap:(){
+             /* getContributorslist(common, context, common.audienceSetState, common.fullcontpage);*/
+              common.pageforbottm = 1;
+              common.lastpageforbottom = 1;
+              common.contributerType = 'all';
+              showaudience(context, common, setState);
+            },
+          ),
         ),
       ],
     );
   }
+
+  void showaudience(context, common, setState) {
+    setState(() {
+      common.loaderInside = true;
+    });
+    var endPoint = 'user/List';
+    var params = 'page=' +
+        common.pageforbottm.toString() +
+        '&length=10&action=audience&user_id=' +
+        common.broadcasterId.toString();
+    makeGetRequest(endPoint, params, 0, context).then((response) {
+      var data = (response).trim();
+      var pic = json.decode(data);
+      common.filteredList = [];
+      common.lastpageforbottom = pic['body']['last_page'];
+      var res = pic['body']['audience']['viewers_list'];
+      if (res.length > 0) {
+        for (dynamic v in res) {
+          var relation = v['userRelation'];
+          relation = relation ?? 0;
+          var icon = Icons.add;
+          var name = 'Follow';
+          if (relation == 1) {
+            name = 'Unfollow';
+            icon = Icons.remove;
+          } else if (relation == 3) {
+            name = 'Friend';
+            icon = Icons.swap_horiz;
+          }
+          var person = Person(v['profileName'], v['user_id'], v['level'],
+              v['userRelation'], v['profile_pic'], name, icon);
+          common.filteredList.add(person);
+        }
+        var endPoint = 'user/List';
+        var params = 'page=' +
+            common.pageforbottm.toString() +
+            '&length=10&type=' +
+            common.contributerType +
+            '&action=topFans&user_id=' +
+            common.broadcasterId.toString();
+        makeGetRequest(endPoint, params, 0, context).then((response) {
+          setState(() {
+            common.loaderInside = false;
+          });
+          var data = (response).trim();
+          var pic = json.decode(data);
+          common.fullContList = pic['body']['full_Data'];
+          common.dayContList = pic['body']['day_Data'];
+          common.fullcontpageLength = pic['body']['full_page'];
+          common.daycontpageLength = pic['body']['day_page'];
+          showModalBottomSheet(
+            backgroundColor: Color.fromRGBO(0, 0, 0, 0.5),
+            barrierColor: Colors.white.withOpacity(0.0),
+            context: context,
+            builder: (BuildContext context) {
+              common.closeContext = context;
+              return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  common.audienceSetState = setState;
+                  return Stack(
+                    children: [
+                      Container(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                child: TabBar(
+                                  tabs: [
+                                    Tab(
+                                      child: Text(
+                                        'Audience',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1
+                                            .copyWith(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    Tab(
+                                      child: Text(
+                                        'Contributors',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1
+                                            .copyWith(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                  controller:
+                                  common.audienceContributerController,
+                                ),
+                              ),
+                              flex: 2,
+                            ),
+                            Expanded(
+                              flex: 10,
+                              child: TabBarView(
+                                controller: common.audienceContributerController,
+                                children: <Widget>[
+                                  ListView.builder(
+                                    controller: common.scrollControllerforbottom,
+                                    shrinkWrap: true,
+                                    itemCount: common.filteredList.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: <Widget>[
+                                            GestureDetector(
+                                              onTap: () {
+                                                if (common.userId !=
+                                                    common.filteredList[index]
+                                                        .userid) {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FullProfile(
+                                                              userId: common
+                                                                  .filteredList[
+                                                              index]
+                                                                  .userid),
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                              child: CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    common.filteredList[index]
+                                                        .profilepic),
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: const EdgeInsets.all(3.0),
+                                              width: 80,
+                                              height: 40,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                                children: <Widget>[
+                                                  Text(
+                                                    common.filteredList[index]
+                                                        .personFirstName,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .subtitle1
+                                                        .copyWith(
+                                                        color: Colors.white,
+                                                        fontSize: 10),
+                                                    maxLines: 1,
+                                                    textAlign: TextAlign.left,
+                                                  ),
+                                                  Text(
+                                                    'ID - ' +
+                                                        common.filteredList[index]
+                                                            .userid,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .subtitle1
+                                                        .copyWith(
+                                                        color: Colors.amber,
+                                                        fontSize: 12),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              padding:
+                                              EdgeInsets.fromLTRB(5, 2, 5, 2),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.pink,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(50.0))),
+                                              child: Text(
+                                                '⭐ ' +
+                                                    common
+                                                        .filteredList[index].lvl,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1
+                                                    .copyWith(
+                                                    color: Colors.white,
+                                                    fontSize: 12),
+                                              ),
+                                            ),
+                                            RaisedButton(
+                                              onPressed: () {
+                                                userRelationbtm(
+                                                    common.filteredList[index]
+                                                        .userrelation,
+                                                    common.filteredList[index]
+                                                        .userid,
+                                                    index,
+                                                    setState,
+                                                    common,
+                                                    context);
+                                              },
+                                              textColor: Colors.white,
+                                              color: Colors.transparent,
+                                              padding: const EdgeInsets.all(0.0),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      80.0)),
+                                              child: Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    5, 1, 5, 1),
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(50)),
+                                                  gradient: LinearGradient(
+                                                      begin: Alignment.centerLeft,
+                                                      end: Alignment.centerRight,
+                                                      colors: [
+                                                        Color(0xFFEC008C),
+                                                        Color(0xFFFC6767)
+                                                      ]),
+                                                ),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      common.filteredList[index]
+                                                          .icon,
+                                                      color: Colors.white,
+                                                    ),
+                                                    Text(
+                                                      common.filteredList[index]
+                                                          .relationName,
+                                                      style: TextStyle(
+                                                          fontSize: 8,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            child: TabBar(
+                                              tabs: [
+                                                Tab(
+                                                  child: Text(
+                                                    'Day List',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .subtitle1
+                                                        .copyWith(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Tab(
+                                                  child: Text(
+                                                    'Full List',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .subtitle1
+                                                        .copyWith(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                              controller:
+                                              common.contributerController,
+                                              onTap: (index) {
+                                                if (index == 0) {
+                                                  common.contributerType = 'day';
+                                                }
+                                                if (index == 1) {
+                                                  common.contributerType = 'full';
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                          flex: 2,
+                                        ),
+                                        Expanded(
+                                          flex: 10,
+                                          child: TabBarView(
+                                            controller:
+                                            common.contributerController,
+                                            children: <Widget>[
+                                              contributerList(
+                                                  common.dayContList,
+                                                  common.dayscrollController,
+                                                  common),
+                                              contributerList(
+                                                  common.fullContList,
+                                                  common.fullscrollController,
+                                                  common)
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      common.loaderInside == true
+                          ? Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        color: Color.fromRGBO(0, 0, 0, 0.5),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                          : Container(),
+                    ],
+                  );
+                },
+              );
+            },
+          ).whenComplete(() {
+            common.closeContext = null;
+          });
+        });
+      }
+    });
+  }
+
+  Widget contributerList(list, scrollController, common) {
+    return ListView.builder(
+      controller: scrollController,
+      shrinkWrap: true,
+      itemCount: list.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  if (common.userId != list[index]['user_id']) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FullProfile(userId: list[index]['user_id']),
+                      ),
+                    );
+                  }
+                },
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(list[index]['profilePic']),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(3.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Text(
+                      list[index]['profileName'],
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle2
+                          .copyWith(color: Colors.white, fontSize: 10),
+                      maxLines: 1,
+                      textAlign: TextAlign.left,
+                    ),
+                    Text(
+                      'ID - ' + list[index]['reference_user_id'],
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1
+                          .copyWith(color: Colors.amber, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                decoration: BoxDecoration(
+                    color: Colors.pink,
+                    borderRadius: BorderRadius.all(Radius.circular(50.0))),
+                child: Text(
+                  '⭐ ' + list[index]['level'],
+                  style: Theme.of(context)
+                      .textTheme
+                      .subtitle1
+                      .copyWith(color: Colors.white, fontSize: 12),
+                ),
+              ),
+              Row(
+                children: [
+                  Image(
+                    image: AssetImage(
+                      'assets/images/broadcast/Gold.png',
+                    ),
+                    width: 10,
+                    height: 10,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    list[index]['gold'].toString(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1
+                        .copyWith(color: Colors.white, fontSize: 14),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /*dynamic getContributorslist(common, context, setState, page) {
+    var endPoint = 'user/List';
+    var params = 'page=' +
+        page.toString() +
+        '&length=10&type=' +
+        common.contributerType +
+        '&action=topFans&user_id=' +
+        common.broadcasterId.toString();
+    makeGetRequest(endPoint, params, 0, context).then((response) {
+      var data = (response).trim();
+      var pic = json.decode(data);
+      common.lastpageforbottom = pic['body']['last_page'];
+      if (common.contributerType == 'all' || common.contributerType == 'full') {
+        if (pic['body']['full_Data'].length > 0) {
+          common.fullContList = List.from(common.fullContList)
+            ..addAll(pic['body']['full_Data']);
+        }
+      }
+      if (common.contributerType == 'all' || common.contributerType == 'day') {
+        if (pic['body']['day_Data'].length > 0) {
+          common.dayContList = List.from(common.dayContList)
+            ..addAll(pic['body']['day_Data']);
+        }
+      }
+      setState(() {});
+    });
+  }*/
 
   _profileview() {
     showModalBottomSheet(

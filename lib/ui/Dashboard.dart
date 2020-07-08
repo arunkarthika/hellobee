@@ -88,6 +88,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   String country = "";
   String city = "";
   Common common = Common();
+  UserData uData = UserData();
 
   int pageLength = 0;
 
@@ -918,6 +919,19 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
       var gender = "Female.png";
       if (data['gender'] == "male") gender = "male.jpg";
       common.userrelation = data['userRelationship'];
+
+      uData.userrelation = data['userRelationship'];
+      if (uData.userrelation == null) uData.userrelation = 0;
+      uData.relationData = "Follow";
+      uData.relationImage = Icons.add;
+      if (uData.userrelation == 1) {
+        uData.relationData = 'Unfollow';
+        uData.relationImage = Icons.remove;
+      } else if (uData.userrelation == 3) {
+        uData.relationImage = Icons.swap_horiz;
+        uData.relationData = 'Friend';
+      }
+
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -1190,7 +1204,8 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 style: TextStyle(color: Colors.white),),
                               icon: Icon(Icons.add, color:Colors.white,size: 18,),
                               onPressed: ()  {
-
+                                userRelation(uData.userrelation, userId, uData,
+                                    setState, context);
                               },
                             ),
                           ],
