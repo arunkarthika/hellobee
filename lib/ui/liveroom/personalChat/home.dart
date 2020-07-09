@@ -212,7 +212,7 @@ class HomeScreenState extends State<HomeScreen> {
               v['profile_pic'],
               name,
               icon,
-              v['firebaseUID']);
+              v['firebaseUID'],v['gcm_registration_id']);
           filteredList.add(person);
         }
       }
@@ -391,10 +391,12 @@ class HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ChatScreen(
+                          builder: (context) =>
+                              ChatScreen(
                                 peerId: filteredList[i].firebaseId,
                                 peerAvatar: filteredList[i].profilepic,
                                 peerName: filteredList[i].personFirstName,
+                                peergcm: filteredList[i].gcm_registration_id,
                               )));
                 },
                 onLongPress: () => Navigator.of(context).push(
@@ -701,6 +703,7 @@ class Choice {
 
 class Person {
   String personFirstName;
+  String gcm_registration_id;
   String userid;
   String lvl;
   int userrelation;
@@ -710,5 +713,5 @@ class Person {
   var firebaseId;
 
   Person(this.personFirstName, this.userid, this.lvl, this.userrelation,
-      this.profilepic, this.relationName, this.icon, this.firebaseId);
+      this.profilepic, this.relationName, this.icon, this.firebaseId, this.gcm_registration_id);
 }
