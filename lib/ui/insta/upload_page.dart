@@ -290,7 +290,7 @@ void postToFireStore({String mediaUrl, String location, String description}) asy
     "likes": {},
     "mediaUrl": mediaUrl,
     "description": description,
-    "ownerId": googleSignIn.currentUser.id,
+    "ownerId": currentUserModel.id,
     "timestamp": DateTime.now(),
   }).then((DocumentReference doc) {
     String docId = doc.documentID;

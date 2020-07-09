@@ -12,9 +12,7 @@ import 'dart:io' show Platform;
 import 'models/user.dart';
 
 final auth = FirebaseAuth.instance;
-final googleSignIn = GoogleSignIn();
 final ref = Firestore.instance.collection('insta_users');
-final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 User currentUserModel;
 
@@ -79,32 +77,33 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        children: [
-          Container(
-            color: Colors.white,
-            child: Feed(),
-          ),
-          Container(
-            color: Colors.white,
-          ),
-          Container(
-            color: Colors.white,
-            child: Uploader1(),
-          ),
-          Container(
-            color: Colors.white,
-          ),
-          Container(
-            color: Colors.white,
-          ),
-        ],
-        controller: pageController,
-        physics: NeverScrollableScrollPhysics(),
-        onPageChanged: onPageChanged,
-      ),
-    );
+    return Feed();
+//    return Scaffold(
+//      body: PageView(
+//        children: [
+//          Container(
+//            color: Colors.white,
+//            child: Feed(),
+//          ),
+//          Container(
+//            color: Colors.white,
+//          ),
+//          Container(
+//            color: Colors.white,
+//            child: Uploader1(),
+//          ),
+//          Container(
+//            color: Colors.white,
+//          ),
+//          Container(
+//            color: Colors.white,
+//          ),
+//        ],
+//        controller: pageController,
+//        physics: NeverScrollableScrollPhysics(),
+//        onPageChanged: onPageChanged,
+//      ),
+//    );
   }
 
   void navigationTapped(int page) {

@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/ui/liveroom/personalChat/const.dart';
@@ -458,12 +459,19 @@ class ChatScreenState extends State<ChatScreen> {
                                 bottomRight: Radius.circular(25),
                               ),
                             ),
-                            child: Text(
+                            child: GestureDetector(
+                              onLongPress: (){
+                                Clipboard.setData(new ClipboardData(text: document['content'].toString()));
+
+                              },
+                              child:Text(
+
+
                               document['content'],
                               style:
                               Theme.of(context).textTheme.body1.apply(
                                 color: Colors.black87,
-                              ),
+                              ),),
                             ),
                           ),
                         ],

@@ -20,6 +20,7 @@ import 'package:honeybee/ui/editMeprofile.dart';
 import 'package:honeybee/ui/insta/main12.dart';
 import 'package:honeybee/ui/liveroom/commonFun.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
+import 'package:honeybee/ui/liveroom/personalChat/home.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
@@ -494,7 +495,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   ),
                 ),
                 Center(child: Fluttergram()),
-                Center(child: ChatHome()),
+                Center(child: HomeScreen()),
                 Center(child: Profile()),
               ],
               controller: bottomController,
@@ -807,14 +808,25 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   Future<bool> _onBackPressed() {
-    DateTime now = DateTime.now();
-    if (currentBackPressTime == null ||
-        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
-      currentBackPressTime = now;
-      Fluttertoast.showToast(msg: exit_warning);
-      return Future.value(false);
+
+    if (pageIndex != 0) {
+      pageIndex = 0;
+      bottomController.index = 0;
+      return null;
+    }else{
+      DateTime now = DateTime.now();
+      if (currentBackPressTime == null ||
+          now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+        currentBackPressTime = now;
+        Fluttertoast.showToast(msg: exit_warning);
+        return Future.value(false);
+      }
+      return Future.value(true);
+
     }
-    return Future.value(true);
+
+
+
   }
 
   Widget roundedButton(String buttonLabel, Color bgColor, Color textColor) {
