@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 
-import '../editMeprofile.dart';
-
 final List tags = [
   "↑Lv 10",
   '🌝 Happy face',
@@ -91,13 +89,13 @@ profileviewAudience(id, context, common) {
                         alignment: Alignment.center,
                         child: GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              /*Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EditProfile(
                                   ),
                                 ),
-                              );
+                              );*/
                             },
                             child: Container(
                               height: 100,

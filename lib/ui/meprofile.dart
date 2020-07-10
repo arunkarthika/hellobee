@@ -3,8 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
-import 'package:honeybee/ui/editMeprofile.dart';
+import 'package:honeybee/ui/MeProfileNew.dart';
 import 'package:honeybee/ui/listview.dart';
 import 'package:honeybee/utils/string.dart';
 
@@ -21,8 +22,6 @@ class MeProfile extends StatefulWidget {
 
 class _EditProfileState extends State<MeProfile>  {
   _EditProfileState({Key key, @required this.touserid});
-
-  final String touserid;
 
   UserData uData = UserData();
   var name = "";
@@ -44,6 +43,8 @@ class _EditProfileState extends State<MeProfile>  {
   var age;
   var idhide;
 
+  var touserid="";
+
   final List tags = [
     "↑Lv 10",
     "💎 50K",
@@ -51,8 +52,13 @@ class _EditProfileState extends State<MeProfile>  {
     '🌝 Happy face',
   ];
 
+  void dataGet() async {
+    touserid = await CommonFun().getStringData('user_id');
+  }
+
   @override
   void initState() {
+    dataGet();
     var params = "action=fullProfile&user_id=" + touserid.toString();
     makeGetRequest("user", params, 0, context).then((response) {
       var res = jsonDecode(response);
@@ -95,8 +101,6 @@ class _EditProfileState extends State<MeProfile>  {
         loader = false;
       });
     });
-
-
     super.initState();
   }
 
@@ -161,10 +165,11 @@ class _EditProfileState extends State<MeProfile>  {
                                width: 24,
                                color: Color(0xFFFFFFFF),
                              ), onPressed: () {
+                               print("object touserid touserid" + touserid);
                              Navigator.of(context).push(
                                  MaterialPageRoute<Null>(
                                      builder: (BuildContext context) {
-                                       return new EditProfile(touserid: touserid,);
+                                       return new EditProfileNew(touserid: touserid,);
                                      }));
                            },
                            ),

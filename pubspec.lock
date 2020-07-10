@@ -70,7 +70,7 @@ packages:
       name: card_settings
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.9.8"
+    version: "1.10.1"
   carousel_slider:
     dependency: "direct main"
     description:
@@ -126,7 +126,14 @@ packages:
       name: connectivity
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.8+6"
+    version: "0.4.9"
+  connectivity_for_web:
+    dependency: transitive
+    description:
+      name: connectivity_for_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   connectivity_macos:
     dependency: transitive
     description:
@@ -362,7 +369,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.4+1"
+    version: "1.4.4+2"
   flutter_local_notifications_platform_interface:
     dependency: transitive
     description:
@@ -383,7 +390,7 @@ packages:
       name: flutter_material_pickers
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.4"
+    version: "1.6.0"
   flutter_multi_formatter:
     dependency: transitive
     description:
@@ -505,7 +512,7 @@ packages:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.7+2"
+    version: "0.6.7+4"
   image_picker_platform_interface:
     dependency: transitive
     description:
@@ -603,7 +610,7 @@ packages:
       name: path_provider_linux
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1+1"
+    version: "0.0.1+2"
   path_provider_macos:
     dependency: transitive
     description:
@@ -645,7 +652,7 @@ packages:
       name: permission_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.1"
+    version: "5.0.1+1"
   permission_handler_platform_interface:
     dependency: transitive
     description:
@@ -708,7 +715,7 @@ packages:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.3"
+    version: "4.3.0"
   quiver:
     dependency: transitive
     description:
@@ -750,7 +757,14 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.7+3"
+    version: "0.5.8"
+  shared_preferences_linux:
+    dependency: transitive
+    description:
+      name: shared_preferences_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.2+1"
   shared_preferences_macos:
     dependency: transitive
     description:
@@ -895,7 +909,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
   vector_math:
     dependency: transitive
     description:
@@ -909,7 +923,7 @@ packages:
       name: wakelock
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.4+1"
+    version: "0.1.4+2"
   webview_flutter:
     dependency: "direct main"
     description:

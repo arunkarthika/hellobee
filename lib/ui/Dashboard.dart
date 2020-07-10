@@ -16,17 +16,13 @@ import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/constant/permision.dart';
 import 'package:honeybee/model/car.dart';
 import 'package:honeybee/model/gift.dart';
-import 'package:honeybee/ui/editMeprofile.dart';
 import 'package:honeybee/ui/insta/main12.dart';
 import 'package:honeybee/ui/liveroom/commonFun.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
-import 'package:honeybee/ui/search_page.dart';
-import 'package:honeybee/ui/story.dart';
 import 'package:honeybee/utils/string.dart';
-import 'package:honeybee/widget/mycircleavatar.dart';
 import 'dart:async';
 import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:archive/archive.dart';
@@ -988,13 +984,13 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                           alignment: Alignment.center,
                           child: GestureDetector(
                               onTap: () {
-                                Navigator.push(
+                                /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => EditProfile(
                                     ),
                                   ),
-                                );
+                                );*/
                               },
                               child: Container(
                                 height: 100,

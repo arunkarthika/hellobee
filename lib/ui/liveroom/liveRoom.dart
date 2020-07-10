@@ -13,8 +13,6 @@ import 'package:honeybee/model/AudienceList.dart';
 import 'package:honeybee/model/Chatmodel.dart';
 import 'package:honeybee/model/Queue.dart';
 import 'package:flutter/material.dart';
-import 'package:base32/base32.dart';
-import 'package:flutter/services.dart';
 import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/search_page.dart';
@@ -28,10 +26,8 @@ import 'package:swipedetector/swipedetector.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:wakelock/wakelock.dart';
-import '../Dashboard.dart';
 import '../broadcastEnd.dart';
 
-import '../editMeprofile.dart';
 import 'body/audio.dart';
 import 'commonFun.dart';
 import 'footer.dart';
@@ -2089,14 +2085,14 @@ class RenderBroadcast extends State<LiveRoom>
                           child: GestureDetector(
                               onTap: () {
                                 print("object" + "User Id" + id);
-                                Navigator.push(
+                                /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => EditProfile(
                                       touserid: id,
                                     ),
                                   ),
-                                );
+                                );*/
                               },
                               child: Container(
                                 height: 100,
@@ -2119,14 +2115,14 @@ class RenderBroadcast extends State<LiveRoom>
                           alignment: Alignment.center,
                           child: GestureDetector(
                               onTap: () {
-                                Navigator.push(
+                                /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => EditProfile(
                                       touserid: id,
                                     ),
                                   ),
-                                );
+                                );*/
                               },
                               child: Container(
                                 height: 105,

@@ -90,6 +90,7 @@ flutter:
     - assets/profile/Writing.svg
     - assets/profile/Statistics.svg
     - assets/profile/Setting.svg
+    - assets/profile/gallery.png
     - assets/profile/Gold.svg
     - assets/profile/Bank.svg
     - assets/profile/Diamond.svg
