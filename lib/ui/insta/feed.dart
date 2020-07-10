@@ -14,10 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Feed extends StatefulWidget {
   _Feed createState() => _Feed();
-  }
+}
 
 class _Feed extends State<Feed>
-  with AutomaticKeepAliveClientMixin<Feed>, WidgetsBindingObserver {
+    with AutomaticKeepAliveClientMixin<Feed>, WidgetsBindingObserver {
   List<ImagePost> feedData;
   File file;
   bool uploading = false;
@@ -29,22 +29,28 @@ class _Feed extends State<Feed>
 
   @override
   void initState() {
-  super.initState();
-  WidgetsBinding.instance.addObserver(this);
-  this._loadFeed();
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    this._loadFeed();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state.toString() == 'AppLifecycleState.paused') {}
     if (state.toString() == 'AppLifecycleState.resumed') {
-      if(file!=null) {
+      if (file != null) {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute<Null>(builder: (BuildContext context) {
-              return new Uploader1(
-                tosearch: file,
-              );
-            }));
+          return new Uploader1(
+            tosearch: file,
+          );
+        }));
       }
     }
     super.didChangeAppLifecycleState(state);
@@ -66,24 +72,34 @@ class _Feed extends State<Feed>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: buildActivityFeed(),
-      floatingActionButton: Container(
-        child: Align(
-          alignment: Alignment.bottomRight,
-          child: FloatingActionButton(
-            backgroundColor: const Color(0xFFFC6767),
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        elevation: 10.0,
+        centerTitle: true,
+        title: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text('HelloBee Feed'),
+            ]),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              size: 30,
+              color: Colors.white,
+            ),
             onPressed: () {
+              print('Click start');
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute<Null>(builder: (BuildContext context) {
-                    return new PostImage();
-                  }));
+                return new PostImage();
+              }));
             },
-            child: Container(
-              child: Icon(Icons.add),
-            ),
           ),
-        ),
+        ],
       ),
+      body: buildActivityFeed(),
     );
   }
 
@@ -153,27 +169,27 @@ class _Feed extends State<Feed>
   @override
   bool get wantKeepAlive => true;
 
-  void instastoredetails(userid,username,photourl,displayname) async {
+  void instastoredetails(userid, username, photourl, displayname) async {
     DocumentSnapshot userRecord = await ref.document(userid).get();
     if (userRecord.data == null) {
-        ref.document(userid).setData({
-          "id": userid,
-          "username": username,
-          "photoUrl": photourl,
-          "email": "emptyurl",
-          "displayName": displayname,
-          "bio": "",
-          "followers": {},
-          "following": {},
-        });
-      }
-      userRecord = await ref.document(userid).get();
+      ref.document(userid).setData({
+        "id": userid,
+        "username": username,
+        "photoUrl": photourl,
+        "email": "emptyurl",
+        "displayName": displayname,
+        "bio": "",
+        "followers": {},
+        "following": {},
+      });
+    }
+    userRecord = await ref.document(userid).get();
     currentUserModel = User.fromDocument(userRecord);
     this._loadFeed();
   }
 
   void instastoredetailsnew() {
-    var userid,photourl,displayname,username;
+    var userid, photourl, displayname, username;
     CommonFun().getStringData('user_id').then((value) {
       userid = value;
       CommonFun().getStringData('profile_pic').then((value) {
@@ -182,11 +198,10 @@ class _Feed extends State<Feed>
           username = value;
           CommonFun().getStringData('profileName').then((value) {
             displayname = value;
-            instastoredetails(userid,username,photourl,displayname);
+            instastoredetails(userid, username, photourl, displayname);
           });
         });
       });
     });
-   }
+  }
 }
-

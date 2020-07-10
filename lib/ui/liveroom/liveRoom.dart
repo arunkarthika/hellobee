@@ -48,13 +48,14 @@ class LiveRoom extends StatefulWidget {
   final String userType1;
   final String broadcasterId1;
 
-  RenderBroadcast createState() => RenderBroadcast(
-    userId: userId1,
-    broadcastUsername: username1,
-    userType: userType1,
-    broadcastType: broadcastType1,
-    broadcasterId: broadcasterId1,
-  );
+  RenderBroadcast createState() =>
+      RenderBroadcast(
+        userId: userId1,
+        broadcastUsername: username1,
+        userType: userType1,
+        broadcastType: broadcastType1,
+        broadcasterId: broadcasterId1,
+      );
 }
 
 class RenderBroadcast extends State<LiveRoom>
@@ -112,8 +113,18 @@ class RenderBroadcast extends State<LiveRoom>
       ZegoUser user = ZegoUser(userId, common.username);
       ZegoExpressEngine.instance.loginRoom(broadcastUsername, user);
       common.zego.setCallback(setState);
-      common.zego.width = MediaQuery.of(context).size.width.ceil().toInt();
-      common.zego.height = (MediaQuery.of(context).size.height.ceil().toInt());
+      common.zego.width = MediaQuery
+          .of(context)
+          .size
+          .width
+          .ceil()
+          .toInt();
+      common.zego.height = (MediaQuery
+          .of(context)
+          .size
+          .height
+          .ceil()
+          .toInt());
       if (userType == 'broad') {
         common.zego.broadOffline = false;
         common.broadcastType = broadcastType;
@@ -242,6 +253,8 @@ class RenderBroadcast extends State<LiveRoom>
     common.timerController.dispose();
     common.menu.dismiss();
     WidgetsBinding.instance.removeObserver(this);
+    Navigator.of(context).pop(false);
+
     Timer(Duration(milliseconds: 1200), () {
       if (common.connectionState == MqttCurrentConnectionState.CONNECTED) {
         common.client.disconnect();
@@ -261,7 +274,10 @@ class RenderBroadcast extends State<LiveRoom>
   Widget build(BuildContext context) {
     common.closeContext = context;
     PopupMenu.context = context;
-    common.widthScreen = MediaQuery.of(context).size.width;
+    common.widthScreen = MediaQuery
+        .of(context)
+        .size
+        .width;
     return GestureDetector(
       onDoubleTap: () {},
       child: SafeArea(
@@ -356,7 +372,10 @@ class RenderBroadcast extends State<LiveRoom>
           child: arrivedShow(common),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height / 1.7,
+          top: MediaQuery
+              .of(context)
+              .size
+              .height / 1.7,
           left: 10,
           bottom: 50,
           right: 60,
@@ -460,21 +479,22 @@ class RenderBroadcast extends State<LiveRoom>
   Future<bool> onWillPop() async {
     return (await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        content: Text('Quit BroadCast?'),
-        actions: <Widget>[
-          FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text('No'),
+      builder: (context) =>
+          AlertDialog(
+            content: Text('Quit BroadCast?'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No'),
+              ),
+              FlatButton(
+                onPressed: () {
+                  exit(context);
+                },
+                child: Text('Yes'),
+              ),
+            ],
           ),
-          FlatButton(
-            onPressed: () {
-              exit(context);
-            },
-            child: Text('Yes'),
-          ),
-        ],
-      ),
     )) ??
         false;
   }
@@ -519,8 +539,14 @@ class RenderBroadcast extends State<LiveRoom>
               icon = Icons.swap_horiz;
             }
 
-            Person person = Person(v["profileName"], v["user_id"], v["level"],
-                v['userRelation'], v['profile_pic'], name, icon);
+            Person person = Person(
+                v["profileName"],
+                v["user_id"],
+                v["level"],
+                v['userRelation'],
+                v['profile_pic'],
+                name,
+                icon);
             common.filteredList.add(person);
           }
         }
@@ -557,8 +583,14 @@ class RenderBroadcast extends State<LiveRoom>
       common.guestData = [];
       common.guestData.clear();
       common.guestList.forEach((k, v) {
-        GuestData gData = GuestData(k, v["profileName"], v["username"],
-            v["profile_pic"], v["level"], 0, 0);
+        GuestData gData = GuestData(
+            k,
+            v["profileName"],
+            v["username"],
+            v["profile_pic"],
+            v["level"],
+            0,
+            0);
         common.guestData.add(gData);
         print('Key=$k, Value=$v');
 
@@ -613,8 +645,14 @@ class RenderBroadcast extends State<LiveRoom>
       common.guestList.forEach((k, v) {
         var temp = common.guestData.indexWhere((item) => item.userId == k);
         if (temp == -1) {
-          var gData = GuestData(k, v['profileName'], v['username'],
-              v['profile_pic'], v['level'], 0, v['video_muted']);
+          var gData = GuestData(
+              k,
+              v['profileName'],
+              v['username'],
+              v['profile_pic'],
+              v['level'],
+              0,
+              v['video_muted']);
           common.guestData.add(gData);
           common.zego.playRemoteStream(k, setState, common.broadcastType);
         } else {
@@ -635,7 +673,9 @@ class RenderBroadcast extends State<LiveRoom>
 
   dateTimeDiff(time) {
     DateTime now = DateTime.now();
-    var diff = now.difference(time).inSeconds;
+    var diff = now
+        .difference(time)
+        .inSeconds;
     return diff;
   }
 
@@ -663,12 +703,13 @@ class RenderBroadcast extends State<LiveRoom>
             ? Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => BroadcastEnd(
-                broadcastTime: actualBroadcastingTime.toString(),
-                viewvers: common.audiencelist.length.toString(),
-                like: common.like.toString(),
-                gold: common.bgold.toString(),
-                userId: broadcasterId),
+            builder: (context) =>
+                BroadcastEnd(
+                    broadcastTime: actualBroadcastingTime.toString(),
+                    viewvers: common.audiencelist.length.toString(),
+                    like: common.like.toString(),
+                    gold: common.bgold.toString(),
+                    userId: broadcasterId),
           ),
         )
             : Navigator.of(context).pop();
@@ -719,8 +760,14 @@ class RenderBroadcast extends State<LiveRoom>
         common.guestData = [];
         common.guestData.clear();
         common.guestList.forEach((k, v) {
-          GuestData gData = GuestData(k, v["profileName"], v["username"],
-              v["profile_pic"], v["level"], 0, 0);
+          GuestData gData = GuestData(
+              k,
+              v["profileName"],
+              v["username"],
+              v["profile_pic"],
+              v["level"],
+              0,
+              0);
           common.guestData.add(gData);
           print('Key=$k, Value=$v');
           common.zego.playRemoteStream(k, setState, common.broadcastType);
@@ -842,8 +889,14 @@ class RenderBroadcast extends State<LiveRoom>
               common.broadcasterId, setState, common.broadcastType);
           common.guestData = [];
           common.guestList.forEach((k, v) {
-            var gData = GuestData(k, v['profileName'], v['username'],
-                v['profile_pic'], v['level'], 0, v['video_muted']);
+            var gData = GuestData(
+                k,
+                v['profileName'],
+                v['username'],
+                v['profile_pic'],
+                v['level'],
+                0,
+                v['video_muted']);
             common.guestData.add(gData);
             common.zego.playRemoteStream(k, setState, common.broadcastType);
           });
@@ -1392,7 +1445,8 @@ class RenderBroadcast extends State<LiveRoom>
             }
           } else if (receivedTopic == common.username) {
             common.publishMessage(arrData[4],
-                '£01T0aSt01£*£${common.userId}£*£${common.name} is already in PK');
+                '£01T0aSt01£*£${common.userId}£*£${common
+                    .name} is already in PK');
           }
           break;
         case '£01pkSession01':
@@ -1410,12 +1464,14 @@ class RenderBroadcast extends State<LiveRoom>
             } else {
               disposePlay(common.guestData[0].userId);
               print(
-                  '@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${common.zego.playViewWidget.length}');
+                  '@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${common.zego.playViewWidget
+                      .length}');
               common.client.unsubscribe(arrData[2]);
               common.guestData = [];
               common.zego.playViewWidget.removeAt(1);
               print(
-                  '@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${common.zego.playViewWidget.length}');
+                  '@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ${common.zego.playViewWidget
+                      .length}');
               if (common.userTypeGlob == 'broad') {
                 common.pkSession = false;
               }
@@ -1486,141 +1542,143 @@ class RenderBroadcast extends State<LiveRoom>
     print("okoko");
     return (await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.transparent,
-        content: Builder(builder: (context) {
-          return Container(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  flex: 8,
-                  child: Text(
-                    inviteString,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: GestureDetector(
-                    onTap: () {
-                      var msgString;
-                      switch (type) {
-                        case "guest":
-                          msgString =
-                              "£01GuestInviteResponse01£*£Accepted£*£" +
-                                  id +
-                                  "£*£" +
-                                  common.name +
-                                  "£*£" +
-                                  common.username +
-                                  "£*£" +
-                                  common.profilePic;
-                          break;
-                        case "pk":
-                          msgString =
-                              "£01PKInviteResponse01£*£Accepted£*£" +
-                                  id +
-                                  "£*£" +
-                                  common.name +
-                                  "£*£" +
-                                  common.username +
-                                  "£*£" +
-                                  common.profilePic +
-                                  "£*£" +
-                                  common.broadcastUsername;
-                          break;
-                        default:
-                          msgString =
-                              "£01GuestInviteResponse01£*£Accepted£*£" +
-                                  id +
-                                  "£*£" +
-                                  common.name +
-                                  "£*£" +
-                                  common.username +
-                                  "£*£" +
-                                  common.profilePic;
-                          break;
-                      }
-                      common.publishMessage(topic, msgString);
-                      Navigator.of(context).pop(false);
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      child: Image(
-                        image: AssetImage(
-                          "assets/broadcast/chair.png",
+      builder: (context) =>
+          AlertDialog(
+            backgroundColor: Colors.transparent,
+            content: Builder(builder: (context) {
+              return Container(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 8,
+                      child: Text(
+                        inviteString,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .subtitle
+                            .copyWith(color: Colors.white),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: GestureDetector(
+                        onTap: () {
+                          var msgString;
+                          switch (type) {
+                            case "guest":
+                              msgString =
+                                  "£01GuestInviteResponse01£*£Accepted£*£" +
+                                      id +
+                                      "£*£" +
+                                      common.name +
+                                      "£*£" +
+                                      common.username +
+                                      "£*£" +
+                                      common.profilePic;
+                              break;
+                            case "pk":
+                              msgString =
+                                  "£01PKInviteResponse01£*£Accepted£*£" +
+                                      id +
+                                      "£*£" +
+                                      common.name +
+                                      "£*£" +
+                                      common.username +
+                                      "£*£" +
+                                      common.profilePic +
+                                      "£*£" +
+                                      common.broadcastUsername;
+                              break;
+                            default:
+                              msgString =
+                                  "£01GuestInviteResponse01£*£Accepted£*£" +
+                                      id +
+                                      "£*£" +
+                                      common.name +
+                                      "£*£" +
+                                      common.username +
+                                      "£*£" +
+                                      common.profilePic;
+                              break;
+                          }
+                          common.publishMessage(topic, msgString);
+                          Navigator.of(context).pop(false);
+                        },
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          child: Image(
+                            image: AssetImage(
+                              "assets/broadcast/chair.png",
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: GestureDetector(
-                    onTap: () {
-                      var msgString;
-                      switch (type) {
-                        case "guest":
-                          msgString =
-                              "£01GuestInviteResponse01£*£Rejected£*£" +
-                                  id +
-                                  "£*£" +
-                                  common.name +
-                                  "£*£" +
-                                  common.username +
-                                  "£*£" +
-                                  common.profilePic;
-                          break;
-                        case "pk":
-                          msgString =
-                              "£01PKInviteResponse01£*£Rejected£*£" +
-                                  id +
-                                  "£*£" +
-                                  common.name +
-                                  "£*£" +
-                                  common.username +
-                                  "£*£" +
-                                  common.profilePic +
-                                  "£*£" +
-                                  common.broadcastUsername;
-                          break;
-                        default:
-                          msgString =
-                              "£01GuestInviteResponse01£*£Rejected£*£" +
-                                  id +
-                                  "£*£" +
-                                  common.name +
-                                  "£*£" +
-                                  common.username +
-                                  "£*£" +
-                                  common.profilePic;
-                          break;
-                      }
-                      common.publishMessage(topic, msgString);
-                      Navigator.of(context).pop(false);
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      child: Image(
-                        image: AssetImage(
-                          "assets/broadcast/Close.png",
+                    Expanded(
+                      flex: 2,
+                      child: GestureDetector(
+                        onTap: () {
+                          var msgString;
+                          switch (type) {
+                            case "guest":
+                              msgString =
+                                  "£01GuestInviteResponse01£*£Rejected£*£" +
+                                      id +
+                                      "£*£" +
+                                      common.name +
+                                      "£*£" +
+                                      common.username +
+                                      "£*£" +
+                                      common.profilePic;
+                              break;
+                            case "pk":
+                              msgString =
+                                  "£01PKInviteResponse01£*£Rejected£*£" +
+                                      id +
+                                      "£*£" +
+                                      common.name +
+                                      "£*£" +
+                                      common.username +
+                                      "£*£" +
+                                      common.profilePic +
+                                      "£*£" +
+                                      common.broadcastUsername;
+                              break;
+                            default:
+                              msgString =
+                                  "£01GuestInviteResponse01£*£Rejected£*£" +
+                                      id +
+                                      "£*£" +
+                                      common.name +
+                                      "£*£" +
+                                      common.username +
+                                      "£*£" +
+                                      common.profilePic;
+                              break;
+                          }
+                          common.publishMessage(topic, msgString);
+                          Navigator.of(context).pop(false);
+                        },
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          child: Image(
+                            image: AssetImage(
+                              "assets/broadcast/Close.png",
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }),
-      ),
+              );
+            }),
+          ),
     )) ??
         false;
   }
@@ -1654,8 +1712,14 @@ class RenderBroadcast extends State<LiveRoom>
                 '£*£' +
                 common.level);
         common.zego.startPublish(userId);
-        var gData = GuestData(userId, common.name, common.username,
-            common.profilePic, common.level, 0, 0);
+        var gData = GuestData(
+            userId,
+            common.name,
+            common.username,
+            common.profilePic,
+            common.level,
+            0,
+            0);
         setState(() {
           common.guestData.add(gData);
         });
@@ -1692,7 +1756,8 @@ class RenderBroadcast extends State<LiveRoom>
       }
     } else {
       print(
-          'MQTTClientWrapper::ERROR Mosquitto client connection failed - disconnecting, status is ${common.client.connectionStatus}');
+          'MQTTClientWrapper::ERROR Mosquitto client connection failed - disconnecting, status is ${common
+              .client.connectionStatus}');
       common.connectionState = MqttCurrentConnectionState.ERROR_WHEN_CONNECTING;
       common.client.disconnect();
     }
@@ -1821,8 +1886,9 @@ class RenderBroadcast extends State<LiveRoom>
         common.chatList[0].txtmsg);
     Timer(
         Duration(milliseconds: 100),
-            () => common.mesagecontroller
-            .jumpTo(common.mesagecontroller.position.maxScrollExtent));
+            () =>
+            common.mesagecontroller
+                .jumpTo(common.mesagecontroller.position.maxScrollExtent));
     return ListView.builder(
       itemCount: common.chatList.length,
       controller: common.mesagecontroller,
@@ -1873,7 +1939,10 @@ class RenderBroadcast extends State<LiveRoom>
                       child: Container(
                         constraints: BoxConstraints(
                             maxWidth:
-                            MediaQuery.of(context).size.width * .6),
+                            MediaQuery
+                                .of(context)
+                                .size
+                                .width * .6),
                         padding: const EdgeInsets.all(15.0),
                         decoration: BoxDecoration(
                           color: Color(0xfff9f9f9),
@@ -1885,7 +1954,11 @@ class RenderBroadcast extends State<LiveRoom>
                         ),
                         child: Text(
                           common.chatList[i].txtmsg,
-                          style: Theme.of(context).textTheme.body1.apply(
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .body1
+                              .apply(
                             color: Colors.black87,
                           ),
                         ),
@@ -1901,7 +1974,8 @@ class RenderBroadcast extends State<LiveRoom>
             padding: EdgeInsets.only(bottom: 10),
             child: Text(
               common.chatList[i].txtmsg,
-              style: Theme.of(context)
+              style: Theme
+                  .of(context)
                   .textTheme
                   .subtitle
                   .copyWith(color: Colors.white, fontSize: 12),
@@ -1961,6 +2035,7 @@ class RenderBroadcast extends State<LiveRoom>
     print(params);
     makeGetRequest("user", params, 0, context).then((response) {
       var res = jsonDecode(response);
+      print("quickProfile" + res.toString());
       var data = res['body'];
       var gender = 'Female.png';
       genderhide = int.tryParse(data['is_the_gender_hide'].toString());
@@ -2088,9 +2163,10 @@ class RenderBroadcast extends State<LiveRoom>
                                 /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => EditProfile(
-                                      touserid: id,
-                                    ),
+                                    builder: (context) =>
+                                        EditProfile(
+                                          touserid: id,
+                                        ),
                                   ),
                                 );*/
                               },
@@ -2118,9 +2194,10 @@ class RenderBroadcast extends State<LiveRoom>
                                 /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => EditProfile(
-                                      touserid: id,
-                                    ),
+                                    builder: (context) =>
+                                        EditProfile(
+                                          touserid: id,
+                                        ),
                                   ),
                                 );*/
                               },
@@ -2366,7 +2443,18 @@ class RenderBroadcast extends State<LiveRoom>
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChatScreen(peerId:"0",peerAvatar:data['profile_pic'],peerName:data['profileName']),
+                                    builder: (context) =>
+                                        ChatScreen(
+                                            peerId: data['firebaseUID'] == null
+                                                ? "0"
+                                                : data['firebaseUID'],
+                                            peerAvatar: data['profile_pic'],
+                                            peerName: data['profileName'],
+                                            peergcm:
+                                            data['gcm_registration_id'] == null
+                                            ? "0"
+                                            : data['gcm_registration_id'],
+                                            ),
                                   ),
                                 );
                               },
@@ -2478,7 +2566,6 @@ class RenderBroadcast extends State<LiveRoom>
           common.userrelation = relationInt;
           common.relationImage = image;
         });
-
       }
     });
   }
@@ -2682,15 +2769,17 @@ class RenderBroadcast extends State<LiveRoom>
                 children: <Widget>[
                   Text(
                     common.broadcasterProfileName,
-                    style: Theme.of(context)
+                    style: Theme
+                        .of(context)
                         .textTheme
                         .subtitle
                         .copyWith(color: Colors.white, fontSize: 20),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    "ID "+common.broadcasterId.toString(),
-                    style: Theme.of(context)
+                    "ID " + common.broadcasterId.toString(),
+                    style: Theme
+                        .of(context)
                         .textTheme
                         .subtitle
                         .copyWith(color: Colors.white, fontSize: 12),
@@ -2796,44 +2885,45 @@ class RenderBroadcast extends State<LiveRoom>
         Positioned(
           top: 20,
           left: 165,
-         child: GestureDetector(
-          child: Container(
-            padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(0, 0, 0, 0.50),
-              borderRadius: BorderRadius.all(
-                Radius.circular(50),
+          child: GestureDetector(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(5, 1, 5, 1),
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(0, 0, 0, 0.50),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(50),
+                ),
+                border: Border.all(
+                  width: 1.5,
+                  style: BorderStyle.solid,
+                  color: Colors.orange,
+                ),
               ),
-              border: Border.all(
-                width: 1.5,
-                style: BorderStyle.solid,
-                color: Colors.orange,
-              ),
-            ),
-            child: Row(
-              children: <Widget>[
-                Image(
-                  image: AssetImage(
-                    "assets/broadcast/Coin.png",
+              child: Row(
+                children: <Widget>[
+                  Image(
+                    image: AssetImage(
+                      "assets/broadcast/Coin.png",
+                    ),
+                    width: 10,
+                    height: 10,
                   ),
-                  width: 10,
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  common.gold.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .subtitle
-                      .copyWith(color: Colors.orange, fontSize: 14),
-                ),
-              ],
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    common.gold.toString(),
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .subtitle
+                        .copyWith(color: Colors.orange, fontSize: 14),
+                  ),
+                ],
+              ),
             ),
-          ),
-            onTap:(){
-             /* getContributorslist(common, context, common.audienceSetState, common.fullcontpage);*/
+            onTap: () {
+              /* getContributorslist(common, context, common.audienceSetState, common.fullcontpage);*/
               common.pageforbottm = 1;
               common.lastpageforbottom = 1;
               common.contributerType = 'all';
@@ -2873,8 +2963,14 @@ class RenderBroadcast extends State<LiveRoom>
             name = 'Friend';
             icon = Icons.swap_horiz;
           }
-          var person = Person(v['profileName'], v['user_id'], v['level'],
-              v['userRelation'], v['profile_pic'], name, icon);
+          var person = Person(
+              v['profileName'],
+              v['user_id'],
+              v['level'],
+              v['userRelation'],
+              v['profile_pic'],
+              name,
+              icon);
           common.filteredList.add(person);
         }
         var endPoint = 'user/List';
@@ -2915,7 +3011,8 @@ class RenderBroadcast extends State<LiveRoom>
                                     Tab(
                                       child: Text(
                                         'Audience',
-                                        style: Theme.of(context)
+                                        style: Theme
+                                            .of(context)
                                             .textTheme
                                             .subtitle1
                                             .copyWith(
@@ -2927,7 +3024,8 @@ class RenderBroadcast extends State<LiveRoom>
                                     Tab(
                                       child: Text(
                                         'Contributors',
-                                        style: Theme.of(context)
+                                        style: Theme
+                                            .of(context)
                                             .textTheme
                                             .subtitle1
                                             .copyWith(
@@ -2946,10 +3044,12 @@ class RenderBroadcast extends State<LiveRoom>
                             Expanded(
                               flex: 10,
                               child: TabBarView(
-                                controller: common.audienceContributerController,
+                                controller:
+                                common.audienceContributerController,
                                 children: <Widget>[
                                   ListView.builder(
-                                    controller: common.scrollControllerforbottom,
+                                    controller:
+                                    common.scrollControllerforbottom,
                                     shrinkWrap: true,
                                     itemCount: common.filteredList.length,
                                     itemBuilder:
@@ -2986,17 +3086,20 @@ class RenderBroadcast extends State<LiveRoom>
                                               ),
                                             ),
                                             Container(
-                                              padding: const EdgeInsets.all(3.0),
+                                              padding:
+                                              const EdgeInsets.all(3.0),
                                               width: 80,
                                               height: 40,
                                               child: Column(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
+                                                MainAxisAlignment
+                                                    .spaceAround,
                                                 children: <Widget>[
                                                   Text(
                                                     common.filteredList[index]
                                                         .personFirstName,
-                                                    style: Theme.of(context)
+                                                    style: Theme
+                                                        .of(context)
                                                         .textTheme
                                                         .subtitle1
                                                         .copyWith(
@@ -3007,9 +3110,11 @@ class RenderBroadcast extends State<LiveRoom>
                                                   ),
                                                   Text(
                                                     'ID - ' +
-                                                        common.filteredList[index]
+                                                        common
+                                                            .filteredList[index]
                                                             .userid,
-                                                    style: Theme.of(context)
+                                                    style: Theme
+                                                        .of(context)
                                                         .textTheme
                                                         .subtitle1
                                                         .copyWith(
@@ -3020,17 +3125,20 @@ class RenderBroadcast extends State<LiveRoom>
                                               ),
                                             ),
                                             Container(
-                                              padding:
-                                              EdgeInsets.fromLTRB(5, 2, 5, 2),
+                                              padding: EdgeInsets.fromLTRB(
+                                                  5, 2, 5, 2),
                                               decoration: BoxDecoration(
                                                   color: Colors.pink,
-                                                  borderRadius: BorderRadius.all(
-                                                      Radius.circular(50.0))),
+                                                  borderRadius:
+                                                  BorderRadius.all(
+                                                      Radius.circular(
+                                                          50.0))),
                                               child: Text(
                                                 '⭐ ' +
-                                                    common
-                                                        .filteredList[index].lvl,
-                                                style: Theme.of(context)
+                                                    common.filteredList[index]
+                                                        .lvl,
+                                                style: Theme
+                                                    .of(context)
                                                     .textTheme
                                                     .subtitle1
                                                     .copyWith(
@@ -3052,7 +3160,8 @@ class RenderBroadcast extends State<LiveRoom>
                                               },
                                               textColor: Colors.white,
                                               color: Colors.transparent,
-                                              padding: const EdgeInsets.all(0.0),
+                                              padding:
+                                              const EdgeInsets.all(0.0),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                   BorderRadius.circular(
@@ -3062,11 +3171,14 @@ class RenderBroadcast extends State<LiveRoom>
                                                     5, 1, 5, 1),
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.all(
+                                                  borderRadius:
+                                                  BorderRadius.all(
                                                       Radius.circular(50)),
                                                   gradient: LinearGradient(
-                                                      begin: Alignment.centerLeft,
-                                                      end: Alignment.centerRight,
+                                                      begin:
+                                                      Alignment.centerLeft,
+                                                      end:
+                                                      Alignment.centerRight,
                                                       colors: [
                                                         Color(0xFFEC008C),
                                                         Color(0xFFFC6767)
@@ -3105,7 +3217,8 @@ class RenderBroadcast extends State<LiveRoom>
                                                 Tab(
                                                   child: Text(
                                                     'Day List',
-                                                    style: Theme.of(context)
+                                                    style: Theme
+                                                        .of(context)
                                                         .textTheme
                                                         .subtitle1
                                                         .copyWith(
@@ -3117,7 +3230,8 @@ class RenderBroadcast extends State<LiveRoom>
                                                 Tab(
                                                   child: Text(
                                                     'Full List',
-                                                    style: Theme.of(context)
+                                                    style: Theme
+                                                        .of(context)
                                                         .textTheme
                                                         .subtitle1
                                                         .copyWith(
@@ -3131,10 +3245,12 @@ class RenderBroadcast extends State<LiveRoom>
                                               common.contributerController,
                                               onTap: (index) {
                                                 if (index == 0) {
-                                                  common.contributerType = 'day';
+                                                  common.contributerType =
+                                                  'day';
                                                 }
                                                 if (index == 1) {
-                                                  common.contributerType = 'full';
+                                                  common.contributerType =
+                                                  'full';
                                                 }
                                               },
                                             ),
@@ -3225,7 +3341,8 @@ class RenderBroadcast extends State<LiveRoom>
                   children: <Widget>[
                     Text(
                       list[index]['profileName'],
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .subtitle2
                           .copyWith(color: Colors.white, fontSize: 10),
@@ -3234,7 +3351,8 @@ class RenderBroadcast extends State<LiveRoom>
                     ),
                     Text(
                       'ID - ' + list[index]['reference_user_id'],
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .subtitle1
                           .copyWith(color: Colors.amber, fontSize: 12),
@@ -3249,7 +3367,8 @@ class RenderBroadcast extends State<LiveRoom>
                     borderRadius: BorderRadius.all(Radius.circular(50.0))),
                 child: Text(
                   '⭐ ' + list[index]['level'],
-                  style: Theme.of(context)
+                  style: Theme
+                      .of(context)
                       .textTheme
                       .subtitle1
                       .copyWith(color: Colors.white, fontSize: 12),
@@ -3269,7 +3388,8 @@ class RenderBroadcast extends State<LiveRoom>
                   ),
                   Text(
                     list[index]['gold'].toString(),
-                    style: Theme.of(context)
+                    style: Theme
+                        .of(context)
                         .textTheme
                         .subtitle1
                         .copyWith(color: Colors.white, fontSize: 14),
@@ -3553,7 +3673,10 @@ class RenderBroadcast extends State<LiveRoom>
           return Container(
             child: Padding(
               padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
+                  bottom: MediaQuery
+                      .of(context)
+                      .viewInsets
+                      .bottom),
               child: TextFormField(
                 focusNode: common.focusNode,
                 decoration: InputDecoration(

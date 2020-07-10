@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/ui/liveroom/personalChat/const.dart';
@@ -31,24 +32,26 @@ class ChatScreen extends StatefulWidget {
   final String peerId;
   final String peerAvatar;
   final String peerName;
+  final String peergcm;
 
-  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName})
+  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm})
       : super(key: key);
 
   @override
   State createState() =>
-      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, peerName: peerName);
+      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, peerName: peerName, peergcm: peergcm);
 }
 
 class ChatScreenState extends State<ChatScreen> {
   bool _showBottom = false;
 
-  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName});
+  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm});
 
   String peerId;
   String peerAvatar;
   String id;
   String peerName;
+  String peergcm;
 
   var listMessage;
   String groupChatId;
@@ -144,7 +147,6 @@ class ChatScreenState extends State<ChatScreen> {
     id=uid;
     readLocal();
     _saveDeviceToken();
-    sendNotification('receiver', 'msg');
     // here you write the codes to input the data into firestore
   }
   _saveDeviceToken() async {
@@ -175,7 +177,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   static Future<void> sendNotification(receiver,msg)async{
 
-    var token = 'cYoMvZctbiA:APA91bE0lqgwXLBxT6eim_aj5FcjuRZN1xb0ln2UW_fOSJ-pTRedNrpdSIR_hi3Kl5x9kjcvh1FVxilGIhWwyPmAgl1qlYDHr3uc_6Lxk3NRTHjui56oQ1PSumZgSFmeQGY9wwz3JHJq';
+    var token = receiver;
     print('token : $token');
 
     final data = {
@@ -305,7 +307,7 @@ class ChatScreenState extends State<ChatScreen> {
       });
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      sendNotification(peerName, content);
+      sendNotification(peergcm, content);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send');
     }
@@ -458,12 +460,19 @@ class ChatScreenState extends State<ChatScreen> {
                                 bottomRight: Radius.circular(25),
                               ),
                             ),
-                            child: Text(
+                            child: GestureDetector(
+                              onLongPress: (){
+                                Clipboard.setData(new ClipboardData(text: document['content'].toString()));
+
+                              },
+                              child:Text(
+
+
                               document['content'],
                               style:
                               Theme.of(context).textTheme.body1.apply(
                                 color: Colors.black87,
-                              ),
+                              ),),
                             ),
                           ),
                         ],
