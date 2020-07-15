@@ -6,9 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/MeProfileNew.dart';
-import 'package:honeybee/ui/listview.dart';
 import 'package:honeybee/utils/string.dart';
-
 import 'liveroom/profileUi.dart';
 
 class MeProfile extends StatefulWidget {
@@ -25,13 +23,14 @@ class _EditProfileState extends State<MeProfile>  {
 
   UserData uData = UserData();
   var name = "";
-  var gender = "Female.png";
+  var gender = "";
   var level = "";
+  var diamond = "";
   var fans = "";
   var overallgold = "";
   var friends = "";
   var followers = "";
-  var country = "India";
+  var country = "";
   bool loader = true;
   var profilePic = "";
   var refrenceId = "";
@@ -42,15 +41,7 @@ class _EditProfileState extends State<MeProfile>  {
   var dob;
   var age;
   var idhide;
-
   var touserid="";
-
-  final List tags = [
-    "↑Lv 10",
-    "💎 50K",
-    "♀ Female",
-    '🌝 Happy face',
-  ];
 
   void dataGet() async {
     touserid = await CommonFun().getStringData('user_id');
@@ -74,19 +65,18 @@ class _EditProfileState extends State<MeProfile>  {
         idhide = data['is_the_user_id_hidden'];
         profilePic = data['profile_pic'];
         name = data['profileName'];
+        diamond = data['diamond'];
         friends = data['friends'];
         followers = data['followers'];
         fans = data['fans'];
         overallgold = data['over_all_gold'];
-        gender = "Female.png";
         level = data['level'];
         age = data['age'];
         name = data['profileName'];
-        if (data['gender'] == "male") gender = "male.jpg";
+        gender = data['gender'];
         country = data['country'];
         profilePic = data['profile_pic'];
         refrenceId = data['reference_user_id'];
-        if (data['gender'] == "male") gender = "male.jpg";
         uData.userrelation = data['userRelationship'];
         if (uData.userrelation == null) uData.userrelation = 0;
         uData.relationData = "Follow";
@@ -124,7 +114,7 @@ class _EditProfileState extends State<MeProfile>  {
                             image: DecorationImage(
                                 fit: BoxFit.cover,
                                 image: NetworkImage(
-                                    'https://images.pexels.com/photos/1308881/pexels-photo-1308881.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500 ')
+                                    'https://images.pexels.com/photos/1391499/pexels-photo-1391499.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
                             )
                         ),
                       ),)
@@ -133,20 +123,28 @@ class _EditProfileState extends State<MeProfile>  {
                     Positioned(
                       top: 180.0,
                       left: 25,
-                      child: Container(
-                        height: 120.0,
-                        width: 120.0,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(profilePic),
+                      child: GestureDetector(
+                        child: Container(
+                          child: Align(
+                            child: CircleAvatar(
+                              radius: 60,
+                              backgroundColor: Colors.black26,
+                              child: ClipOval(
+                                  child: Center(
+                                    child: Image.network(
+                                      profilePic,
+                                      width: 250,
+                                      height: 250,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                              ),
                             ),
-                            border: Border.all(
-                                color: Colors.white,
-                                width: 2.0
-                            )
+                          ),
                         ),
+                        onTap: (){
+
+                        },
                       ),
                     ),
                     Positioned(
@@ -165,14 +163,12 @@ class _EditProfileState extends State<MeProfile>  {
                                width: 24,
                                color: Color(0xFFFFFFFF),
                              ), onPressed: () {
-                               print("object touserid touserid" + touserid);
                              Navigator.of(context).push(
                                  MaterialPageRoute<Null>(
                                      builder: (BuildContext context) {
                                        return new EditProfileNew(touserid: touserid,);
                                      }));
-                           },
-                           ),
+                           },),
                         ),
                       ),
                     ),
@@ -193,7 +189,6 @@ class _EditProfileState extends State<MeProfile>  {
                           fontWeight: FontWeight.bold,
                           fontSize: 25.0),
                     ),
-                    /*Icon(Icons.check_circle, color: Colors.blueAccent,)*/
                   ],
                 ),
               ),
@@ -203,11 +198,11 @@ class _EditProfileState extends State<MeProfile>  {
                     child: refrenceId == null
                         ? Text("ID ")
                         : Text(
-                        "ID: " + refrenceId+
+                        "ID: " + refrenceId +
                             ' ' +
                             "|" +
                             ' ' +
-                            "India",
+                            country,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.subtitle1.
                         apply(color: Colors.orange)
@@ -215,6 +210,70 @@ class _EditProfileState extends State<MeProfile>  {
                 ),
               ),
               SizedBox(height: 10.0,),
+              Positioned(
+                top: 190,
+                left: 0,
+                right: 0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        OutlineButton(
+                            padding: EdgeInsets.all(0.0),
+                            child: Column(
+                              // Replace with a Row for horizontal icon + text
+                              children: <Widget>[
+                                Text("↑Level " + level,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                              ],
+                            ),
+                            onPressed: () {},
+                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                        ),
+                        OutlineButton(
+                            padding: EdgeInsets.all(0.0),
+                            child: Column(
+                              // Replace with a Row for horizontal icon + text
+                              children: <Widget>[
+                                Text("💎 " + diamond,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                              ],
+                            ),
+                            onPressed: () {},
+                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                        ),
+                        OutlineButton(
+                            padding: EdgeInsets.all(0.0),
+                            child: Column(
+                              // Replace with a Row for horizontal icon + text
+                              children: <Widget>[
+                                Text("⚤" + gender,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                              ],
+                            ),
+                            onPressed: () {},
+                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -239,12 +298,7 @@ class _EditProfileState extends State<MeProfile>  {
                             ],
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Listview(),
-                              ),
-                            );
+
                           },
                         ),
                         FlatButton(
@@ -263,12 +317,7 @@ class _EditProfileState extends State<MeProfile>  {
                             ],
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Listview(),
-                              ),
-                            );
+
                           },
                         ),
                         FlatButton(
@@ -287,12 +336,7 @@ class _EditProfileState extends State<MeProfile>  {
                             ],
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Listview(),
-                              ),
-                            );
+
                           },
                         ),
                         FlatButton(
@@ -361,7 +405,7 @@ class _EditProfileState extends State<MeProfile>  {
                           fontSize: 18.0
                       ),),
                       SizedBox(width: 5.0,),
-                      Text("FeMale",
+                      Text(gender,
                         style: TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold

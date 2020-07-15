@@ -132,7 +132,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   _storagepermissionstore() async {
     var storageStatus = await PermissionFun().storagePermision();
     if (storageStatus.toString() != "PermissionStatus.granted") {
-      toast("Please Allow the Permission", Colors.red);
+      Fluttertoast.showToast(msg: permission_warning);
     }
   }
 
@@ -1035,7 +1035,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 ' ' +
                                 "|" +
                                 ' ' +
-                                "India",
+                                data['country'],
                             style: TextStyle(
                               fontSize: 15.0,
                               color: Colors.orange,
@@ -1047,29 +1047,64 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                         top: 190,
                         left: 0,
                         right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          height: 30,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: tags.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(color: Colors.black)),
-                                margin: const EdgeInsets.only(right: 5),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 5, 20, 4),
-                                  child: Text(
-                                    tags[index],
-                                    style: TextStyle(color: Colors.black),
-                                  ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                OutlineButton(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: Column(
+                                      // Replace with a Row for horizontal icon + text
+                                      children: <Widget>[
+                                        Text("↑Level " + data['level'],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ],
+                                    ),
+                                    onPressed: () {},
+                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                                 ),
-                              );
-                            },
-                          ),
+                                OutlineButton(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: Column(
+                                      // Replace with a Row for horizontal icon + text
+                                      children: <Widget>[
+                                        Text("💎 " + data["diamond"],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ],
+                                    ),
+                                    onPressed: () {},
+                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                ),
+                                OutlineButton(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: Column(
+                                      // Replace with a Row for horizontal icon + text
+                                      children: <Widget>[
+                                        Text("♀ " + data["gender"],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ],
+                                    ),
+                                    onPressed: () {},
+                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                       Positioned(
@@ -1248,11 +1283,15 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
           return SimpleDialog(
             children: <Widget>[
               SimpleDialogOption(
-                onPressed: () {},
+                onPressed: () {
+
+                },
                 child: const Text('Block'),
               ),
               SimpleDialogOption(
-                onPressed: () {},
+                onPressed: () {
+
+                },
                 child: const Text('Report'),
               ),
             ],
@@ -1301,8 +1340,7 @@ class ListItem extends StatelessWidget {
     }
     return GestureDetector(
       onTap: () {
-        Fluttertoast.showToast(
-          msg: under_dev);
+        Fluttertoast.showToast(msg: under_dev);
       },
       child: Container(
         margin: EdgeInsets.only(right: 10),

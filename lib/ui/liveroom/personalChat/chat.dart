@@ -207,7 +207,7 @@ class ChatScreenState extends State<ChatScreen> {
           encoding: Encoding.getByName('utf-8'),
           headers: headers);
       if (response.statusCode == 200) {
-        Fluttertoast.showToast(msg: 'Request Sent To Driver');
+
       } else {
         Fluttertoast.showToast(msg: 'notification sending failed');
         print('notification sending failed');

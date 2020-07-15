@@ -47,7 +47,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SettingsSection(
             title: 'Account',
             tiles: [
-              SettingsTile(title: 'Connected Accounts', leading: Icon(Icons.phone)),
+              SettingsTile(title: 'Connected Accounts',
+                  leading: Icon(Icons.phone)),
               SettingsTile(title: 'Review Us!', leading: Icon(Icons.star),
                 onTap: () {
                   StoreRedirect.redirect(

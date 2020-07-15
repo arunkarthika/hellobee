@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/Dashboard.dart';
@@ -77,8 +78,6 @@ class _MyAppState extends State<NewUser> {
 
   Future getImage() async {
     var image = await ImagePicker().getImage(source: ImageSource.gallery);
-    // var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
     setState(() {
       _image = image;
     });
@@ -97,7 +96,6 @@ class _MyAppState extends State<NewUser> {
   }
 
   Future<void> deviceId() async {
-
     deviceid = await DeviceId.getID;
     try {
       imei = await DeviceId.getIMEI;
@@ -105,11 +103,8 @@ class _MyAppState extends State<NewUser> {
     } on PlatformException catch (e) {
       print(e.message);
     }
-
     if (!mounted) return;
-
     setState(() {
-      //_deviceid = 'Your deviceid: $deviceid\nYour IMEI: $imei\nYour MEID: $meid';
     });
   }
 
@@ -117,7 +112,6 @@ class _MyAppState extends State<NewUser> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-    print("inside okok");
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -172,13 +166,6 @@ class _MyAppState extends State<NewUser> {
         ),
       ),
     );
-  }
-
-  Future getImageFromGallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      imageURI = image;
-    });
   }
 
   void _handleRadioValueChange(int value) {
@@ -273,7 +260,7 @@ class _MyAppState extends State<NewUser> {
                           ),
                         ),
                       ),
-                      Padding(
+                     /* Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: TextFormField(
                           controller: name,
@@ -281,6 +268,35 @@ class _MyAppState extends State<NewUser> {
                           decoration: InputDecoration(
                             hintText: 'Name',
                             labelText: 'Enter Name',
+                          ),
+                        ),
+                      ),*/
+                      Padding(
+                        padding: EdgeInsets.only(right: 20, bottom: 10),
+                        child: Container(
+                          height: 70,
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: Material(
+                            elevation: 10,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(35),
+                                )),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 20, right: 20, top: 2, bottom: 2),
+                              child: FormBuilderTextField(
+                                textInputAction: TextInputAction.go,
+                                controller: name,
+                                attribute: 'ProfileName',
+                                decoration: InputDecoration(
+                                    labelText: 'ProfileName'),
+                                validators: [
+                                  FormBuilderValidators.required()
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),

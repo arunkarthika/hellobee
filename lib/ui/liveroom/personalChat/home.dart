@@ -76,10 +76,8 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
   static Future<void> sendNotification(receiver,msg)async{
-
     var token = 'cYoMvZctbiA:APA91bE0lqgwXLBxT6eim_aj5FcjuRZN1xb0ln2UW_fOSJ-pTRedNrpdSIR_hi3Kl5x9kjcvh1FVxilGIhWwyPmAgl1qlYDHr3uc_6Lxk3NRTHjui56oQ1PSumZgSFmeQGY9wwz3JHJq';
     print('token : $token');
-
     final data = {
       "notification": {"body": msg, "title": "Message From $receiver"},
       "priority": "high",
@@ -97,17 +95,13 @@ class HomeScreenState extends State<HomeScreen> {
     };
 
     final postUrl = 'https://fcm.googleapis.com/fcm/send';
-
-
-
-
     try {
       final response = await http.post(postUrl,
           body: json.encode(data),
           encoding: Encoding.getByName('utf-8'),
           headers: headers);
       if (response.statusCode == 200) {
-        Fluttertoast.showToast(msg: 'Request Sent To Driver');
+
       } else {
         Fluttertoast.showToast(msg: 'notification sending failed');
         print('notification sending failed');
@@ -117,12 +111,7 @@ class HomeScreenState extends State<HomeScreen> {
     catch(e){
       print('exception $e');
     }
-
-
-
-
   }
-
 
   void registerNotification() async{
     firebaseMessaging.requestNotificationPermissions();

@@ -82,15 +82,6 @@ class RenderBroadcast extends State<LiveRoom>
   final String games = 'assets/liveroom/games.svg';
   final String heart = 'assets/liveroom/heart.svg';
 
-  final List tags = [
-    "↑Lv 10",
-    '🌝 Happy face',
-    "💎 50K",
-    "♀ Male",
-    "💐 Life style🤳",
-    "Bio: 😚 Forget Whoe Forgets U 👍"
-  ];
-
   @override
   void initState() {
     common.connectionState = MqttCurrentConnectionState.DISCONNECTED;
@@ -2025,7 +2016,6 @@ class RenderBroadcast extends State<LiveRoom>
   profileviewAudience(id, context, common) {
     print("userId" + id);
     var params = "";
-
     var genderhide;
     var idhide;
     if (id == common.userId)
@@ -2242,7 +2232,7 @@ class RenderBroadcast extends State<LiveRoom>
                                 ' ' +
                                 "|" +
                                 ' ' +
-                                "India",
+                                data['country'],
                             style: TextStyle(
                               fontSize: 15.0,
                               color: Colors.orange,
@@ -2254,29 +2244,64 @@ class RenderBroadcast extends State<LiveRoom>
                         top: 190,
                         left: 0,
                         right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          height: 30,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: tags.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(color: Colors.black)),
-                                margin: const EdgeInsets.only(right: 5),
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets.fromLTRB(20, 5, 20, 4),
-                                  child: Text(
-                                    tags[index],
-                                    style: TextStyle(color: Colors.black),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                OutlineButton(
+                                  padding: EdgeInsets.all(0.0),
+                                  child: Column(
+                                    // Replace with a Row for horizontal icon + text
+                                    children: <Widget>[
+                                      Text("↑Level " + data['level'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ],
                                   ),
+                                  onPressed: () {},
+                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                                 ),
-                              );
-                            },
-                          ),
+                                OutlineButton(
+                                  padding: EdgeInsets.all(0.0),
+                                  child: Column(
+                                    // Replace with a Row for horizontal icon + text
+                                    children: <Widget>[
+                                      Text("💎 " + data["diamond"],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ],
+                                  ),
+                                  onPressed: () {},
+                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                ),
+                                OutlineButton(
+                                  padding: EdgeInsets.all(0.0),
+                                  child: Column(
+                                    // Replace with a Row for horizontal icon + text
+                                    children: <Widget>[
+                                      Text("♀ " + data["gender"],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ],
+                                  ),
+                                  onPressed: () {},
+                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                       Positioned(
@@ -2773,7 +2798,7 @@ class RenderBroadcast extends State<LiveRoom>
                         .of(context)
                         .textTheme
                         .subtitle
-                        .copyWith(color: Colors.white, fontSize: 20),
+                        .copyWith(color: Colors.white, fontSize: 15),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(

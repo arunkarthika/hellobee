@@ -3,14 +3,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
-import 'package:honeybee/ui/Dashboard.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
-import 'package:honeybee/utils/string.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class EditProfileNew extends StatefulWidget {
   EditProfileNew({Key key, @required this.touserid,}) : super(key: key);
@@ -45,27 +44,54 @@ class _MyAppState extends State<EditProfileNew> {
   var dob;
   var age;
   var idhide;
-
   var touserid="";
-
-  var _profilePic;
+  DateTime date;
   var _image;
+  var _imageCover;
+  bool _piccheck = false;
+  bool _piccheckCover = false;
   int _radioValue1 = -1;
   bool _visible = false;
+  String genderValue;
+  File imageURI;
   PageController _pageController = PageController();
-
+  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   final TextEditingController names = TextEditingController();
   final TextEditingController username = TextEditingController();
   final TextEditingController referalCode = TextEditingController();
+  String _selectedDate = 'Date of Birth';
 
-  String genderValue;
-  File imageURI;
+  Future getImageCover() async {
+    var image = await ImagePicker().getImage(source: ImageSource.gallery);
+    _piccheckCover = true;
+    if (image != null) {
+      setState(() {
+        _imageCover = File(image.path);
+      });
+    }
+  }
 
   Future getImage() async {
     var image = await ImagePicker().getImage(source: ImageSource.gallery);
-    setState(() {
-      _image = image;
-    });
+    _piccheck = true;
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime d = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1980),
+      lastDate: DateTime(2021),
+    );
+    if (d != null)
+      setState(() {
+        _selectedDate = new DateFormat.yMMMMd("en_US").format(d);
+      });
   }
 
   @override
@@ -80,36 +106,22 @@ class _MyAppState extends State<EditProfileNew> {
         status = data['status'];
         dob = data['date_of_birth'];
         age = data['age'];
-        agehide = data['is_the_age_hidden'];
-        genderhide = data['is_the_gender_hide'];
-        dobhide = data['is_the_dob_hidden'];
-        idhide = data['is_the_user_id_hidden'];
         profilePic = data['profile_pic'];
-        name = data['profileName'];
-        friends = data['friends'];
-        followers = data['followers'];
-        fans = data['fans'];
-        overallgold = data['over_all_gold'];
-        gender = "Female.png";
+        names.text = name = data['profileName'];
         level = data['level'];
-        age = data['age'];
-        name = data['profileName'];
-        if (data['gender'] == "male") gender = "male.jpg";
         country = data['country'];
         profilePic = data['profile_pic'];
-        refrenceId = data['reference_user_id'];
-        if (data['gender'] == "male") gender = "male.jpg";
-        uData.userrelation = data['userRelationship'];
-        if (uData.userrelation == null) uData.userrelation = 0;
-        uData.relationData = "Follow";
-        uData.relationImage = Icons.add;
-        if (uData.userrelation == 1) {
-          uData.relationData = 'Unfollow';
-          uData.relationImage = Icons.remove;
-        } else if (uData.userrelation == 3) {
-          uData.relationImage = Icons.swap_horiz;
-          uData.relationData = 'Friend';
+        referalCode.text = refrenceId = data['reference_user_id'];
+
+        if (dob == '0' ||
+            dob == '' ||
+            dob == '0000-00-00' ||
+            dob == null) {
+          dob = DateTime.now();
+        } else {
+         /* date = DateTime.parse(common.date);*/
         }
+        age = calculateAge(date);
         loader = false;
       });
     });
@@ -123,6 +135,7 @@ class _MyAppState extends State<EditProfileNew> {
   @override
   void dispose() {
     _pageController.dispose();
+    names.dispose();
     super.dispose();
   }
 
@@ -144,7 +157,7 @@ class _MyAppState extends State<EditProfileNew> {
                           image: DecorationImage(
                               fit: BoxFit.cover,
                               image: NetworkImage(
-                                  'https://images.pexels.com/photos/1308881/pexels-photo-1308881.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500 ')
+                                  'https://images.pexels.com/photos/1391499/pexels-photo-1391499.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
                           )
                       ),
                     ),)
@@ -154,20 +167,33 @@ class _MyAppState extends State<EditProfileNew> {
                     top: 180.0,
                     left: 25,
                     child: GestureDetector(
-                    child: Container(
-                      height: 120.0,
-                      width: 120.0,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                                'https://images.pexels.com/photos/1308881/pexels-photo-1308881.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500 ')
+                     child: Container(
+                      child: Align(
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundColor: Colors.black26,
+                          child: ClipOval(
+                            child: (_piccheck == false)
+                                ? FittedBox(
+                              child: Center(
+                                child: Image.network(
+                                  profilePic,
+                                  width: 250,
+                                  height: 250,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                                : FittedBox(
+                              child: Image.file(
+                                _image,
+                                width: 250,
+                                height: 250,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                          border: Border.all(
-                              color: Colors.white,
-                              width: 2.0
-                          )
+                        ),
                       ),
                     ),
                       onTap: (){
@@ -200,11 +226,7 @@ class _MyAppState extends State<EditProfileNew> {
                             width: 24,
                             color: Color(0xFFFFFFFF),
                           ), onPressed: () {
-                          Navigator.of(context).push(
-                              MaterialPageRoute<Null>(
-                                  builder: (BuildContext context) {
-                                    return new EditProfileNew(touserid: touserid,);
-                                  }));
+                          getImageCover();
                         },
                         ),
                       ),
@@ -246,22 +268,11 @@ class _MyAppState extends State<EditProfileNew> {
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: TextFormField(
-                          controller: username,
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            hintText: 'Enter User Name',
-                            labelText: 'Username',
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: TextFormField(
                           controller: names,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             hintText: 'Name',
-                            labelText: 'Enter Name',
+                            labelText: 'Name',
                           ),
                         ),
                       ),
@@ -271,8 +282,8 @@ class _MyAppState extends State<EditProfileNew> {
                           controller: referalCode,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            hintText: 'Enter Refferal Code (if any)',
-                            labelText: 'Refferal Code (if any)',
+                            hintText: 'Enter Referal Code',
+                            labelText: 'Refferal Code ',
                           ),
                         ),
                       ),
@@ -284,6 +295,46 @@ class _MyAppState extends State<EditProfileNew> {
                           decoration: InputDecoration(
                             hintText: 'Reference ID',
                             labelText: 'Reference Id',
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: 20, bottom: 10),
+                        child: Container(
+                          height: 70,
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: Material(
+                            elevation: 10,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(35),
+                                )),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  InkWell(
+                                    child: Text(
+                                        _selectedDate,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(color: Color(0xFF000000),
+                                          fontSize: 16,)
+                                    ),
+                                    onTap: (){
+                                      _selectDate(context);
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.calendar_today),
+                                    onPressed: () {
+                                      _selectDate(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -349,8 +400,63 @@ class _MyAppState extends State<EditProfileNew> {
                         child: RaisedButton(
                           child: Text("Update"),
                           onPressed: () {
-                            dataProccessor(
-                                username.text, names.text, referalCode.text);
+                            loader = true;
+                            var endPoint = 'user/updateProfile';
+                            if (_fbKey.currentState.saveAndValidate()) {}
+                            var date =
+                            _fbKey.currentState.value['date'].toString();
+                            var dob = date.split(' ')[0];
+                            var params;
+                            age = calculateAge(DateTime.parse(dob));
+                            if (_image == null) {
+                              params = {
+                                'name':
+                                _fbKey.currentState.value['ProfileName'],
+                                'gender': _fbKey.currentState.value['gender'],
+                                'profile_pic': profilePic,
+                                'profile_pic1': profilePic,
+                                'profile_pic2': profilePic,
+                                'country':
+                                _fbKey.currentState.value['Country'],
+                                'dob': dob,
+                                'age': age.toString(),
+                                // 'state': _fbKey.currentState.value['Country'],
+                                // 'city': _fbKey.currentState.value['Country'],
+                                // 'reference_id': referenceId
+                              };
+                              makePostRequest(endPoint, jsonEncode(params), 0,
+                                  context)
+                                  .then((response) {
+                                var data = (response).trim();
+                                var d2 = jsonDecode(data);
+                                if (d2['status'] == 0) {
+                                  toast(d2['message'], Colors.green);
+                                  updateProfile();
+                                }
+                              });
+                            } else {
+                              params = {
+                                'name':
+                                _fbKey.currentState.value['ProfileName'],
+                                'gender': _fbKey.currentState.value['gender'],
+                                'profile_pic1': profilePic,
+                                'profile_pic2': profilePic,
+                                'country':
+                                _fbKey.currentState.value['Country'],
+                                'dob': dob,
+                                'age': age.toString(),
+                              };
+                              uploadImage(_image, 'user/updateProfile',
+                                  jsonEncode(params), 0, context)
+                                  .then((response) {
+                                var data = (response).trim();
+                                var d2 = jsonDecode(data);
+                                if (d2['status'] == 0) {
+                                  toast(d2['message'], Colors.green);
+                                  updateProfile();
+                                }
+                              });
+                            }
                           },
                           color: Colors.orange,
                           textColor: Colors.white,
@@ -369,10 +475,53 @@ class _MyAppState extends State<EditProfileNew> {
     );
   }
 
-  Future getImageFromGallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      imageURI = image;
+  dynamic calculateAge(DateTime birthDate) {
+    var currentDate = DateTime.now();
+    var age = currentDate.year - birthDate.year;
+    var month1 = currentDate.month;
+    var month2 = birthDate.month;
+    if (month2 > month1) {
+      age--;
+    } else if (month1 == month2) {
+      var day1 = currentDate.day;
+      var day2 = birthDate.day;
+      if (day2 > day1) {
+        age--;
+      }
+    }
+    return age;
+  }
+
+  dynamic updateProfile() {
+    var params = 'action=fullProfile';
+    makeGetRequest('user', params, 0, context).then((response) {
+      var res = jsonDecode(response);
+      var entryList = res['body'].entries.toList();
+      for (var j = 0; j < entryList.length; j++) {
+        CommonFun().saveShare(entryList[j].key, entryList[j].value.toString());
+        switch (entryList[j].key) {
+          /*case 'profileName':
+            common.profileName = entryList[j].value.toString();
+            break;
+          case 'profile_pic':
+            common.profilePic =
+                entryList[j].value.toString() + '?v=' + common.count.toString();
+            break;
+          case 'gender':
+            common.gender = entryList[j].value.toString();
+            break;
+          case 'country':
+            common.country = entryList[j].value.toString();
+            break;
+          case 'date_of_birth':
+            common.date = entryList[j].value.toString();
+            break;
+          default:*/
+        }
+      }
+      loader = false;
+      setState(() {});
+      Navigator.of(context).pop();
     });
   }
 
@@ -390,32 +539,6 @@ class _MyAppState extends State<EditProfileNew> {
     });
   }
 
-  Widget _buildHeaderSection() {
-    return Stack(
-      children: <Widget>[
-        Align(
-          child: ClipOval(
-            child: ClipOval(
-              child: SizedBox(
-                width: 100.0,
-                height: 100.0,
-                child: (_image != null)
-                    ? Image.file(
-                  _image,
-                  fit: BoxFit.fill,
-                )
-                    : Image.network(
-                  _profilePic,
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _editbtn() {
     return Align(
       alignment: Alignment.bottomLeft,
@@ -424,94 +547,15 @@ class _MyAppState extends State<EditProfileNew> {
         child: IconButton(
           icon: Icon(
             Icons.camera_enhance,
-            color: Colors.black,
+            color: Colors.black38,
             size: 30.0,
           ),
           onPressed: () {
-           /* getImage();*/
-            Fluttertoast.showToast(msg: exit_warning);
+            getImage();
           },
         ),
       ),
     );
-  }
-
-  void dataProccessor(String username, String name, String referralcode) {
-    setState(() {
-      _visible = true;
-    });
-    referralcode = referralcode == null ? "" : referralcode;
-    String endPoint = 'system/register';
-    if (_image != null) {
-      var params = {
-        "action": "register",
-        "user_state": "login",
-        "screen_id": "1",
-        "name": name,
-        "username": username,
-        "gender": genderValue,
-        "referral": referralcode,
-        "profile_pic": ""
-      };
-
-      uploadImage(_image, endPoint, jsonEncode(params), 1, context)
-          .then((response) {
-        setState(() {
-          _visible = false;
-        });
-        var data = (response).trim();
-        var d2 = jsonDecode(data);
-        if (d2['status'] == 0) {
-          var entryList = d2['body'].entries.toList();
-
-          for (var j = 0; j < entryList.length; j++) {
-            CommonFun()
-                .saveShare(entryList[j].key, entryList[j].value.toString());
-          }
-          CommonFun().saveShare('bearer', d2['body']['activation_code']);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Dashboard(),
-            ),
-          );
-        }
-      });
-    }else {
-      var params = {
-        'action': 'register',
-        'user_state': 'login',
-        'screen_id': '1',
-        'name': name.toString(),
-        'username': username.toString(),
-        'gender': genderValue.toString(),
-        'referral': referralcode.toString(),
-        'profile_pic': _profilePic.toString(),
-      };
-      makePostRequest(endPoint, jsonEncode(params), 1, context)
-          .then((response) {
-        setState(() {
-          _visible = false;
-        });
-        var data = (response).trim();
-        var d2 = jsonDecode(data);
-        if (d2['status'] == 0) {
-          var entryList = d2['body'].entries.toList();
-
-          for (var j = 0; j < entryList.length; j++) {
-            CommonFun()
-                .saveShare(entryList[j].key, entryList[j].value.toString());
-          }
-          CommonFun().saveShare('bearer', d2['body']['activation_code']);
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Dashboard(),
-            ),
-          );
-        }
-      });
-    }
   }
 }
 
