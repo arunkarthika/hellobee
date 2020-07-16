@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
+import 'package:honeybee/ui/Imageupload.dart';
+import 'package:honeybee/ui/Wallet/wallet.dart';
 import 'package:honeybee/ui/meprofile.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/ui/setting.dart';
@@ -30,6 +31,8 @@ class Profilepage extends State<Profile> {
   var bGold="";
   var gcm_registration_id="";
   var friends="";
+  var fans="";
+  var followers="";
   bool loader = false;
 
   @override
@@ -65,6 +68,8 @@ class Profilepage extends State<Profile> {
     diamond = await CommonFun().getStringData('diamond');
     bGold = await CommonFun().getStringData('over_all_gold');
     friends = await CommonFun().getStringData('friends');
+    fans = await CommonFun().getStringData('fans');
+    followers = await CommonFun().getStringData('followers');
     gcm_registration_id = await CommonFun().getStringData('gcm_registration_id');
 
     setState(() {
@@ -112,7 +117,7 @@ class Profilepage extends State<Profile> {
                     Navigator.of(context).push(
                         MaterialPageRoute<Null>(
                             builder: (BuildContext context) {
-                              return new Webview(text: textToSend, webViewTitle: "Wallet",);
+                              return new Wallet();
                             }));
                   },
                 ),
@@ -159,7 +164,14 @@ class Profilepage extends State<Profile> {
                         child: new Wrap(
                           children: <Widget>[
                             new ListTile(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SingleImageUpload(),
+                                  ),
+                                );
+                              },
                               leading: Container(
                                 padding: EdgeInsets.all(9.0),
                                 decoration: BoxDecoration(
@@ -175,7 +187,12 @@ class Profilepage extends State<Profile> {
                               trailing: IconButton(
                                 icon: Icon(Icons.chevron_right),
                                 onPressed: () {
-
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SingleImageUpload(),
+                                    ),
+                                  );
                                 },
                               ),
                             ),
@@ -320,7 +337,6 @@ class Profilepage extends State<Profile> {
                   maxRadius: 35.0,
                   backgroundImage: NetworkImage(
                       (profilePic),
-                    /*"https://images.pexels.com/photos/1580274/pexels-photo-1580274.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"*/
                   ),
                 ),
               ),
@@ -345,7 +361,7 @@ class Profilepage extends State<Profile> {
                           profileName,
                           style: Theme.of(context)
                               .textTheme
-                              .title
+                              .subtitle2
                               .apply(fontWeightDelta: 2, color: Colors.white),
                         ),
                         SizedBox(width: 15.0),
@@ -359,21 +375,6 @@ class Profilepage extends State<Profile> {
                       ],
                     ),
                     SizedBox(height: 5.0),
-                    /*Text(
-                      "ID 100250",
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle
-                          .apply(color: Colors.white),
-                    ),*/
-                    /*referenceId == null
-                        ? Text("ID ")
-                        : Text(
-                      "ID: " + referenceId,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.subtitle.
-                        apply(color: Colors.white)
-                    ),*/
                     Row(
                       children: <Widget>[
                         referenceId == null
@@ -412,11 +413,13 @@ class Profilepage extends State<Profile> {
             GestureDetector(
               child: Column(
                 children: <Widget>[
-                  Text(
-                    "849",
+                  friends == null
+                      ? Text("0")
+                      : Text(
+                    friends,
                     style: Theme.of(context)
                         .textTheme
-                        .title
+                        .subtitle2
                         .apply(color: Colors.white),
                   ),
                   SizedBox(height: 3.0),
@@ -436,11 +439,13 @@ class Profilepage extends State<Profile> {
             GestureDetector(
               child: Column(
                 children: <Widget>[
-                  Text(
-                    "51",
+                  followers == null
+                      ? Text("0")
+                      : Text(
+                    followers,
                     style: Theme.of(context)
                         .textTheme
-                        .title
+                        .subtitle2
                         .apply(color: Colors.white),
                   ),
                   SizedBox(height: 3.0),
@@ -461,11 +466,13 @@ class Profilepage extends State<Profile> {
            GestureDetector(
             child: Column(
                 children: <Widget>[
-                  Text(
-                    "291",
+                  fans == null
+                      ? Text("0")
+                      : Text(
+                    fans,
                     style: Theme.of(context)
                         .textTheme
-                        .title
+                        .subtitle2
                         .apply(color: Colors.white),
                   ),
                   SizedBox(height: 3.0),
@@ -492,7 +499,7 @@ class Profilepage extends State<Profile> {
                       bGold,
                     style: Theme.of(context)
                         .textTheme
-                        .title
+                        .subtitle2
                         .apply(color: Colors.white),
                   ),
                   SizedBox(height: 3.0),
@@ -503,7 +510,7 @@ class Profilepage extends State<Profile> {
                 ],
               ),
                onTap: () {
-                 Fluttertoast.showToast(msg: exit_warning);
+
                },
              ),
             ],

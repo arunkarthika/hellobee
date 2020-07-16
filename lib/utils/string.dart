@@ -8,7 +8,7 @@ String reportMessage = "Amelia Reported Successfully!";
 String profileSuccess = "Profile Updated Successfully!!";
 String exit_warning = "Press back again to leave";
 String under_dev = "Under Development!";
-String permission_warning = "Please Allow the Permission";
+String permission_warning = "Please Allow the Permission!";
 String internetConnection= "No Internet Connection";
 
 

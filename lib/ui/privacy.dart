@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/http.dart';
 
 void main() => runApp(Privacy());
@@ -107,7 +108,7 @@ class PrivacyPage extends State<Privacy> {
     makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
       var data = jsonDecode(response);
       if (data['status'] == 0) {
-        toast(data['message'], Colors.green);
+        Fluttertoast.showToast(msg: data['message']);
       }
     });
   }

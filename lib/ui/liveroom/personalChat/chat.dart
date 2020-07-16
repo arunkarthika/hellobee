@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/ui/liveroom/personalChat/const.dart';
@@ -31,24 +32,26 @@ class ChatScreen extends StatefulWidget {
   final String peerId;
   final String peerAvatar;
   final String peerName;
+  final String peergcm;
 
-  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName})
+  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm})
       : super(key: key);
 
   @override
   State createState() =>
-      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, peerName: peerName);
+      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, peerName: peerName, peergcm: peergcm);
 }
 
 class ChatScreenState extends State<ChatScreen> {
   bool _showBottom = false;
 
-  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName});
+  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm});
 
   String peerId;
   String peerAvatar;
   String id;
   String peerName;
+  String peergcm;
 
   var listMessage;
   String groupChatId;
@@ -92,7 +95,6 @@ class ChatScreenState extends State<ChatScreen> {
   void registerNotification() async{
     _fcm.requestNotificationPermissions();
 
-
     _fcm.configure(onMessage: (Map<String, dynamic> message) {
       Platform.isAndroid
           ? showNotification(message['notification'])
@@ -106,10 +108,6 @@ class ChatScreenState extends State<ChatScreen> {
     });
     _fcm.getToken().then((token) {
       print("token"+token);
-//      Firestore.instance
-//          .collection('users')
-//          .document(currentUserId)
-//          .setData({'pushToken': token});
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
     });
@@ -144,8 +142,6 @@ class ChatScreenState extends State<ChatScreen> {
     id=uid;
     readLocal();
     _saveDeviceToken();
-    sendNotification('receiver', 'msg');
-    // here you write the codes to input the data into firestore
   }
   _saveDeviceToken() async {
     // Get the current user
@@ -175,7 +171,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   static Future<void> sendNotification(receiver,msg)async{
 
-    var token = 'cYoMvZctbiA:APA91bE0lqgwXLBxT6eim_aj5FcjuRZN1xb0ln2UW_fOSJ-pTRedNrpdSIR_hi3Kl5x9kjcvh1FVxilGIhWwyPmAgl1qlYDHr3uc_6Lxk3NRTHjui56oQ1PSumZgSFmeQGY9wwz3JHJq';
+    var token = receiver;
     print('token : $token');
 
     final data = {
@@ -193,19 +189,13 @@ class ChatScreenState extends State<ChatScreen> {
       'content-type': 'application/json',
       'Authorization': 'key=AAAAykcMHoI:APA91bEW9Bh9ysmmZS2hfFzK679_maREiia6IPfzdphBJHIRDz1K7Db2j5PXIpFC8HmcG9dIfFap8HsMC5gWqOJQ1TvKCdLmhTEuNy1hIPiCiVOrbIo4MLB1ACSADznlwLo_5OnVW9gh'
     };
-
     final postUrl = 'https://fcm.googleapis.com/fcm/send';
-
-
-
-
     try {
       final response = await http.post(postUrl,
           body: json.encode(data),
           encoding: Encoding.getByName('utf-8'),
           headers: headers);
       if (response.statusCode == 200) {
-        Fluttertoast.showToast(msg: 'Request Sent To Driver');
       } else {
         Fluttertoast.showToast(msg: 'notification sending failed');
         print('notification sending failed');
@@ -215,10 +205,6 @@ class ChatScreenState extends State<ChatScreen> {
     catch(e){
       print('exception $e');
     }
-
-
-
-
   }
 
   dynamic readLocal() async {
@@ -234,7 +220,6 @@ class ChatScreenState extends State<ChatScreen> {
         .collection('users')
         .document(id)
         .setData({'chattingWith': peerId});
-
     setState(() {
 
     });
@@ -281,7 +266,6 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void onSendMessage(String content, int type) {
-    // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
 
@@ -305,7 +289,7 @@ class ChatScreenState extends State<ChatScreen> {
       });
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      sendNotification(peerName, content);
+      sendNotification(peergcm, content);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send');
     }
@@ -458,12 +442,19 @@ class ChatScreenState extends State<ChatScreen> {
                                 bottomRight: Radius.circular(25),
                               ),
                             ),
-                            child: Text(
+                            child: GestureDetector(
+                              onLongPress: (){
+                                Clipboard.setData(new ClipboardData(text: document['content'].toString()));
+
+                              },
+                              child:Text(
+
+
                               document['content'],
                               style:
                               Theme.of(context).textTheme.body1.apply(
                                 color: Colors.black87,
-                              ),
+                              ),),
                             ),
                           ),
                         ],
@@ -614,7 +605,10 @@ class ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Text(
                     peerName,
-                    style: Theme.of(context).textTheme.subhead,
+                    style: Theme.of(context).
+                    textTheme.
+                    subtitle1
+                    .copyWith(color: Colors.black, fontSize: 18),
                     overflow: TextOverflow.clip,
                   ),
                   Text(
@@ -631,20 +625,20 @@ class ChatScreenState extends State<ChatScreen> {
             IconButton(
               icon: Icon(Icons.phone),
               onPressed: () {
-                Fluttertoast.showToast(msg: 'Coming Soon');
+                Fluttertoast.showToast(msg: 'Coming Soon!');
               },
             ),
             IconButton(
               icon: Icon(Icons.videocam),
               onPressed: () {
-                Fluttertoast.showToast(msg: 'Coming Soon');
+                Fluttertoast.showToast(msg: 'Coming Soon!');
 
               },
             ),
             IconButton(
               icon: Icon(Icons.more_vert),
               onPressed: () {
-
+                Fluttertoast.showToast(msg: 'Coming Soon!');
               },
             ),
           ],
@@ -673,27 +667,91 @@ class ChatScreenState extends State<ChatScreen> {
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('mimi1', 2),
+                onPressed: () => onSendMessage('funny4', 2),
                 child: Image.asset(
-                  'assets/images/sticker/mimi1.gif',
+                  'assets/images/sticker/funny4.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi2', 2),
+                onPressed: () => onSendMessage('funny5', 2),
                 child: Image.asset(
-                  'assets/images/sticker/mimi2.gif',
+                  'assets/images/sticker/funny5.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi3', 2),
+                onPressed: () => onSendMessage('funny6', 2),
                 child: Image.asset(
-                  'assets/images/sticker/mimi3.gif',
+                  'assets/images/sticker/funny6.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ),
+          Row(
+            children: <Widget>[
+              FlatButton(
+                onPressed: () => onSendMessage('kitty', 2),
+                child: Image.asset(
+                  'assets/images/sticker/kitty.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              FlatButton(
+                onPressed: () => onSendMessage('funny', 2),
+                child: Image.asset(
+                  'assets/images/sticker/funny.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              FlatButton(
+                onPressed: () => onSendMessage('funny1', 2),
+                child: Image.asset(
+                  'assets/images/sticker/funny1.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ),
+          Row(
+            children: <Widget>[
+              FlatButton(
+                onPressed: () => onSendMessage('tenor', 2),
+                child: Image.asset(
+                  'assets/images/sticker/tenor.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              FlatButton(
+                onPressed: () => onSendMessage('funny2', 2),
+                child: Image.asset(
+                  'assets/images/sticker/funny2.gif',
+                  width: 50.0,
+                  height: 50.0,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              FlatButton(
+                onPressed: () => onSendMessage('funny3', 2),
+                child: Image.asset(
+                  'assets/images/sticker/funny3.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -705,59 +763,27 @@ class ChatScreenState extends State<ChatScreen> {
           Row(
             children: <Widget>[
               FlatButton(
-                onPressed: () => onSendMessage('mimi4', 2),
+                onPressed: () => onSendMessage('funny7', 2),
                 child: Image.asset(
-                  'assets/images/sticker/mimi4.gif',
+                  'assets/images/sticker/funny7.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi5', 2),
+                onPressed: () => onSendMessage('funny8', 2),
                 child: Image.asset(
-                  'assets/images/sticker/mimi5.gif',
+                  'assets/images/sticker/funny8.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
                 ),
               ),
               FlatButton(
-                onPressed: () => onSendMessage('mimi6', 2),
+                onPressed: () => onSendMessage('tenor1', 2),
                 child: Image.asset(
-                  'assets/images/sticker/mimi6.gif',
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                ),
-              )
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          ),
-          Row(
-            children: <Widget>[
-              FlatButton(
-                onPressed: () => onSendMessage('mimi7', 2),
-                child: Image.asset(
-                  'assets/images/sticker/mimi7.gif',
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              FlatButton(
-                onPressed: () => onSendMessage('mimi8', 2),
-                child: Image.asset(
-                  'assets/images/sticker/mimi8.gif',
-                  width: 50.0,
-                  height: 50.0,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              FlatButton(
-                onPressed: () => onSendMessage('mimi9', 2),
-                child: Image.asset(
-                  'assets/images/sticker/mimi9.gif',
+                  'assets/images/sticker/tenor1.gif',
                   width: 50.0,
                   height: 50.0,
                   fit: BoxFit.cover,
@@ -772,8 +798,8 @@ class ChatScreenState extends State<ChatScreen> {
       decoration: BoxDecoration(
           border: Border(top: BorderSide(color: greyColor2, width: 0.5)),
           color: Colors.white),
-      padding: EdgeInsets.all(5.0),
-      height: 180.0,
+      padding: EdgeInsets.all(3.0),
+      height: 280.0,
     );
   }
 
@@ -846,7 +872,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget buildInputnew() {
     return Container(
       margin: EdgeInsets.all(15.0),
-      height: 61,
+      height: 60,
       child: Row(
         children: <Widget>[
           Expanded(
@@ -872,14 +898,16 @@ class ChatScreenState extends State<ChatScreen> {
                   ),
                   IconButton(
                     icon: Icon(Icons.photo_camera),
-                    onPressed: () {getImage();},
+                    onPressed: () {
+                      getImage();
+                      },
                   ),
-                  IconButton(
+                  /*IconButton(
                     icon: Icon(Icons.attach_file),
                     onPressed: () {
-                      _showBottom = true;
+
                     },
-                  )
+                  )*/
                 ],
               ),
             ),
@@ -894,17 +922,21 @@ class ChatScreenState extends State<ChatScreen> {
                 color: Colors.white,
               ),
               onTap: () => onSendMessage(textEditingController.text, 0),
-              onLongPress: () {
-                setState(() {
-                  _showBottom = true;
-                });
-              },
             ),
-          )
+          ),
         ],
       ),
     );
   }
+
+  List<IconData> icons = [
+    Icons.image,
+    Icons.camera,
+    Icons.file_upload,
+    Icons.folder,
+    Icons.gif
+  ];
+
 
   Widget buildListMessage() {
     return Flexible(

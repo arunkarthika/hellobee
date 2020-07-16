@@ -5,7 +5,6 @@ import 'package:honeybee/ui/Language.dart';
 import 'package:honeybee/ui/loginpage.dart';
 import 'package:honeybee/utils/string.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:store_redirect/store_redirect.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -47,12 +46,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           SettingsSection(
             title: 'Account',
             tiles: [
-              SettingsTile(title: 'Connected Accounts', leading: Icon(Icons.phone)),
+              SettingsTile(title: 'Connected Accounts',
+                  leading: Icon(Icons.phone)),
               SettingsTile(title: 'Review Us!', leading: Icon(Icons.star),
                 onTap: () {
-                  StoreRedirect.redirect(
+                 /* StoreRedirect.redirect(
                     androidAppId: "com.blive",
-                  );
+                  );*/
                 },
               ),
               SettingsTile(title: 'Log out', leading: Icon(Icons.exit_to_app),
@@ -106,14 +106,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Fluttertoast.showToast(msg: under_dev);
                 },
               ),
-              /*SettingsTile(
+              SettingsTile(
                   title: 'Clear Cache',
                   leading: Icon(Icons.collections_bookmark),
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => LanguagesScreen()));
                 },
-              ),*/
+              ),
               SettingsTile(
                 title: 'Feedback',
                 leading: Icon(Icons.feedback),
@@ -202,47 +202,6 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
       ),
     );
   }
-
-//  @override
-//  Widget build(BuildContext context) {
-//    return Scaffold(
-//      appBar: AppBar(title: Text('Languages')),
-//      body: SettingsList(
-//        sections: [
-//          SettingsSection(tiles: [
-//            SettingsTile(
-//              title: "English",
-//              leading: trailingWidget(0),
-//              onTap: () {
-//                changeLanguage(0);
-//              },
-//            ),
-//            SettingsTile(
-//              title: "Spanish",
-//              leading: trailingWidget(1),
-//              onTap: () {
-//                changeLanguage(1);
-//              },
-//            ),
-//            SettingsTile(
-//              title: "Chinese",
-//              leading: trailingWidget(2),
-//              onTap: () {
-//                changeLanguage(2);
-//              },
-//            ),
-//            SettingsTile(
-//              title: "German",
-//              leading: trailingWidget(3),
-//              onTap: () {
-//                changeLanguage(3);
-//              },
-//            ),
-//          ]),
-//        ],
-//      ),
-//    );
-//  }
 
   Widget trailingWidget(int index) {
     return (languageIndex == index)

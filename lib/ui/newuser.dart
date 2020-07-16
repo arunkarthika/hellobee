@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/Dashboard.dart';
@@ -48,6 +49,8 @@ class _MyAppState extends State<NewUser> {
   var gcmId;
   var _domain;
   var _email;
+  var _profilePic;
+  var _image;
   var _mobile;
   int _radioValue1 = -1;
   bool _visible = false;
@@ -67,8 +70,16 @@ class _MyAppState extends State<NewUser> {
       _domain = widget.domain;
       _email = widget.userEmailId;
       _mobile = widget.userMobile;
+      _profilePic = widget.profilePic;
       name.text = widget.profileName;
       username.text = widget.userName.replaceAll(' ', '');
+    });
+  }
+
+  Future getImage() async {
+    var image = await ImagePicker().getImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
     });
   }
 
@@ -85,7 +96,6 @@ class _MyAppState extends State<NewUser> {
   }
 
   Future<void> deviceId() async {
-
     deviceid = await DeviceId.getID;
     try {
       imei = await DeviceId.getIMEI;
@@ -93,11 +103,8 @@ class _MyAppState extends State<NewUser> {
     } on PlatformException catch (e) {
       print(e.message);
     }
-
     if (!mounted) return;
-
     setState(() {
-      //_deviceid = 'Your deviceid: $deviceid\nYour IMEI: $imei\nYour MEID: $meid';
     });
   }
 
@@ -105,7 +112,6 @@ class _MyAppState extends State<NewUser> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-    print("inside okok");
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -144,6 +150,15 @@ class _MyAppState extends State<NewUser> {
                     child: _buildHeaderSection(),
                   ),
                 ),
+                Positioned(
+                  top: -20,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    alignment: Alignment.topLeft,
+                    child: _editbtn(),
+                  ),
+                ),
               ],
             ),
             _buildAuthSection(),
@@ -151,13 +166,6 @@ class _MyAppState extends State<NewUser> {
         ),
       ),
     );
-  }
-
-  Future getImageFromGallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      imageURI = image;
-    });
   }
 
   void _handleRadioValueChange(int value) {
@@ -176,21 +184,45 @@ class _MyAppState extends State<NewUser> {
   }
 
   Widget _buildHeaderSection() {
-    return GestureDetector(
-      onTap: () {
-        getImageFromGallery();
-      },
-      child: Container(
-        width: 100.0,
-        height: 100.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(50)),
-          image: DecorationImage(
-            image: AssetImage(
-              'assets/images/logo.png',
+    return Stack(
+      children: <Widget>[
+        Align(
+          child: ClipOval(
+            child: ClipOval(
+              child: SizedBox(
+                width: 100.0,
+                height: 100.0,
+                child: (_image != null)
+                    ? Image.file(
+                  _image,
+                  fit: BoxFit.fill,
+                )
+                    : Image.network(
+                  _profilePic,
+                  fit: BoxFit.fill,
+                ),
+              ),
             ),
-            fit: BoxFit.cover,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _editbtn() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: EdgeInsets.only(top: 120.0, left: 80.0),
+        child: IconButton(
+          icon: Icon(
+            Icons.camera_enhance,
+            color: Colors.white,
+            size: 30.0,
+          ),
+          onPressed: () {
+            getImage();
+          },
         ),
       ),
     );
@@ -228,7 +260,7 @@ class _MyAppState extends State<NewUser> {
                           ),
                         ),
                       ),
-                      Padding(
+                     /* Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: TextFormField(
                           controller: name,
@@ -236,6 +268,35 @@ class _MyAppState extends State<NewUser> {
                           decoration: InputDecoration(
                             hintText: 'Name',
                             labelText: 'Enter Name',
+                          ),
+                        ),
+                      ),*/
+                      Padding(
+                        padding: EdgeInsets.only(right: 20, bottom: 10),
+                        child: Container(
+                          height: 70,
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: Material(
+                            elevation: 10,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(35),
+                                )),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 20, right: 20, top: 2, bottom: 2),
+                              child: FormBuilderTextField(
+                                textInputAction: TextInputAction.go,
+                                controller: name,
+                                attribute: 'ProfileName',
+                                decoration: InputDecoration(
+                                    labelText: 'ProfileName'),
+                                validators: [
+                                  FormBuilderValidators.required()
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -327,24 +388,89 @@ class _MyAppState extends State<NewUser> {
     });
     referralcode = referralcode == null ? "" : referralcode;
     String endPoint = 'system/register';
-    var params = {
-      "action": "register",
-      "user_state": "login",
-      "screen_id": "1",
-      "name": name,
-      "username": username,
-      "gender": genderValue,
-      "login_domain": _domain,
-      "email": _email,
-      "mobile": _mobile,
-      "device_id": deviceid,
-      "referral": referralcode,
-      "firebaseUID": uid.toString(),
-      "gcm_registration_id":gcmId.toString(),
-      "profile_pic": ""
-    };
+    if (_image != null) {
+      var params = {
+        "action": "register",
+        "user_state": "login",
+        "screen_id": "1",
+        "name": name,
+        "username": username,
+        "gender": genderValue,
+        "login_domain": _domain,
+        "email": _email,
+        "mobile": _mobile,
+        "device_id": deviceid,
+        "referral": referralcode,
+        "firebaseUID": uid.toString(),
+        "gcm_registration_id": gcmId.toString(),
+        "profile_pic": ""
+      };
 
-    print(endPoint + jsonEncode(params));
+      uploadImage(_image, endPoint, jsonEncode(params), 1, context)
+          .then((response) {
+        setState(() {
+          _visible = false;
+        });
+        var data = (response).trim();
+        var d2 = jsonDecode(data);
+        if (d2['status'] == 0) {
+          var entryList = d2['body'].entries.toList();
+
+          for (var j = 0; j < entryList.length; j++) {
+            CommonFun()
+                .saveShare(entryList[j].key, entryList[j].value.toString());
+          }
+          CommonFun().saveShare('bearer', d2['body']['activation_code']);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(),
+            ),
+          );
+        }
+      });
+    }else {
+      var params = {
+        'action': 'register',
+        'user_state': 'login',
+        'screen_id': '1',
+        'name': name.toString(),
+        'username': username.toString(),
+        'gender': genderValue.toString(),
+        'login_domain': _domain.toString(),
+        'email': _email.toString(),
+        'mobile': _mobile.toString(),
+        'device_id': deviceid.toString(),
+        'referral': referralcode.toString(),
+        'gcm_registration_id': gcmId.toString(),
+        'profile_pic': _profilePic.toString(),
+        'firebaseUID': uid.toString(),
+      };
+      makePostRequest(endPoint, jsonEncode(params), 1, context)
+          .then((response) {
+        setState(() {
+          _visible = false;
+        });
+        var data = (response).trim();
+        var d2 = jsonDecode(data);
+        if (d2['status'] == 0) {
+          var entryList = d2['body'].entries.toList();
+
+          for (var j = 0; j < entryList.length; j++) {
+            CommonFun()
+                .saveShare(entryList[j].key, entryList[j].value.toString());
+          }
+          CommonFun().saveShare('bearer', d2['body']['activation_code']);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Dashboard(),
+            ),
+          );
+        }
+      });
+    }
+    /*print(endPoint + jsonEncode(params));
     print("FCMUID"+endPoint + uid.toString());
     makePostRequest(endPoint, jsonEncode(params), 1, context).then((response) {
       setState(() {
@@ -368,6 +494,7 @@ class _MyAppState extends State<NewUser> {
               (Route<dynamic> route) => false,
         );
       }
-    });
+    });*/
   }
 }
+

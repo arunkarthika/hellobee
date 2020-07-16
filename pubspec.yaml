@@ -64,7 +64,8 @@ dependencies:
   popup_menu: ^1.0.5
   screenshot: ^0.1.1
   base32: ^1.1.1
-
+  flutter_form_builder: ^3.10.1
+  charts_flutter: ^0.9.0
 
 dev_dependencies:
   flutter_test:
@@ -75,58 +76,13 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/login/BG.jpg
+    - assets/images/
     - assets/twilight_sparkle.png
-    - assets/login/Logo.png
-    - assets/login/Logo_text.png
-    - assets/login/Google.png
-    - assets/profile/ProfileBG.png
-    - assets/profile/Wallet.svg
-    - assets/profile/Medal.png
-    - assets/profile/diamond.png
-    - assets/profile/Bgold.png
-    - assets/profile/Medal.svg
-    - assets/profile/edit.png
-    - assets/profile/Writing.svg
-    - assets/profile/Statistics.svg
-    - assets/profile/Setting.svg
-    - assets/profile/Gold.svg
-    - assets/profile/Bank.svg
-    - assets/profile/Diamond.svg
-    - assets/profile/Coin.svg
-    - assets/login/Insta.png
-    - assets/login/Mobile.png
-    - assets/login/Facebook.png
-    - assets/login/Twitter.png
-    - assets/broadcast/AudioBG.jpg
-    - assets/broadcast/menu.png
-    - assets/broadcast/chair.png
-    - assets/broadcast/mic.png
-    - assets/broadcast/tropy.png
-    - assets/broadcast/audiocall.png
-    - assets/broadcast/Chat.png
-    - assets/broadcast/Close.png
-    - assets/broadcast/Coin.png
-    - assets/broadcast/gift.png
-    - assets/broadcast/Share.png
-    - assets/broadcast/Fans.png
-    - assets/broadcast/BulletMessage.png
-    - assets/broadcast/Send.png
-    - assets/broadcast/Gold.png
-    - assets/liveroom/games.svg
-    - assets/liveroom/pk.svg
-    - assets/liveroom/gallery.svg
-    - assets/liveroom/share.png
-    - assets/liveroom/music.svg
-    - assets/liveroom/heart.svg
-    - assets/dashboard/Home.png
-    - assets/dashboard/HomeSelected.png
-    - assets/dashboard/Profile.png
-    - assets/dashboard/Message.png
-    - assets/dashboard/Photo.png
-    - assets/dashboard/ProfileSelected.png
-    - assets/dashboard/Toppers.png
-    - assets/dashboard/Golive.png
-    - assets/dashboard/ToppersSelected.png
+    - assets/profile/
+    - assets/login/
+    - assets/broadcast/
+    - assets/liveroom/
+    - assets/dashboard/
+    - assets/images/sticker/
 
 

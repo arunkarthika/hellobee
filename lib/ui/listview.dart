@@ -1,9 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:honeybee/ui/editMeprofile.dart';
-import 'package:honeybee/ui/userprofile.dart';
 
 void main()=> runApp(
     MaterialApp(
@@ -182,13 +178,7 @@ class Listview extends StatelessWidget {
             subtitle: Text(" ID 100560"),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditProfile(
-                  ),
-                ),
-              );
+
             },
           ),
         ],

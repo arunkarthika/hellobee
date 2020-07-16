@@ -4,17 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 
-import '../editMeprofile.dart';
-
-final List tags = [
-  "↑Lv 10",
-  '🌝 Happy face',
-  "💎 50K",
-  "♀ Male",
-  "💐 Life style🤳",
-  "Bio: 😚 Forget Whoe Forgets U 👍"
-];
-
 profileviewAudience(id, context, common) {
   var params = "";
   if (id == common.userId)
@@ -25,16 +14,11 @@ profileviewAudience(id, context, common) {
   makeGetRequest("user", params, 0, context).then((response) {
     var res = jsonDecode(response);
     var data = res['body'];
-    print('iyooooooooooooooooooo');
     print(data);
     print(data['profile_pic']);
     var gender = "Female.png";
     if (data['gender'] == "male") gender = "male.jpg";
-    common.userrelation = data['userRelationship'];
-    print('common.userrelation');
-    print(common.userrelation);
-    print('common.relationData');
-    print(common.relationData);
+    common.userrelation = data['userRelation'];
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -91,13 +75,13 @@ profileviewAudience(id, context, common) {
                         alignment: Alignment.center,
                         child: GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              /*Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => EditProfile(
                                   ),
                                 ),
-                              );
+                              );*/
                             },
                             child: Container(
                               height: 100,
@@ -140,7 +124,7 @@ profileviewAudience(id, context, common) {
                               ' ' +
                               "|" +
                               ' ' +
-                              "India",
+                              data['country' ],
                           style: TextStyle(
                             fontSize: 15.0,
                             color: Colors.orange,
@@ -152,28 +136,64 @@ profileviewAudience(id, context, common) {
                       top: 190,
                       left: 0,
                       right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        height: 30,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: tags.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15),
-                                  border: Border.all(color: Colors.black)),
-                              margin: const EdgeInsets.only(right: 5),
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(20, 5, 20, 4),
-                                child: Text(
-                                  tags[index],
-                                  style: TextStyle(color: Colors.black),
-                                ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              OutlineButton(
+                                  padding: EdgeInsets.all(0.0),
+                                  child: Column(
+                                    // Replace with a Row for horizontal icon + text
+                                    children: <Widget>[
+                                      Text("↑Level " + data['level'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ],
+                                  ),
+                                  onPressed: () {},
+                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                               ),
-                            );
-                          },
-                        ),
+                              OutlineButton(
+                                  padding: EdgeInsets.all(0.0),
+                                  child: Column(
+                                    // Replace with a Row for horizontal icon + text
+                                    children: <Widget>[
+                                      Text("💎 " + data["diamond"],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ],
+                                  ),
+                                  onPressed: () {},
+                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                              ),
+                              OutlineButton(
+                                  padding: EdgeInsets.all(0.0),
+                                  child: Column(
+                                    // Replace with a Row for horizontal icon + text
+                                    children: <Widget>[
+                                      Text("♀ " + data["gender"],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13.0,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ],
+                                  ),
+                                  onPressed: () {},
+                                  shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     Positioned(
@@ -303,8 +323,9 @@ profileviewAudience(id, context, common) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatScreen(peerId:"0",peerAvatar:data['profile_pic'],peerName:data['profileName']),
-
+                                  builder: (context) => ChatScreen
+                                    (peerId:"0",peerAvatar:data['profile_pic'],
+                                      peerName:data['profileName']),
                                 ),
                               );
                             },
@@ -469,10 +490,8 @@ class _FullProfileState extends State<FullProfile> {
     print(userId);
     var params = "action=fullProfile&user_id=" + userId.toString();
     makeGetRequest("user", params, 0, context).then((response) {
-      //  var giftslist = Gifts();
       var res = jsonDecode(response);
       var data = res['body'];
-      print('iyooooooooooooooooooo');
       print(data);
       setState(() {
         status = data['status'];
@@ -605,7 +624,7 @@ class _FullProfileState extends State<FullProfile> {
                   "ID" + ' ' + (idhide == 1 ? "PRIVATE" : refrenceId),
                   style: Theme.of(context)
                       .textTheme
-                      .subtitle
+                      .subtitle1
                       .copyWith(color: Colors.white),
                 ),
               ),
@@ -644,7 +663,7 @@ class _FullProfileState extends State<FullProfile> {
                               level,
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle
+                                  .subtitle1
                                   .copyWith(
                                 color: Colors.white,
                                 // fontSize: 12,
@@ -676,7 +695,7 @@ class _FullProfileState extends State<FullProfile> {
                               "Age",
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle
+                                  .subtitle1
                                   .copyWith(color: Colors.white),
                             ),
                             SizedBox(
@@ -686,7 +705,7 @@ class _FullProfileState extends State<FullProfile> {
                               agehide == 1 ? "PRIVATE" : age.toString(),
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle
+                                  .subtitle1
                                   .copyWith(color: Colors.white),
                             ),
                           ],
@@ -699,7 +718,7 @@ class _FullProfileState extends State<FullProfile> {
                               "Gender",
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle
+                                  .subtitle1
                                   .copyWith(color: Colors.white),
                             ),
                             SizedBox(
@@ -710,7 +729,7 @@ class _FullProfileState extends State<FullProfile> {
                               "PRIVATE",
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle
+                                  .subtitle1
                                   .copyWith(color: Colors.white),
                             )
                                 : Image(
@@ -730,7 +749,7 @@ class _FullProfileState extends State<FullProfile> {
                               "D.O.B",
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle
+                                  .subtitle1
                                   .copyWith(color: Colors.white),
                             ),
                             SizedBox(
@@ -740,7 +759,7 @@ class _FullProfileState extends State<FullProfile> {
                               dobhide == 1 ? "PRIVATE" : dob.toString(),
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle
+                                  .subtitle1
                                   .copyWith(color: Colors.white),
                             ),
                           ],
@@ -797,7 +816,7 @@ class _FullProfileState extends State<FullProfile> {
                             uData.relationData,
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle
+                                .subtitle1
                                 .copyWith(
                               color: Colors.white,
                               fontSize: 18,

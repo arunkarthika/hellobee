@@ -16,17 +16,14 @@ import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/constant/permision.dart';
 import 'package:honeybee/model/car.dart';
 import 'package:honeybee/model/gift.dart';
-import 'package:honeybee/ui/editMeprofile.dart';
 import 'package:honeybee/ui/insta/main12.dart';
 import 'package:honeybee/ui/liveroom/commonFun.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
+import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/liveroom/personalChat/home.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:honeybee/ui/profile.dart';
-import 'package:honeybee/ui/search_page.dart';
-import 'package:honeybee/ui/story.dart';
 import 'package:honeybee/utils/string.dart';
-import 'package:honeybee/widget/mycircleavatar.dart';
 import 'dart:async';
 import 'package:zego_express_engine/zego_express_engine.dart';
 import 'package:archive/archive.dart';
@@ -45,7 +42,6 @@ class Dashboard extends StatefulWidget {
 class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   String api = 'https://blive.s3.ap-south-1.amazonaws.com';
   String _appDocsDir;
-
 
   TabController controller, bottomController;
 
@@ -88,6 +84,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   String country = "";
   String city = "";
   Common common = Common();
+  UserData uData = UserData();
 
   int pageLength = 0;
 
@@ -107,7 +104,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
       return;
     }
     var zippedFile =
-    await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
+        await _downloadFile('$api/$name.zip', '$name.zip', _appDocsDir);
 
     var bytes = zippedFile.readAsBytesSync();
     var archive = ZipDecoder().decodeBytes(bytes);
@@ -135,7 +132,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   _storagepermissionstore() async {
     var storageStatus = await PermissionFun().storagePermision();
     if (storageStatus.toString() != "PermissionStatus.granted") {
-      toast("Please Allow the Permission", Colors.red);
+      Fluttertoast.showToast(msg: permission_warning);
     }
   }
 
@@ -202,12 +199,13 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   void _handleTabSelection() {
     setState(() {});
   }
+
   void inputData() async {
-    var auth=FirebaseAuth.instance;
+    var auth = FirebaseAuth.instance;
 
     final FirebaseUser user = await auth.currentUser();
     final uid = user.uid;
-    print('firebaseUID'+uid.toString());
+    print('firebaseUID' + uid.toString());
     // here you write the codes to input the data into firestore
   }
 
@@ -225,8 +223,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
         int bodyLength = d2['body']['audioList'].length;
         if (bodyLength != 0) {
           setState(() {
-            activeList = List.from(activeList)
-              ..addAll(d2['body']['audioList']);
+            activeList = List.from(activeList)..addAll(d2['body']['audioList']);
             pageLength = d2['body']['last_page'];
             merge = 1;
           });
@@ -238,7 +235,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               CommonFun().saveShare('giftVersion', d2['body']['giftVersion']);
               giftVersion = d2['body']['giftVersion'];
               makeGetRequest("user/List",
-                  "user_id=" + "100001" + "&action=giftList", 0, context)
+                      "user_id=" + "100001" + "&action=giftList", 0, context)
                   .then((response) {
                 var data = jsonDecode(response);
                 giftData = data['body']['giftList']['gift_list']['all'];
@@ -373,7 +370,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
               },
             ),
             floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked,
+                FloatingActionButtonLocation.centerDocked,
             body: TabBarView(
               children: <Widget>[
                 Scaffold(
@@ -422,8 +419,8 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 return Container(
                                   width: double.infinity,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(10)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
                                     image: DecorationImage(
                                       image: CachedNetworkImageProvider(
                                         banner[i]['image'],
@@ -492,7 +489,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Center(child: new Fluttergram()),
+                Center(child: Fluttergram()),
                 Center(child: HomeScreen()),
                 Center(child: Profile()),
               ],
@@ -506,18 +503,18 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 0
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Home.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Home.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset('assets/dashboard/Home.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child: Image.asset('assets/dashboard/Home.png'),
+                            ),
                       width: bottomController.index == 0 ? 40 : 30,
                       height: bottomController.index == 0 ? 40 : 30,
                     ),
@@ -526,19 +523,18 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 1
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Photo.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Photo.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child:
-                        Image.asset('assets/dashboard/Photo.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child: Image.asset('assets/dashboard/Photo.png'),
+                            ),
                       width: bottomController.index == 1 ? 40 : 30,
                       height: bottomController.index == 1 ? 40 : 30,
                     ),
@@ -547,19 +543,19 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 2
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Message.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Message.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child:
-                        Image.asset('assets/dashboard/Message.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Message.png'),
+                            ),
                       width: bottomController.index == 2 ? 40 : 30,
                       height: bottomController.index == 2 ? 40 : 30,
                     ),
@@ -568,19 +564,19 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     child: Container(
                       child: bottomController.index == 3
                           ? Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.deepOrangeAccent,
-                          backgroundImage:
-                          AssetImage('assets/dashboard/Profile.png'),
-                        ),
-                      )
+                              padding: const EdgeInsets.all(5.0),
+                              child: CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepOrangeAccent,
+                                backgroundImage:
+                                    AssetImage('assets/dashboard/Profile.png'),
+                              ),
+                            )
                           : Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child:
-                        Image.asset('assets/dashboard/Profile.png'),
-                      ),
+                              padding: const EdgeInsets.all(5.0),
+                              child:
+                                  Image.asset('assets/dashboard/Profile.png'),
+                            ),
                       width: bottomController.index == 3 ? 40 : 30,
                       height: bottomController.index == 3 ? 40 : 30,
                     ),
@@ -603,7 +599,6 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
       ),
     );
   }
-
 
   Widget dispyActive(list, viewController) {
     return list.length != 0
@@ -806,14 +801,20 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   Future<bool> _onBackPressed() {
-    DateTime now = DateTime.now();
-    if (currentBackPressTime == null ||
-        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
-      currentBackPressTime = now;
-      Fluttertoast.showToast(msg: exit_warning);
-      return Future.value(false);
+    if (pageIndex != 0) {
+      pageIndex = 0;
+      bottomController.index = 0;
+      return null;
+    } else {
+      DateTime now = DateTime.now();
+      if (currentBackPressTime == null ||
+          now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+        currentBackPressTime = now;
+        Fluttertoast.showToast(msg: exit_warning);
+        return Future.value(false);
+      }
+      return Future.value(true);
     }
-    return Future.value(true);
   }
 
   Widget roundedButton(String buttonLabel, Color bgColor, Color textColor) {
@@ -915,9 +916,19 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
       var data = res['body'];
       print(data);
       print(data['profile_pic']);
-      var gender = "Female.png";
-      if (data['gender'] == "male") gender = "male.jpg";
-      common.userrelation = data['userRelationship'];
+      common.userrelation = data['userRelation'];
+      uData.userrelation = data['userRelation'];
+      if (uData.userrelation == null) uData.userrelation = 0;
+      uData.relationData = "Follow";
+      uData.relationImage = Icons.add;
+      if (uData.userrelation == 1) {
+        uData.relationData = 'Unfollow';
+        uData.relationImage = Icons.remove;
+      } else if (uData.userrelation == 3) {
+        uData.relationImage = Icons.swap_horiz;
+        uData.relationData = 'Friend';
+      }
+
       showModalBottomSheet(
         context: context,
         backgroundColor: Colors.transparent,
@@ -945,9 +956,10 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                   child: Row(
                                     children: <Widget>[
                                       Container(
-                                          padding: const EdgeInsets.only(left: 3),
-                                          child: Icon(Icons.report, color: Colors.black)
-                                      ),
+                                          padding:
+                                              const EdgeInsets.only(left: 3),
+                                          child: Icon(Icons.report,
+                                              color: Colors.black)),
                                       Text(
                                         " Report",
                                         style: TextStyle(
@@ -961,11 +973,10 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-                            onTap: (){
+                            onTap: () {
                               _asyncSimpleDialog(context);
                             },
-                          )
-                      ),
+                          )),
                       Positioned(
                         top: 25,
                         left: 0,
@@ -974,13 +985,12 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                           alignment: Alignment.center,
                           child: GestureDetector(
                               onTap: () {
-                                Navigator.push(
+                                /*Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => EditProfile(
-                                    ),
+                                    builder: (context) => EditProfile(),
                                   ),
-                                );
+                                );*/
                               },
                               child: Container(
                                 height: 100,
@@ -992,8 +1002,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                              )
-                          ),
+                              )),
                         ),
                       ),
                       Positioned(
@@ -1019,11 +1028,11 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                           child: Text(
                             "ID" +
                                 ' ' +
-                                data['reference_user_id' ] +
+                                data['reference_user_id'] +
                                 ' ' +
                                 "|" +
                                 ' ' +
-                                "India",
+                                data['country'],
                             style: TextStyle(
                               fontSize: 15.0,
                               color: Colors.orange,
@@ -1035,28 +1044,64 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                         top: 190,
                         left: 0,
                         right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          height: 30,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: tags.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(color: Colors.black)),
-                                margin: const EdgeInsets.only(right: 5),
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 4),
-                                  child: Text(
-                                    tags[index],
-                                    style: TextStyle(color: Colors.black),
-                                  ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                OutlineButton(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: Column(
+                                      // Replace with a Row for horizontal icon + text
+                                      children: <Widget>[
+                                        Text("↑Level " + data['level'],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ],
+                                    ),
+                                    onPressed: () {},
+                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                                 ),
-                              );
-                            },
-                          ),
+                                OutlineButton(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: Column(
+                                      // Replace with a Row for horizontal icon + text
+                                      children: <Widget>[
+                                        Text("💎 " + data["diamond"],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ],
+                                    ),
+                                    onPressed: () {},
+                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                ),
+                                OutlineButton(
+                                    padding: EdgeInsets.all(0.0),
+                                    child: Column(
+                                      // Replace with a Row for horizontal icon + text
+                                      children: <Widget>[
+                                        Text("♀ " + data["gender"],
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13.0,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                      ],
+                                    ),
+                                    onPressed: () {},
+                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                       Positioned(
@@ -1075,38 +1120,42 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                   child: Column(
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
-                                      Text(  data['friends'],
-                                          style: TextStyle(color: Colors.black,
+                                      Text(data['friends'],
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("Friends",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                                 FlatButton(
                                   padding: EdgeInsets.all(10.0),
                                   child: Column(
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
-                                      Text( data['fans'],
-                                          style: TextStyle(color: Colors.black,
+                                      Text(data['fans'],
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("Fans",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                                 FlatButton(
                                   padding: EdgeInsets.all(10.0),
@@ -1114,18 +1163,20 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
                                       Text(data['followers'],
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("Followers",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                                 FlatButton(
                                   padding: EdgeInsets.all(10.0),
@@ -1133,18 +1184,20 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                     // Replace with a Row for horizontal icon + text
                                     children: <Widget>[
                                       Text(data['over_all_gold'].toString(),
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                       Text("B-Gold",
-                                          style: TextStyle(color: Colors.black,
+                                          style: TextStyle(
+                                            color: Colors.black,
                                             fontSize: 13.0,
-                                            fontWeight: FontWeight.bold,)),
+                                            fontWeight: FontWeight.bold,
+                                          )),
                                     ],
                                   ),
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                 ),
                               ],
                             ),
@@ -1165,15 +1218,22 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 side: BorderSide(color: Colors.white),
                               ),
                               color: Colors.white,
-                              label: Text('Chat',
-                                style: TextStyle(color: Colors.black),),
-                              icon: Icon(Icons.message, color:Colors.black,size: 18,),
+                              label: Text(
+                                'Chat',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              icon: Icon(
+                                Icons.message,
+                                color: Colors.black,
+                                size: 18,
+                              ),
                               onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => HomeScreen(
-                                    ),
+                                    builder: (context) => ChatScreen
+                                      (peerId:"0",peerAvatar:data['profile_pic'],
+                                        peerName:data['profileName']),
                                   ),
                                 );
                               },
@@ -1186,11 +1246,18 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                               color: Colors.deepOrange,
                               splashColor: Colors.yellow[200],
                               animationDuration: Duration(seconds: 4),
-                              label: Text('Follow',
-                                style: TextStyle(color: Colors.white),),
-                              icon: Icon(Icons.add, color:Colors.white,size: 18,),
-                              onPressed: ()  {
-
+                              label: Text(
+                                uData.relationData,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              icon: Icon(
+                                uData.relationImage,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              onPressed: () {
+                                userRelation(uData.userrelation, userId, uData,
+                                    setState, context);
                               },
                             ),
                           ],
@@ -1215,11 +1282,15 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
           return SimpleDialog(
             children: <Widget>[
               SimpleDialogOption(
-                onPressed: () {},
+                onPressed: () {
+
+                },
                 child: const Text('Block'),
               ),
               SimpleDialogOption(
-                onPressed: () {},
+                onPressed: () {
+
+                },
                 child: const Text('Report'),
               ),
             ],
@@ -1228,28 +1299,26 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
   }
 
   void story() {
-     String endPoint = "test/topStories";
-      var params = "";
-      params = "";
-      print(params);
-      makeGetRequest(endPoint, params, 0, context).then((response) {
-        var data = (response).trim();
-        var d2 = jsonDecode(data);
-        if (d2['status'] == 0) {
-          int bodyLength = d2['body']['topstory'].length;
-          if (bodyLength != 0) {
-            setState(() {
-              storyList = List.from(storyList)
-                  ..addAll(d2['body']['topstory']);
-            });
-          }
-
-        } else if (d2['status'] == 1 && d2['message'] == "Session Expiry") {
-          story();
+    String endPoint = "test/topStories";
+    var params = "";
+    params = "";
+    print(params);
+    makeGetRequest(endPoint, params, 0, context).then((response) {
+      var data = (response).trim();
+      var d2 = jsonDecode(data);
+      if (d2['status'] == 0) {
+        int bodyLength = d2['body']['topstory'].length;
+        if (bodyLength != 0) {
+          setState(() {
+            storyList = List.from(storyList)..addAll(d2['body']['topstory']);
+          });
         }
-      });
-    }
+      } else if (d2['status'] == 1 && d2['message'] == "Session Expiry") {
+        story();
+      }
+    });
   }
+}
 
 class ListItem extends StatelessWidget {
   final double sheetItemHeight;
@@ -1268,40 +1337,45 @@ class ListItem extends StatelessWidget {
       innerMap = mapVal;
       isMap = false;
     }
-    return Container(
-      margin: EdgeInsets.only(right: 10),
-      width: sheetItemHeight,
-      height: sheetItemHeight,
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
+    return GestureDetector(
+      onTap: () {
+        Fluttertoast.showToast(msg: under_dev);
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 5),
+        width: sheetItemHeight,
+        height: sheetItemHeight,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.orange, Colors.deepOrangeAccent],
           ),
           color: Color(0xff8d7bef),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      //
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          mapVal.keys.elementAt(0),
-          isMap
-              ? Text(innerMap.keys.elementAt(0),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white, letterSpacing: 1.2, fontSize: 11))
-              : Container(),
-          Text(
-            innerMap.values.elementAt(0),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
-          )
-        ],
+          borderRadius: BorderRadius.circular(15),
+        ),
+        //
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            mapVal.keys.elementAt(0),
+            isMap
+                ? Text(innerMap.keys.elementAt(0),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white, letterSpacing: 1.2, fontSize: 11))
+                : Container(),
+            Text(
+              innerMap.values.elementAt(0),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
