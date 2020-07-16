@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'create_account.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'dart:io' show Platform;
 import 'models/user.dart';
@@ -17,6 +18,10 @@ final ref = Firestore.instance.collection('insta_users');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
 User currentUserModel;
+
+
+
+
 
 Future<void> tryCreateUserRecord(BuildContext context) async {
   String userid = await CommonFun().getStringData('user_id');
@@ -49,15 +54,16 @@ Future<void> tryCreateUserRecord(BuildContext context) async {
 }
 
 class Fluttergram extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      title: 'Instagram',
       theme: ThemeData(
           primarySwatch: Colors.blue,
           buttonColor: Colors.pink,
           primaryIconTheme: IconThemeData(color: Colors.black)),
-      home: HomePage(),
+      home: HomePage(title: 'Instagram'),
     );
   }
 }
@@ -77,6 +83,8 @@ class _HomePageState extends State<HomePage> {
   bool triedSilentLogin = false;
   bool setupNotifications = false;
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +92,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Container(
             color: Colors.white,
-            child: Feed(),
+            child: new  Feed(),
           ),
           Container(
             color: Colors.white,
@@ -106,6 +114,9 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+
+
 
   void navigationTapped(int page) {
     //Animating Page

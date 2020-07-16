@@ -492,7 +492,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Center(child: Fluttergram()),
+                Center(child: new Fluttergram()),
                 Center(child: HomeScreen()),
                 Center(child: Profile()),
               ],
