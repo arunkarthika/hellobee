@@ -19,9 +19,9 @@ import 'package:honeybee/model/gift.dart';
 import 'package:honeybee/ui/insta/main12.dart';
 import 'package:honeybee/ui/liveroom/commonFun.dart';
 import 'package:honeybee/ui/liveroom/liveRoom.dart';
+import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/liveroom/personalChat/home.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
-import 'package:honeybee/ui/message.dart';
 import 'package:honeybee/ui/profile.dart';
 import 'package:honeybee/utils/string.dart';
 import 'dart:async';
@@ -916,11 +916,8 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
       var data = res['body'];
       print(data);
       print(data['profile_pic']);
-      var gender = "Female.png";
-      if (data['gender'] == "male") gender = "male.jpg";
-      common.userrelation = data['userRelationship'];
-
-      uData.userrelation = data['userRelationship'];
+      common.userrelation = data['userRelation'];
+      uData.userrelation = data['userRelation'];
       if (uData.userrelation == null) uData.userrelation = 0;
       uData.relationData = "Follow";
       uData.relationImage = Icons.add;
@@ -1234,7 +1231,9 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChatHome(),
+                                    builder: (context) => ChatScreen
+                                      (peerId:"0",peerAvatar:data['profile_pic'],
+                                        peerName:data['profileName']),
                                   ),
                                 );
                               },
@@ -1248,11 +1247,11 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                               splashColor: Colors.yellow[200],
                               animationDuration: Duration(seconds: 4),
                               label: Text(
-                                'Follow',
+                                uData.relationData,
                                 style: TextStyle(color: Colors.white),
                               ),
                               icon: Icon(
-                                Icons.add,
+                                uData.relationImage,
                                 color: Colors.white,
                                 size: 18,
                               ),
@@ -1343,7 +1342,7 @@ class ListItem extends StatelessWidget {
         Fluttertoast.showToast(msg: under_dev);
       },
       child: Container(
-        margin: EdgeInsets.only(right: 10),
+        margin: EdgeInsets.only(right: 5),
         width: sheetItemHeight,
         height: sheetItemHeight,
         padding: EdgeInsets.all(10),

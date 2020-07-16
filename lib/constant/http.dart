@@ -11,27 +11,12 @@ import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 
-toast(text, color) {
-  Fluttertoast.showToast(
-    msg: text,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    timeInSecForIos: 3,
-    backgroundColor: color,
-    textColor: Colors.white,
-    fontSize: 16.0,
-  );
-}
-
 makeGetRequest(String endPoint, String params, int woutauth, context) async {
   if (await CommonFun().check()) {
   String username = await CommonFun().getStringData('bearer');
   String password = await CommonFun().getStringData('token');
-  String basicAuth =
-      'Basic ' + base64Encode(utf8.encode('$username:$password'));
-  String url =
-      /*'https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/$endPoint?$params';*/
-      'https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/$endPoint?$params';
+  String basicAuth ='Basic ' + base64Encode(utf8.encode('$username:$password'));
+  String url ='https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/$endPoint?$params';
   var response;
   print(url);
   print(woutauth);
@@ -45,9 +30,7 @@ makeGetRequest(String endPoint, String params, int woutauth, context) async {
   }
   if (response.statusCode == 401 && woutauth == 0) {
     var json = jsonEncode({'device': 'android'});
-    var urlData =
-       /* "https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/system/auth";*/
-        "https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/system/auth";
+    var urlData = "https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/system/auth";
     var session = await http.post(Uri.encodeFull(urlData),
         body: jsonDecode(json), headers: {"Authorization": "Bearer $username"});
     if (session.statusCode == 406) {
@@ -63,7 +46,7 @@ makeGetRequest(String endPoint, String params, int woutauth, context) async {
   print(response.body);
   var jsonData = jsonDecode(response.body);
   if (jsonData['status'] == 1 && jsonData['message'] != "Session Expiry") {
-    toast(jsonData['message'], Colors.red);
+    Fluttertoast.showToast(msg: jsonData['message']);
   }
   print('response.body');
   print(response.body);
@@ -77,10 +60,8 @@ makePostRequest(String endPoint, String params, int woutauth, context) async {
   if (await CommonFun().check()) {
   String username = await CommonFun().getStringData('bearer');
   String password = await CommonFun().getStringData('token');
-  String basicAuth =
-      'Basic ' + base64Encode(utf8.encode('$username:$password'));
+  String basicAuth = 'Basic ' + base64Encode(utf8.encode('$username:$password'));
   String url = 'https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/$endPoint';
- // String url = 'https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/$endPoint';
   print(url);
   var response;
   if (woutauth == 0) {
@@ -95,7 +76,6 @@ makePostRequest(String endPoint, String params, int woutauth, context) async {
   if (response.statusCode == 401 && woutauth == 0) {
     var json = jsonEncode({'device': 'android'});
     var urlData =
-      //  "https://phalcon.sjhinfotech.com/blive_phalcon/api/v1/system/auth";
         "https://phalcon.sjhinfotech.com/Hellobee_phalcon/api/v1/system/auth";
     var session = await http.post(Uri.encodeFull(urlData),
         body: jsonDecode(json), headers: {"Authorization": "Bearer $username"});
@@ -110,7 +90,7 @@ makePostRequest(String endPoint, String params, int woutauth, context) async {
   }
   var jsonData = jsonDecode(response.body);
   if (jsonData['status'] == 1 && jsonData['message'] != "Session Expiry") {
-    toast(jsonData['message'], Colors.red);
+    Fluttertoast.showToast(msg: jsonData['message']);
   }
   return response.body;
   } else {
@@ -163,12 +143,12 @@ Future uploadImage(File file, endPoint, params, woutauth, context) async {
     }
     var jsonData = jsonDecode(value);
     if (jsonData['status'] == 1 && jsonData['message'] != 'Session Expiry') {
-      toast(jsonData['message'], Colors.red);
+      Fluttertoast.showToast(msg: jsonData['message']);
     }
     print('data');
     print(value);
     return value;
   } else {
-    toast('No Internet Connection', Colors.red);
+    Fluttertoast.showToast(msg: internetConnection);
   }
 }

@@ -15,6 +15,7 @@ import 'package:honeybee/model/Queue.dart';
 import 'package:flutter/material.dart';
 import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
+import 'package:honeybee/ui/meprofile.dart';
 import 'package:honeybee/ui/search_page.dart';
 import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
@@ -801,13 +802,14 @@ class RenderBroadcast extends State<LiveRoom>
       'page': common.page.toString(),
       'user_id': common.broadcasterId
     };
+    // ignore: missing_return
     makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
       var data = (response).trim();
       var pic = json.decode(data);
       var temp = pic['body'];
       if (pic['body']['broadCastList']['kickOutList'].contains(common.userId) ||
           pic['body']['broadCastList']['blockList'].contains(common.userId)) {
-        toast('You are not allowed to enter into this room', Colors.red);
+        Fluttertoast.showToast(msg: "You are not allowed to enter into this room");
         onWillPopOffline();
         return false;
       }
@@ -1119,6 +1121,7 @@ class RenderBroadcast extends State<LiveRoom>
 
   void onMessage() {
     common.c++;
+    // ignore: missing_return
     common.client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       MqttPublishMessage recMess = c[0].payload;
       var receivedTopic = c[0].topic;
@@ -1216,7 +1219,7 @@ class RenderBroadcast extends State<LiveRoom>
             case 'Rejected':
               if (common.username == receivedTopic &&
                   arrData[2] == common.userId) {
-                toast('Guest rejected your PK time request', Colors.red);
+                Fluttertoast.showToast(msg: "Guest rejected your PK time request");
               }
               break;
             case 'StartTimer':
@@ -1283,7 +1286,7 @@ class RenderBroadcast extends State<LiveRoom>
           break;
         case '£01kickout01':
           if (arrData[1] == common.userId) {
-            toast('Host Kicked You Out', Colors.red);
+            Fluttertoast.showToast(msg: "Host Kicked You Out");
             onWillPopOffline();
           }
           break;
@@ -1430,9 +1433,9 @@ class RenderBroadcast extends State<LiveRoom>
                 'totalTime': broadcastingTime,
                 'username': common.username
               };
-              toast('PK request Accepted', Colors.orange);
+              Fluttertoast.showToast(msg: "PK request Accepted");
             } else {
-              toast('PK request rejected', Colors.orange);
+              Fluttertoast.showToast(msg: "PK request rejected");
             }
           } else if (receivedTopic == common.username) {
             common.publishMessage(arrData[4],
@@ -1473,7 +1476,7 @@ class RenderBroadcast extends State<LiveRoom>
           break;
         case '£01T0aSt01':
           if (receivedTopic == common.username) {
-            toast(arrData[2], Colors.orange);
+            Fluttertoast.showToast(msg: arrData[2]);
           }
           break;
         case '£01RemoveGus01':
@@ -2150,15 +2153,15 @@ class RenderBroadcast extends State<LiveRoom>
                           child: GestureDetector(
                               onTap: () {
                                 print("object" + "User Id" + id);
-                                /*Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        EditProfile(
+                                        MeProfile(
                                           touserid: id,
                                         ),
                                   ),
-                                );*/
+                                );
                               },
                               child: Container(
                                 height: 100,
@@ -2181,15 +2184,15 @@ class RenderBroadcast extends State<LiveRoom>
                           alignment: Alignment.center,
                           child: GestureDetector(
                               onTap: () {
-                                /*Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        EditProfile(
+                                        MeProfile(
                                           touserid: id,
                                         ),
                                   ),
-                                );*/
+                                );
                               },
                               child: Container(
                                 height: 105,
@@ -2566,9 +2569,7 @@ class RenderBroadcast extends State<LiveRoom>
       if (data['status'] == 0) {
         var body = data['body'];
         var message = data['body'];
-        toast(message, Colors.black);
         Fluttertoast.showToast(msg: message);
-
         CommonFun().saveShare('friends', body['friends']);
         CommonFun().saveShare('followers', body['followers']);
         CommonFun().saveShare('fans', body['fans']);
@@ -2626,7 +2627,7 @@ class RenderBroadcast extends State<LiveRoom>
     makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
       var data = jsonDecode(response);
       var message = data['body'];
-      toast(message, Colors.black);
+      Fluttertoast.showToast(msg: message);
       common.publishMessage(
           common.broadcastUsername,
           '£01kickout01£*£' +
@@ -2704,8 +2705,7 @@ class RenderBroadcast extends State<LiveRoom>
     makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
       var data = jsonDecode(response);
       var message = data['body'];
-      toast(message, Colors.black);
-
+      Fluttertoast.showToast(msg: message);
       common.publishMessage(
           common.broadcastUsername,
           '£01kickout01£*£' +
@@ -2755,7 +2755,7 @@ class RenderBroadcast extends State<LiveRoom>
     makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
       var data = jsonDecode(response);
       var message = data['body'];
-      toast(message, Colors.black);
+      Fluttertoast.showToast(msg: message);
       common.publishMessage(
           common.broadcastUsername,
           '£01TextStatus01£*£' +
@@ -3455,105 +3455,6 @@ class RenderBroadcast extends State<LiveRoom>
       setState(() {});
     });
   }*/
-
-  _profileview() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      isScrollControlled: true,
-      builder: (BuildContext bc) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      FlatButton(
-                        padding: EdgeInsets.all(10.0),
-                        child: Column(
-                          // Replace with a Row for horizontal icon + text
-                          children: <Widget>[
-                            SvgPicture.asset(
-                              pk,
-                              width: 30.0,
-                              height: 30.0,
-                              fit: BoxFit.fill,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          toast("under Development!", Colors.black);
-                        },
-                      ),
-                      FlatButton(
-                        padding: EdgeInsets.all(10.0),
-                        child: Column(
-                          // Replace with a Row for horizontal icon + text
-                          children: <Widget>[
-                            SvgPicture.asset(
-                              gallery,
-                              width: 30.0,
-                              height: 30.0,
-                              fit: BoxFit.fill,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          toast("under Development!", Colors.black);
-                        },
-                      ),
-                      FlatButton(
-                        padding: EdgeInsets.all(10.0),
-                        child: Column(
-                          // Replace with a Row for horizontal icon + text
-                          children: <Widget>[
-                            SvgPicture.asset(
-                              music,
-                              width: 30.0,
-                              height: 30.0,
-                              fit: BoxFit.fill,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MyMusic(),
-                            ),
-                          );
-                        },
-                      ),
-                      FlatButton(
-                        padding: EdgeInsets.all(10.0),
-                        child: Column(
-                          children: <Widget>[
-                            SvgPicture.asset(
-                              games,
-                              width: 30.0,
-                              height: 30.0,
-                              fit: BoxFit.fill,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          toast("under Development!", Colors.black);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   _share() {
     showModalBottomSheet(

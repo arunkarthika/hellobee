@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
@@ -25,9 +26,6 @@ Widget audienceBroadShow(context, common, setState) {
           child: RaisedButton(
               onPressed: () {
                 print(common.level);
-                if (int.tryParse(common.level) < 10) {
-                  toast('Sorry!! You must reach level 10', Colors.red);
-                } else {
                   common.publishMessage(
                       common.broadcastUsername,
                       '£01GuestInvite01£*£' +
@@ -42,7 +40,6 @@ Widget audienceBroadShow(context, common, setState) {
                           common.profilePic +
                           '£*£' +
                           common.level);
-                }
               },
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(80.0)),
@@ -536,15 +533,10 @@ void onInvitaion(context, common) {
                                                   .removeAt(index);
                                             });
                                           } else {
-                                            if (int.tryParse(common.level) >=
-                                                10) {
-                                              toast(
-                                                  'Sorry!! You must reach level 10',
-                                                  Colors.red);
+                                            if (int.tryParse(common.level) >= 10) {
+                                              Fluttertoast.showToast(msg: "Sorry!! You must reach level 10");
                                             } else {
-                                              toast(
-                                                  'Sorry!! Guest room already filled',
-                                                  Colors.red);
+                                              Fluttertoast.showToast(msg: "Sorry!! Guest room already filled");
                                             }
                                           }
                                         },
@@ -2708,7 +2700,7 @@ void sendGiftold(
     giftName, message, giftValue, giftCount, setState, context, common) {
   var arriveMsg = "";
   if (common.diamond <= 0) {
-    toast("Diamond Value is Low", Colors.red);
+    Fluttertoast.showToast(msg: "Diamond Value is Low!");
   } else {
     print(
         "===========================common.giftUserId=======================");
@@ -2787,7 +2779,7 @@ void sendGift(
     giftName, message, giftValue, giftCount, setState, context, common) {
   var arriveMsg = '';
   if (common.diamond <= 0) {
-    toast('Diamond Value is Low', Colors.red);
+    Fluttertoast.showToast(msg: "Diamond Value is Low!");
   } else {
     var params = {
       'giftName': giftName,
@@ -3011,7 +3003,7 @@ void loadAnimation(setState, common) async {
       });
     }
   } on Exception catch (_) {
-    toast("Never ....? ", Colors.red);
+
   }
 }
 

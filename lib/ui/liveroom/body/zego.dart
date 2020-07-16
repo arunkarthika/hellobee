@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:zego_express_engine/zego_express_engine.dart';
@@ -101,7 +102,6 @@ class ZegoClass {
       ZegoExpressEngine.instance.startPreview();
     } else {
       //for audio call
-
       // Set the preview canvas
       previewCanvas = ZegoCanvas(viewID, viewMode, backgroundColor);
 
@@ -114,29 +114,29 @@ class ZegoClass {
     switch (skin) {
       case 'Sharpen':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.Sharpen);
-        toast('Sharpen Applied Success!', Colors.green);
+        Fluttertoast.showToast(msg: "Sharpen Applied Success!");
         break;
       case 'Polish':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.Polish);
-        toast('Polish Applied Success!', Colors.green);
+        Fluttertoast.showToast(msg: "Polish Applied Success!");
         break;
       case 'Whiten':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.Whiten);
-        toast('Whiten Applied Success!', Colors.green);
+        Fluttertoast.showToast(msg: "Whiten Applied Success!");
         break;
       case 'SkinWhiten':
         ZegoExpressEngine.instance
             .enableBeautify(ZegoBeautifyFeature.SkinWhiten);
-        toast('SkinWhiten Applied Success!', Colors.green);
+        Fluttertoast.showToast(msg: "SkinWhiten Applied Success!");
         break;
       case 'None':
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.None);
-        toast('Beauty Removed Success!', Colors.green);
+        Fluttertoast.showToast(msg: "Beauty Removed Success");
         break;
       case 'Mychoice':
         var option = ZegoBeautifyOption(x, y, z);
         ZegoExpressEngine.instance.setBeautifyOption(option);
-        toast('Beauty Choice Applied Success!', Colors.green);
+        Fluttertoast.showToast(msg: "Beauty Choice Applied Success!");
         break;
       default:
         ZegoExpressEngine.instance.enableBeautify(ZegoBeautifyFeature.None);

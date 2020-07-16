@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
@@ -430,7 +431,7 @@ class _MyAppState extends State<EditProfileNew> {
                                 var data = (response).trim();
                                 var d2 = jsonDecode(data);
                                 if (d2['status'] == 0) {
-                                  toast(d2['message'], Colors.green);
+                                  Fluttertoast.showToast(msg: d2['message']);
                                   updateProfile();
                                 }
                               });
@@ -452,7 +453,7 @@ class _MyAppState extends State<EditProfileNew> {
                                 var data = (response).trim();
                                 var d2 = jsonDecode(data);
                                 if (d2['status'] == 0) {
-                                  toast(d2['message'], Colors.green);
+                                  Fluttertoast.showToast(msg: d2['message']);
                                   updateProfile();
                                 }
                               });

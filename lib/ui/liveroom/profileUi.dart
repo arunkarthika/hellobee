@@ -18,7 +18,7 @@ profileviewAudience(id, context, common) {
     print(data['profile_pic']);
     var gender = "Female.png";
     if (data['gender'] == "male") gender = "male.jpg";
-    common.userrelation = data['userRelationship'];
+    common.userrelation = data['userRelation'];
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
