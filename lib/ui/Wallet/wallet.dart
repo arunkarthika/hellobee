@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:honeybee/model/data.dart';
+import 'package:honeybee/ui/Wallet/overView.dart';
 import 'package:honeybee/ui/Wallet/widgets/add_button.dart';
-import 'file:///D:/Flutter%20Samples/hellobee_New/lib/ui/Wallet/overView.dart';
 import 'package:honeybee/ui/Wallet/widgets/credit_card.dart';
 import 'package:honeybee/ui/Wallet/widgets/payment_card.dart';
 import 'package:honeybee/ui/Wallet/widgets/screen_size.dart';

@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
+import 'package:honeybee/ui/Imageupload.dart';
 import 'package:honeybee/ui/liveroom/profileUi.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
@@ -56,7 +56,6 @@ class _MyAppState extends State<EditProfileNew> {
   String genderValue;
   File imageURI;
   PageController _pageController = PageController();
-  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   final TextEditingController names = TextEditingController();
   final TextEditingController username = TextEditingController();
   final TextEditingController referalCode = TextEditingController();
@@ -227,7 +226,13 @@ class _MyAppState extends State<EditProfileNew> {
                             width: 24,
                             color: Color(0xFFFFFFFF),
                           ), onPressed: () {
-                          getImageCover();
+                         /* getImageCover();*/
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SingleImageUpload(),
+                            ),
+                          );
                         },
                         ),
                       ),
@@ -403,27 +408,12 @@ class _MyAppState extends State<EditProfileNew> {
                           onPressed: () {
                             loader = true;
                             var endPoint = 'user/updateProfile';
-                            if (_fbKey.currentState.saveAndValidate()) {}
-                            var date =
-                            _fbKey.currentState.value['date'].toString();
-                            var dob = date.split(' ')[0];
+
                             var params;
                             age = calculateAge(DateTime.parse(dob));
                             if (_image == null) {
                               params = {
-                                'name':
-                                _fbKey.currentState.value['ProfileName'],
-                                'gender': _fbKey.currentState.value['gender'],
-                                'profile_pic': profilePic,
-                                'profile_pic1': profilePic,
-                                'profile_pic2': profilePic,
-                                'country':
-                                _fbKey.currentState.value['Country'],
-                                'dob': dob,
-                                'age': age.toString(),
-                                // 'state': _fbKey.currentState.value['Country'],
-                                // 'city': _fbKey.currentState.value['Country'],
-                                // 'reference_id': referenceId
+
                               };
                               makePostRequest(endPoint, jsonEncode(params), 0,
                                   context)
@@ -437,15 +427,7 @@ class _MyAppState extends State<EditProfileNew> {
                               });
                             } else {
                               params = {
-                                'name':
-                                _fbKey.currentState.value['ProfileName'],
-                                'gender': _fbKey.currentState.value['gender'],
-                                'profile_pic1': profilePic,
-                                'profile_pic2': profilePic,
-                                'country':
-                                _fbKey.currentState.value['Country'],
-                                'dob': dob,
-                                'age': age.toString(),
+
                               };
                               uploadImage(_image, 'user/updateProfile',
                                   jsonEncode(params), 0, context)

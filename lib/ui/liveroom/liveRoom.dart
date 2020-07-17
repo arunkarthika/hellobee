@@ -2137,8 +2137,7 @@ class RenderBroadcast extends State<LiveRoom>
                                     ),
                                     onTap: () {
                                       Navigator.pop(context);
-                                      userBlockRelation(common.blockInt,
-                                          id, common, setState, context);
+                                      userBlockRelation(common.blockInt,id, common, setState, context);
                                     }),
                               ],
                             ),
