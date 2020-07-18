@@ -74,12 +74,12 @@ class _Feed extends State<Feed>
       /*appBar: AppBar(
         backgroundColor: Colors.orange,
         centerTitle: true,
-        *//*title: Row(
+        */ /*title: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text('HelloBee Feed'),
-            ]),*//*
+            ]),*/ /*
         title: const Text('HelloBee Feed'),
         actions: <Widget>[
           IconButton(
@@ -97,34 +97,30 @@ class _Feed extends State<Feed>
           ),
         ],
       ),*/
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(40.0),
-          child: AppBar(
-            backgroundColor: Colors.orange,
-            centerTitle: true,
-            /*title: Row(
+      appBar: AppBar(
+//        backgroundColor: Colors.orange,
+        /*title: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text('HelloBee Feed'),
             ]),*/
-            title: const Text('HelloBee Feed'),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.add,
-                  size: 30,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute<Null>(builder: (BuildContext context) {
-                        return new PostImage();
-                      }));
-                },
-              ),
-            ],
+        title: Text('HelloBee Feed'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              size: 20,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<Null>(builder: (BuildContext context) {
+                return new PostImage();
+              }));
+            },
           ),
+        ],
       ),
       body: buildActivityFeed(),
     );

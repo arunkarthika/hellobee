@@ -191,8 +191,9 @@ class _ListPersonPageState extends State<ListPersonPage> {
                       // print("_filteredList" + _filteredList[index].relationName);
 
                       return Card(
+
                         child: Container(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             mainAxisSize: MainAxisSize.max,
@@ -240,13 +241,35 @@ class _ListPersonPageState extends State<ListPersonPage> {
                                   ],
                                 ),
                               ),
-                              Text(
-                                '⭐ ' + _filteredList[index].lvl,
-                                style: TextStyle(
-                                    fontSize: 10.0,
-                                    fontWeight: FontWeight.bold,
-                                    foreground: Paint()
-                                      ..shader = linearGradient),
+                              Container(
+                                padding: EdgeInsets.all(2.0),
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment(0.8, 0.0),
+                                    // 10% of the width, so there are ten blinds.
+                                    colors: [
+                                      Colors.red,
+                                      Colors.orangeAccent,
+                                    ],
+                                    // whitish to gray
+                                    tileMode: TileMode
+                                        .repeated, // repeats the gradient over the canvas
+                                  ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(80.0)),
+                                ),
+                                child: Center(
+                                  child:Text(
+                                  '⭐ ' +_filteredList[index].lvl,
+                                      style: TextStyle(color: Colors.white),
+
+/*                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      foreground: Paint()
+                                        ..shader = linearGradient)*/
+                                ),
+                                ),
                               ),
                               types != "topFans"
                                   ? RaisedButton(
@@ -279,12 +302,13 @@ class _ListPersonPageState extends State<ListPersonPage> {
                                             end: Alignment(0.8, 0.0),
                                             // 10% of the width, so there are ten blinds.
                                             colors: [
-                                              Colors.red,
-                                              Colors.orangeAccent
+                                              Colors.orangeAccent,
+                                              Colors.blue,
+
                                             ],
                                             // whitish to gray
                                             tileMode: TileMode
-                                                .mirror, // repeats the gradient over the canvas
+                                                .repeated, // repeats the gradient over the canvas
                                           ),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(80.0)),
@@ -308,12 +332,30 @@ class _ListPersonPageState extends State<ListPersonPage> {
                                       ),
                                     )
                                   : Container(
-                                      child: Text(
-                                        _filteredList[index].relationName,
-                                        style: TextStyle(
-                                            fontSize: 8, color: Colors.white),
+                                      padding: EdgeInsets.all(5.0),
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment(0.8, 0.0),
+                                          // 10% of the width, so there are ten blinds.
+                                          colors: [
+                                            Colors.orangeAccent,
+                                            Colors.blue,
+                                          ],
+                                          // whitish to gray
+                                          tileMode: TileMode
+                                              .repeated, // repeats the gradient over the canvas
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(80.0)),
                                       ),
-                                    ),
+                                      child: Center(
+                                        child: Text(
+                                          "💎 " +
+                                              _filteredList[index].relationName,
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      )),
                             ],
                           ),
                         ),
@@ -350,12 +392,17 @@ class _ListPersonPageState extends State<ListPersonPage> {
     }
 
     if (type == "topFans") {
+      var params = 'length=10&page=$page&user_id=' +
+          userId +
+          '&action=' +
+          type +
+          '&type=all';
       makeGetRequest(endPoint, params, 0, context).then((response) {
         var data = (response).trim();
         var pic = json.decode(data);
 
-        lastpage = pic['body']['full_page'];
-        var res = pic['body']['full_Data'];
+        lastpage = pic['body']['day_page'];
+        var res = pic['body']['day_Data'];
         if (res.length > 0) {
           var indexData = 1;
           for (dynamic v in res) {
@@ -363,8 +410,11 @@ class _ListPersonPageState extends State<ListPersonPage> {
             var icon = Icons.add;
             var name = 'Follow';
             var person = Person(v['profileName'], v['user_id'], v['level'],
-                indexData, v['profile_pic'], v['gold'], icon);
+                indexData, v['profilePic'], v['gold'].toString(), icon);
             _filteredList.add(person);
+            setState(() {
+              isLoading = false;
+            });
           }
         }
         if (page == 1) {

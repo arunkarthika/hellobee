@@ -393,69 +393,14 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                   ),
                   body: Column(
                     children: <Widget>[
+                      SizedBox(
+                        height: 10,
+                      ),
                       Container(
                         width: double.infinity,
                         height: 50,
                         padding: const EdgeInsets.only(top: 5.0),
                         child: storyListView(),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        height: 120,
-                        margin: EdgeInsets.all(5),
-                        child: Card(
-                          margin: EdgeInsets.only(top: 0.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: CarouselSlider.builder(
-                            itemCount: banner.length,
-                            itemBuilder: (BuildContext context, int i) {
-                              if (banner.length == 0) {
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              } else {
-                                return Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        banner[i]['image'],
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            options: CarouselOptions(
-                              height: double.infinity,
-                              aspectRatio: 16 / 9,
-                              viewportFraction: 1.0,
-                              autoPlay: true,
-                              enlargeCenterPage: false,
-                              autoPlayInterval: Duration(seconds: 2),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        height: 100,
-                        child: Column(
-                          children: <Widget>[
-                            Expanded(
-                              child: ListView(
-                                children: <Widget>[
-                                  offerDetails(85),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
                       ),
                       Expanded(
                         child: TabBarView(
@@ -473,21 +418,92 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                               default:
                                 break;
                             }
-
-                            return new Center(
-                              child: RefreshIndicator(
-                                child: Container(
-                                  child: dispyActive(
-                                      activeList, activescrollController),
+                            return new RefreshIndicator(
+                              child:Column(
+                              children: <Widget>[
+                                tab.text == "Live"
+                                    ? Container(
+                                        width: double.infinity,
+                                        height: 120,
+                                        margin: EdgeInsets.all(5),
+                                        child: Card(
+                                          margin: EdgeInsets.only(top: 0.0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          child: CarouselSlider.builder(
+                                            itemCount: banner.length,
+                                            itemBuilder:
+                                                (BuildContext context, int i) {
+                                              if (banner.length == 0) {
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              } else {
+                                                return Container(
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10)),
+                                                    image: DecorationImage(
+                                                      image:
+                                                          CachedNetworkImageProvider(
+                                                        banner[i]['image'],
+                                                      ),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            options: CarouselOptions(
+                                              height: double.infinity,
+                                              aspectRatio: 16 / 9,
+                                              viewportFraction: 1.0,
+                                              autoPlay: true,
+                                              enlargeCenterPage: false,
+                                              autoPlayInterval:
+                                                  Duration(seconds: 2),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                                tab.text == "Live"
+                                    ? Container(
+                                  width: double.infinity,
+                                  height: 100,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: ListView(
+                                          children: <Widget>[
+                                            offerDetails(85),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ):SizedBox(
+                                  height: 20,
                                 ),
-                                onRefresh: refreshFun,
+                                new Expanded(
+                                    child: dispyActive(
+                                        activeList, activescrollController))
+                              ],
                               ),
+                              onRefresh: refreshFun,
                             );
                           }).toList(),
                         ),
                       ),
                     ],
                   ),
+
                 ),
                 Center(child: Fluttergram()),
                 Center(child: HomeScreen()),
@@ -1065,8 +1081,9 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                       ],
                                     ),
                                     onPressed: () {},
-                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                                ),
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(30.0))),
                                 OutlineButton(
                                     padding: EdgeInsets.all(0.0),
                                     child: Column(
@@ -1081,8 +1098,9 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                       ],
                                     ),
                                     onPressed: () {},
-                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                                ),
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(30.0))),
                                 OutlineButton(
                                     padding: EdgeInsets.all(0.0),
                                     child: Column(
@@ -1097,8 +1115,9 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                       ],
                                     ),
                                     onPressed: () {},
-                                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                                ),
+                                    shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(30.0))),
                               ],
                             ),
                           ],
@@ -1231,9 +1250,11 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ChatScreen
-                                      (peerId:"0",peerAvatar:data['profile_pic'],
-                                        peerName:data['profileName'],userid:data['userid']),
+                                    builder: (context) => ChatScreen(
+                                        peerId: "0",
+                                        peerAvatar: data['profile_pic'],
+                                        peerName: data['profileName'],
+                                        userid: data['userid']),
                                   ),
                                 );
                               },
@@ -1282,15 +1303,11 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
           return SimpleDialog(
             children: <Widget>[
               SimpleDialogOption(
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 child: const Text('Block'),
               ),
               SimpleDialogOption(
-                onPressed: () {
-
-                },
+                onPressed: () {},
                 child: const Text('Report'),
               ),
             ],
