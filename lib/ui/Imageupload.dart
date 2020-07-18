@@ -2,7 +2,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/model/ImageUploadModel.dart';
+import 'package:honeybee/ui/MeProfileNew.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SingleImageUpload extends StatefulWidget {
@@ -15,11 +17,15 @@ class SingleImageUpload extends StatefulWidget {
 class _SingleImageUploadState extends State<SingleImageUpload> {
   List<Object> images = List<Object>();
   Future<File> _imageFile;
+  var touserid="";
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    dataGet();
     setState(() {
+      images.add("Add Image");
       images.add("Add Image");
       images.add("Add Image");
       images.add("Add Image");
@@ -27,13 +33,34 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
     });
   }
 
+  void dataGet() async {
+    touserid = await CommonFun().getStringData('user_id');
+  }
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: new Scaffold(
         appBar: new AppBar(
-          centerTitle: true,
-          title: const Text('Plugin example app'),
+          backgroundColor: Colors.orange,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: clearImage),
+          title: const Text('Image Upload'),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: (){
+
+                },
+                child: Text(
+                  "Upload",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0),
+                ))
+          ],
         ),
         body: Column(
           children: <Widget>[
@@ -46,10 +73,20 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
     );
   }
 
+  void clearImage() {
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute<Null>(builder: (BuildContext context) {
+          return new EditProfileNew(touserid: touserid,);
+        }));
+    setState(() {
+
+    });
+  }
+
   Widget buildGridView() {
     return GridView.count(
       shrinkWrap: true,
-      crossAxisCount: 3,
+      crossAxisCount: 2,
       childAspectRatio: 1,
       children: List.generate(images.length, (index) {
         if (images[index] is ImageUploadModel) {
@@ -98,7 +135,7 @@ class _SingleImageUploadState extends State<SingleImageUpload> {
 
   Future _onAddImageClick(int index) async {
     setState(() {
-      _imageFile = ImagePicker.pickImage(source: ImageSource.gallery) as Future<File>;
+      _imageFile = ImagePicker.pickImage(source: ImageSource.gallery);
       getFileImage(index);
     });
   }

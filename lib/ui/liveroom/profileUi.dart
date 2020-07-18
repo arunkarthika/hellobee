@@ -446,8 +446,11 @@ void userRelation(level, id, common, setState, context) {
 
 class UserData {
   var relationImage = Icons.add;
+  var relationImageblock = Icons.block;
   String relationData = "Follow";
+  String relationDataBlock = "Block";
   int userrelation = 0;
+  int userrelationblock = 0;
   String userId;
   String name;
   String username;

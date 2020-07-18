@@ -16,7 +16,7 @@ Widget audio(context, setState, common) {
         height: double.infinity,
         child: Image(
           image: AssetImage(
-            "assets/broadcast/AudioBG.jpg",
+            "assets/broadcast/LiveBG.jpg",
           ),
           fit: BoxFit.cover,
         ),
@@ -235,7 +235,7 @@ Widget audioold(context, setState, common) {
         height: double.infinity,
         child: Image(
           image: AssetImage(
-            "assets/broadcast/AudioBG.jpg",
+            "assets/broadcast/LiveBG.jpg",
           ),
           fit: BoxFit.cover,
         ),

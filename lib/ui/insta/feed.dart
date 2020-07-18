@@ -70,18 +70,17 @@ class _Feed extends State<Feed>
   }
 
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: Colors.orange,
-        elevation: 10.0,
         centerTitle: true,
-        title: Row(
+        *//*title: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text('HelloBee Feed'),
-            ]),
+            ]),*//*
+        title: const Text('HelloBee Feed'),
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -90,7 +89,6 @@ class _Feed extends State<Feed>
               color: Colors.white,
             ),
             onPressed: () {
-              print('Click start');
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute<Null>(builder: (BuildContext context) {
                 return new PostImage();
@@ -98,6 +96,35 @@ class _Feed extends State<Feed>
             },
           ),
         ],
+      ),*/
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(40.0),
+          child: AppBar(
+            backgroundColor: Colors.orange,
+            centerTitle: true,
+            /*title: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text('HelloBee Feed'),
+            ]),*/
+            title: const Text('HelloBee Feed'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.add,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                        return new PostImage();
+                      }));
+                },
+              ),
+            ],
+          ),
       ),
       body: buildActivityFeed(),
     );

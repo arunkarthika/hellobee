@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/constant/common.dart';
 import 'package:honeybee/constant/http.dart';
 import 'package:honeybee/ui/MeProfileNew.dart';
+import 'package:honeybee/ui/liveroom/personalChat/chat.dart';
 import 'package:honeybee/utils/string.dart';
 import 'liveroom/profileUi.dart';
 
@@ -33,7 +34,9 @@ class _EditProfileState extends State<MeProfile>  {
   var country = "";
   bool loader = true;
   var profilePic = "";
+  var coverPic = "";
   var refrenceId = "";
+  var block = "";
   var status = "";
   var agehide;
   var genderhide;
@@ -64,6 +67,7 @@ class _EditProfileState extends State<MeProfile>  {
         dobhide = data['is_the_dob_hidden'];
         idhide = data['is_the_user_id_hidden'];
         profilePic = data['profile_pic'];
+        coverPic = data['cover_pic'];
         name = data['profileName'];
         diamond = data['diamond'];
         friends = data['friends'];
@@ -77,7 +81,17 @@ class _EditProfileState extends State<MeProfile>  {
         country = data['country'];
         profilePic = data['profile_pic'];
         refrenceId = data['reference_user_id'];
+        uData.userrelationblock = data['block'];
         uData.userrelation = data['userRelationship'];
+
+        if (uData.userrelationblock == null) uData.userrelationblock = 0;
+        uData.relationDataBlock = "Block";
+        uData.relationImageblock = Icons.block;
+        if (uData.userrelationblock == 1) {
+          uData.relationDataBlock = 'UnBlock';
+          uData.relationImageblock = Icons.radio_button_unchecked;
+        }
+
         if (uData.userrelation == null) uData.userrelation = 0;
         uData.relationData = "Follow";
         uData.relationImage = Icons.add;
@@ -113,8 +127,7 @@ class _EditProfileState extends State<MeProfile>  {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    'https://images.pexels.com/photos/1391499/pexels-photo-1391499.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
+                                image: NetworkImage(coverPic)
                             )
                         ),
                       ),)
@@ -161,6 +174,30 @@ class _EditProfileState extends State<MeProfile>  {
                              icon: Image.asset(
                                "assets/profile/edit.png",
                                width: 24,
+                               color: Color(0xFFFFFFFF),
+                             ), onPressed: () {
+                             Navigator.of(context).push(
+                                 MaterialPageRoute<Null>(
+                                     builder: (BuildContext context) {
+                                       return new EditProfileNew(touserid: touserid,);
+                                     }));
+                           },),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 15,
+                      right: 15,
+                      child: Container(
+                        height: 40.0,
+                        width: 40.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.rectangle),
+                          child: InkWell(
+                           child: IconButton(
+                             alignment: Alignment.topCenter,
+                             icon: Icon(
+                               Icons.more_vert,
                                color: Color(0xFFFFFFFF),
                              ), onPressed: () {
                              Navigator.of(context).push(
@@ -282,6 +319,95 @@ class _EditProfileState extends State<MeProfile>  {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
+                        OutlineButton(
+                            padding: EdgeInsets.all(0.0),
+                            child: Row(
+                              // Replace with a Row for horizontal icon + text
+                              children: <Widget>[
+                                 Icon(
+                                  Icons.message,
+                                  color: Colors.black,
+                                  size: 18,
+                                ),
+                                Text(" Chat",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                              ],
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen
+                                    (peerId:"0",peerAvatar:profilePic,
+                                      peerName:name),
+                                ),
+                              );
+                            },
+                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                        ),
+                        OutlineButton(
+                            padding: EdgeInsets.all(0.0),
+                            child: Row(
+                              // Replace with a Row for horizontal icon + text
+                              children: <Widget>[
+                                 Icon(
+                                  uData.relationImage,
+                                  color: Colors.grey,
+                                  size: 18,
+                                ),
+                                Text(  uData.relationData,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                              ],
+                            ),
+                            onPressed: () {
+                              userRelation(uData.userrelation, touserid, uData,
+                                  setState, context);
+                            },
+                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                        ),
+                        OutlineButton(
+                            padding: EdgeInsets.all(0.0),
+                            child: Row(
+                              children: <Widget>[
+                                 Icon(
+                                   uData.relationImageblock,
+                                  color: Colors.black38,
+                                  size: 18,
+                                ),
+                                Text( " " + uData.relationDataBlock,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                    )),
+                              ],
+                            ),
+                            onPressed: () {
+                              userBlockRelation("blockInt", touserid, "common", setState, context);
+                            },
+                            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
                         FlatButton(
                           padding: EdgeInsets.all(10.0),
                           child: Column(
@@ -363,7 +489,7 @@ class _EditProfileState extends State<MeProfile>  {
                   ],
                 ),
               ),
-
+              SizedBox(height: 10.0,),
               SizedBox(height: 10.0,),
               Container(
                 padding: EdgeInsets.only(left: 10.0,right: 10.0),
@@ -399,34 +525,6 @@ class _EditProfileState extends State<MeProfile>  {
                     ],),
                     SizedBox(height: 10.0,),
                     Row(children: <Widget>[
-                      Icon(Icons.person),
-                      SizedBox(width: 5.0,),
-                      Text('Gender',style: TextStyle(
-                          fontSize: 18.0
-                      ),),
-                      SizedBox(width: 5.0,),
-                      Text(gender,
-                        style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold
-                        ),)
-                    ],),
-                    SizedBox(height: 10.0,),
-                    Row(children: <Widget>[
-                      Icon(Icons.home),
-                      SizedBox(width: 5.0,),
-                      Text('Lives in',style: TextStyle(
-                          fontSize: 18.0
-                      ),),
-                      SizedBox(width: 5.0,),
-                      Text(country,
-                        style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold
-                        ),)
-                    ],),
-                    SizedBox(height: 10.0,),
-                    Row(children: <Widget>[
                       Icon(Icons.location_on),
                       SizedBox(width: 5.0,),
                       Text('From',style: TextStyle(
@@ -440,26 +538,7 @@ class _EditProfileState extends State<MeProfile>  {
                         ),)
                     ],),
                     SizedBox(height: 10.0,),
-                    /*    Row(children: <Widget>[
-                      Icon(Icons.list),
-                      SizedBox(width: 5.0,),
-                      Text('Followed by',style: TextStyle(
-                          fontSize: 18.0
-                      ),),
-                      SizedBox(width: 5.0,),
-                      Text('100K people',style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold
-                      ),)
-                    ],),*/
                     SizedBox(height: 5.0,),
-                    /*  Row(children: <Widget>[
-                      Expanded(
-                        child: RaisedButton(
-                          child: Text('see more..'),
-                        ),
-                      )
-                    ],),*/
                     Container(
                       height: 10.0,
                       child:
@@ -474,7 +553,7 @@ class _EditProfileState extends State<MeProfile>  {
                           fontWeight: FontWeight.bold,
                         ),)),
                     Container(child:
-                    Column(
+                     Column(
                       children: <Widget>[
                         Row(children: <Widget>[
                           Expanded(
@@ -520,6 +599,47 @@ class _EditProfileState extends State<MeProfile>  {
         ],
       ),
     );
+  }
+
+  void userBlockRelation(type, id, common, setState, context) {
+    setState(() {
+
+    });
+    var endPoint = 'user/userRelation';
+    var action = '';
+    var returnData = '';
+    var image = Icons.add;
+    var relationInt = 0;
+    switch (type) {
+      case 0:
+        action = 'block';
+        image = Icons.radio_button_unchecked;
+        returnData = 'Unblock';
+        relationInt = 1;
+        break;
+      case 1:
+        action = 'unblock';
+        image = Icons.block;
+        returnData = 'Block';
+        relationInt = 0;
+        break;
+      default:
+    }
+    var params = {
+      'action': action,
+      'user_id': id.toString(),
+    };
+    makePostRequest(endPoint, jsonEncode(params), 0, context).then((response) {
+      var data = jsonDecode(response);
+      var message = data['body'];
+      Fluttertoast.showToast(msg: message);
+      setState(() {
+        common.loaderInside = false;
+        common.blockStatus = returnData;
+        common.blockInt = relationInt;
+        common.blockIcon = image;
+      });
+    });
   }
 
   _showMoreOption(BuildContext context) {
