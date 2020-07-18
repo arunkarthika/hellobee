@@ -103,7 +103,7 @@ class EndPage extends State<BroadcastEnd> {
                       height: double.infinity,
                       child: Image(
                         image: AssetImage(
-                          "assets/broadcast/AudioBG.jpg",
+                          "assets/broadcast/LiveBG.jpg",
                         ),
                         fit: BoxFit.fill,
                       ),

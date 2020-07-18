@@ -43,9 +43,10 @@ class _MyAppState extends State<EditProfileNew> {
   var genderhide;
   var dobhide;
   var dob;
-  var age;
   var idhide;
   var touserid="";
+  var coverPic="";
+
   DateTime date;
   var _image;
   var _imageCover;
@@ -105,9 +106,10 @@ class _MyAppState extends State<EditProfileNew> {
       setState(() {
         status = data['status'];
         dob = data['date_of_birth'];
-        age = data['age'];
         profilePic = data['profile_pic'];
         names.text = name = data['profileName'];
+        coverPic = data['cover_pic'];
+        print("coverPic " + coverPic);
         level = data['level'];
         country = data['country'];
         profilePic = data['profile_pic'];
@@ -121,7 +123,6 @@ class _MyAppState extends State<EditProfileNew> {
         } else {
          /* date = DateTime.parse(common.date);*/
         }
-        age = calculateAge(date);
         loader = false;
       });
     });
@@ -156,8 +157,7 @@ class _MyAppState extends State<EditProfileNew> {
                       decoration: BoxDecoration(
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(
-                                  'https://images.pexels.com/photos/1391499/pexels-photo-1391499.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
+                              image: NetworkImage(coverPic)
                           )
                       ),
                     ),)
@@ -408,9 +408,7 @@ class _MyAppState extends State<EditProfileNew> {
                           onPressed: () {
                             loader = true;
                             var endPoint = 'user/updateProfile';
-
                             var params;
-                            age = calculateAge(DateTime.parse(dob));
                             if (_image == null) {
                               params = {
 

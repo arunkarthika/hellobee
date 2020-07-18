@@ -34,7 +34,9 @@ class _EditProfileState extends State<MeProfile>  {
   var country = "";
   bool loader = true;
   var profilePic = "";
+  var coverPic = "";
   var refrenceId = "";
+  var block = "";
   var status = "";
   var agehide;
   var genderhide;
@@ -43,10 +45,6 @@ class _EditProfileState extends State<MeProfile>  {
   var age;
   var idhide;
   var touserid="";
-
-  IconData blockIcon = Icons.block;
-  IconData relationImage = Icons.add;
-  IconData textIcon = Icons.speaker_notes;
 
   void dataGet() async {
     touserid = await CommonFun().getStringData('user_id');
@@ -69,6 +67,7 @@ class _EditProfileState extends State<MeProfile>  {
         dobhide = data['is_the_dob_hidden'];
         idhide = data['is_the_user_id_hidden'];
         profilePic = data['profile_pic'];
+        coverPic = data['cover_pic'];
         name = data['profileName'];
         diamond = data['diamond'];
         friends = data['friends'];
@@ -82,7 +81,17 @@ class _EditProfileState extends State<MeProfile>  {
         country = data['country'];
         profilePic = data['profile_pic'];
         refrenceId = data['reference_user_id'];
+        uData.userrelationblock = data['block'];
         uData.userrelation = data['userRelationship'];
+
+        if (uData.userrelationblock == null) uData.userrelationblock = 0;
+        uData.relationDataBlock = "Block";
+        uData.relationImageblock = Icons.block;
+        if (uData.userrelationblock == 1) {
+          uData.relationDataBlock = 'UnBlock';
+          uData.relationImageblock = Icons.radio_button_unchecked;
+        }
+
         if (uData.userrelation == null) uData.userrelation = 0;
         uData.relationData = "Follow";
         uData.relationImage = Icons.add;
@@ -118,8 +127,7 @@ class _EditProfileState extends State<MeProfile>  {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    'https://images.pexels.com/photos/1391499/pexels-photo-1391499.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500')
+                                image: NetworkImage(coverPic)
                             )
                         ),
                       ),)
@@ -360,20 +368,21 @@ class _EditProfileState extends State<MeProfile>  {
                               ],
                             ),
                             onPressed: () {
-
+                              userRelation(uData.userrelation, touserid, uData,
+                                  setState, context);
                             },
                             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                         ),
-                       /* OutlineButton(
+                        OutlineButton(
                             padding: EdgeInsets.all(0.0),
                             child: Row(
                               children: <Widget>[
                                  Icon(
-                                   blockIcon,
+                                   uData.relationImageblock,
                                   color: Colors.black38,
                                   size: 18,
                                 ),
-                                Text( " " + blockStatus,
+                                Text( " " + uData.relationDataBlock,
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 13.0,
@@ -382,10 +391,10 @@ class _EditProfileState extends State<MeProfile>  {
                               ],
                             ),
                             onPressed: () {
-                              userBlockRelation(common.blockInt, touserid, common, setState, context);
+                              userBlockRelation("blockInt", touserid, "common", setState, context);
                             },
                             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
-                        ),*/
+                        ),
                       ],
                     ),
                   ],
