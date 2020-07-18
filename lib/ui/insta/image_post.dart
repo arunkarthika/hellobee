@@ -191,20 +191,20 @@ class _ImagePost extends State<ImagePost> {
               ),
               title: GestureDetector(
                 child: Text(snapshot.data.data['username'], style: boldStyle),
-                onTap: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute<Null>(builder: (BuildContext context) {
-                        return new MeProfile(
-                          touserid: ownerId,
-                        );
-                      }));
-
-                },
               ),
               subtitle: Text(this.location),
-              trailing: const Icon(Icons.more_vert),
+              trailing: GestureDetector(
+                  onTap: () {
+                    _asyncSimpleDialog(snapshot.data.data['username'], context);
+                  },
+                  child: Icon(Icons.more_vert)),
               onTap: () {
-                _asyncSimpleDialog(snapshot.data.data['username'], context);
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute<Null>(builder: (BuildContext context) {
+                  return new MeProfile(
+                    touserid: ownerId,
+                  );
+                }));
               },
             );
           }
