@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:honeybee/ui/liveroom/personalChat/const.dart';
 import 'package:honeybee/ui/liveroom/personalChat/full_photo.dart';
 import 'package:honeybee/ui/liveroom/personalChat/loading.dart';
+import 'package:honeybee/ui/meprofile.dart';
 import 'package:honeybee/utils/global.dart';
 import 'package:honeybee/widget/mycircleavatar.dart';
 import 'package:image_picker/image_picker.dart';
@@ -33,21 +34,23 @@ class ChatScreen extends StatefulWidget {
   final String peerAvatar;
   final String peerName;
   final String peergcm;
+  final String userid;
 
-  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm})
+  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm, @required this.userid})
       : super(key: key);
 
   @override
   State createState() =>
-      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, peerName: peerName, peergcm: peergcm);
+      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar, peerName: peerName, peergcm: peergcm,userid:userid);
 }
 
 class ChatScreenState extends State<ChatScreen> {
   bool _showBottom = false;
 
-  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm});
+  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar, @required this.peerName, @required this.peergcm, @required this.userid});
 
   String peerId;
+  String userid;
   String peerAvatar;
   String id;
   String peerName;
@@ -592,7 +595,18 @@ class ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black54),
-          title: Row(
+          title: GestureDetector(
+            onTap: (){
+              Navigator.of(context).push(
+                  MaterialPageRoute<Null>(builder: (BuildContext context) {
+                    return new MeProfile(
+                      touserid: userid,
+                    );
+                  }));
+
+            },
+
+            child: Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               MyCircleAvatar(
@@ -621,6 +635,7 @@ class ChatScreenState extends State<ChatScreen> {
               )
             ],
           ),
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.phone),
@@ -642,6 +657,7 @@ class ChatScreenState extends State<ChatScreen> {
               },
             ),
           ],
+
         ),
         body: Stack(
           children: <Widget>[

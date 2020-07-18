@@ -386,6 +386,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 peerAvatar: filteredList[i].profilepic,
                                 peerName: filteredList[i].personFirstName,
                                 peergcm: filteredList[i].gcm_registration_id,
+                                  userid:filteredList[i].userid
                               )));
                 },
                 onLongPress: () => Navigator.of(context).push(

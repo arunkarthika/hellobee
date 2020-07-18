@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:honeybee/constant/common.dart';
+import 'package:honeybee/ui/meprofile.dart';
 import 'main12.dart';
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -88,7 +90,7 @@ class _ImagePost extends State<ImagePost> {
   final String postId;
   bool liked;
   final String ownerId;
-   String myid;
+  String myid;
 
   bool showHeart = false;
 
@@ -98,14 +100,15 @@ class _ImagePost extends State<ImagePost> {
   );
 
   var reference = Firestore.instance.collection('insta_posts');
+
   @override
   void initState() {
     CommonFun().getStringData('user_id').then((value) {
       myid = value;
     });
-
   }
-    _ImagePost(
+
+  _ImagePost(
       {this.mediaUrl,
       this.username,
       this.location,
@@ -154,9 +157,10 @@ class _ImagePost extends State<ImagePost> {
                   child: Container(
                     width: 100,
                     height: 100,
-                    child:  Opacity(
+                    child: Opacity(
                         opacity: 0.85,
-                        child: FlareActor("assets/flare/Like.flr",
+                        child: FlareActor(
+                          "assets/flare/Like.flr",
                           animation: "Like",
                         )),
                   ),
@@ -178,26 +182,62 @@ class _ImagePost extends State<ImagePost> {
             .document(ownerId)
             .get(),
         builder: (context, snapshot) {
-
           if (snapshot.data != null) {
             return ListTile(
               leading: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(snapshot.data.data['photoUrl']),
+                backgroundImage:
+                    CachedNetworkImageProvider(snapshot.data.data['photoUrl']),
                 backgroundColor: Colors.grey,
               ),
               title: GestureDetector(
                 child: Text(snapshot.data.data['username'], style: boldStyle),
                 onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                        return new MeProfile(
+                          touserid: ownerId,
+                        );
+                      }));
 
                 },
               ),
               subtitle: Text(this.location),
               trailing: const Icon(Icons.more_vert),
+              onTap: () {
+                _asyncSimpleDialog(snapshot.data.data['username'], context);
+              },
             );
           }
 
           // snapshot data is null here
           return Container();
+        });
+  }
+
+  Future<Dialog> _asyncSimpleDialog(id, BuildContext context) async {
+    return await showDialog<Dialog>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            children: <Widget>[
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Fluttertoast.showToast(msg: 'Reported Sucesfully');
+                },
+                child: const Text('Its Spam'),
+              ),
+              SimpleDialogOption(
+                onPressed: () {
+                  Fluttertoast.showToast(msg: 'Reported Sucesfully');
+
+                  Navigator.pop(context);
+                },
+                child: const Text('Its inApproproate'),
+              ),
+            ],
+          );
         });
   }
 

@@ -1233,7 +1233,7 @@ class HomePage extends State<Dashboard> with TickerProviderStateMixin {
                                   MaterialPageRoute(
                                     builder: (context) => ChatScreen
                                       (peerId:"0",peerAvatar:data['profile_pic'],
-                                        peerName:data['profileName']),
+                                        peerName:data['profileName'],userid:data['userid']),
                                   ),
                                 );
                               },

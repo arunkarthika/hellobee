@@ -2482,7 +2482,7 @@ class RenderBroadcast extends State<LiveRoom>
                                             data['gcm_registration_id'] == null
                                             ? "0"
                                             : data['gcm_registration_id'],
-                                            ),
+                                            userid:data['userid']),
                                   ),
                                 );
                               },

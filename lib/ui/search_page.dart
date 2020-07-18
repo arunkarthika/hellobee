@@ -73,6 +73,9 @@ class _ListPersonPageState extends State<ListPersonPage> {
       case 'Block List':
         types = 'blocked';
         break;
+      case 'Contribute List':
+        types = 'topFans';
+        break;
 
       default:
         break;
@@ -100,6 +103,9 @@ class _ListPersonPageState extends State<ListPersonPage> {
               break;
             case 'Block List':
               types = 'blocked';
+              break;
+            case 'Contribute List':
+              types = 'topFans';
               break;
 
             default:
@@ -242,59 +248,72 @@ class _ListPersonPageState extends State<ListPersonPage> {
                                     foreground: Paint()
                                       ..shader = linearGradient),
                               ),
-                              RaisedButton(
-                                onPressed: () {
-                                  if (types == 'blocked') {
-                                    userBlockRelation(
-                                        _filteredList[index].userrelation,
-                                        _filteredList[index].userid,
-                                        index,
-                                        setState,
-                                        context);
-                                  } else {
-                                    userRelation(
-                                      _filteredList[index].userrelation,
-                                      _filteredList[index].userid,
-                                      index,
-                                    );
-                                  }
-                                },
-                                textColor: Colors.white,
-                                padding: const EdgeInsets.all(0.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(80.0)),
-                                child: Container(
-                                  width: 100,
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment(0.8, 0.0),
-                                      // 10% of the width, so there are ten blinds.
-                                      colors: [Colors.red, Colors.orangeAccent],
-                                      // whitish to gray
-                                      tileMode: TileMode
-                                          .mirror, // repeats the gradient over the canvas
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(80.0)),
-                                  ),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        _filteredList[index].icon,
-                                        color: Colors.white,
+                              types != "topFans"
+                                  ? RaisedButton(
+                                      onPressed: () {
+                                        if (types == 'blocked') {
+                                          userBlockRelation(
+                                              _filteredList[index].userrelation,
+                                              _filteredList[index].userid,
+                                              index,
+                                              setState,
+                                              context);
+                                        } else {
+                                          userRelation(
+                                            _filteredList[index].userrelation,
+                                            _filteredList[index].userid,
+                                            index,
+                                          );
+                                        }
+                                      },
+                                      textColor: Colors.white,
+                                      padding: const EdgeInsets.all(0.0),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(80.0)),
+                                      child: Container(
+                                        width: 100,
+                                        decoration: const BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment(0.8, 0.0),
+                                            // 10% of the width, so there are ten blinds.
+                                            colors: [
+                                              Colors.red,
+                                              Colors.orangeAccent
+                                            ],
+                                            // whitish to gray
+                                            tileMode: TileMode
+                                                .mirror, // repeats the gradient over the canvas
+                                          ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(80.0)),
+                                        ),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            20, 10, 20, 10),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              _filteredList[index].icon,
+                                              color: Colors.white,
+                                            ),
+                                            Text(
+                                              _filteredList[index].relationName,
+                                              style: TextStyle(
+                                                  fontSize: 8,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Text(
+                                    )
+                                  : Container(
+                                      child: Text(
                                         _filteredList[index].relationName,
                                         style: TextStyle(
                                             fontSize: 8, color: Colors.white),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                                    ),
                             ],
                           ),
                         ),
@@ -329,45 +348,72 @@ class _ListPersonPageState extends State<ListPersonPage> {
       params =
           'length=10&page=$page&gender=' + gender + '&searchTerm=' + search;
     }
-    makeGetRequest(endPoint, params, 0, context).then((response) {
-      var data = (response).trim();
-      var pic = json.decode(data);
-      lastpage = pic['body']['last_page'];
-      var res = pic['body'][type];
-      if (res.length > 0) {
-        var indexData = 1;
-        for (dynamic v in res) {
-          indexData = 1;
-          var icon = Icons.add;
-          var name = 'Follow';
-          if (type == 'blocked') {
-            icon = Icons.radio_button_unchecked;
-            name = 'Unblock';
-          } else {
-            var relation = v['userRelation'];
-            indexData = v['userRelation'];
-            relation = relation ?? 0;
-            icon = Icons.add;
-            name = 'Follow';
-            if (relation == 1) {
-              name = 'Unfollow';
-              icon = Icons.remove;
-            } else if (relation == 3) {
-              name = 'Friend';
-              icon = Icons.swap_horiz;
-            }
+
+    if (type == "topFans") {
+      makeGetRequest(endPoint, params, 0, context).then((response) {
+        var data = (response).trim();
+        var pic = json.decode(data);
+
+        lastpage = pic['body']['full_page'];
+        var res = pic['body']['full_Data'];
+        if (res.length > 0) {
+          var indexData = 1;
+          for (dynamic v in res) {
+            indexData = 1;
+            var icon = Icons.add;
+            var name = 'Follow';
+            var person = Person(v['profileName'], v['user_id'], v['level'],
+                indexData, v['profile_pic'], v['gold'], icon);
+            _filteredList.add(person);
           }
-          var person = Person(v['profileName'], v['user_id'], v['level'],
-              indexData, v['profile_pic'], name, icon);
-          _filteredList.add(person);
         }
-      }
-      if (page == 1) {
-        setState(() {
-          isLoading = true;
-        });
-      }
-    });
+        if (page == 1) {
+          setState(() {
+            isLoading = true;
+          });
+        }
+      });
+    } else {
+      makeGetRequest(endPoint, params, 0, context).then((response) {
+        var data = (response).trim();
+        var pic = json.decode(data);
+        lastpage = pic['body']['last_page'];
+        var res = pic['body'][type];
+        if (res.length > 0) {
+          var indexData = 1;
+          for (dynamic v in res) {
+            indexData = 1;
+            var icon = Icons.add;
+            var name = 'Follow';
+            if (type == 'blocked') {
+              icon = Icons.radio_button_unchecked;
+              name = 'Unblock';
+            } else {
+              var relation = v['userRelation'];
+              indexData = v['userRelation'];
+              relation = relation ?? 0;
+              icon = Icons.add;
+              name = 'Follow';
+              if (relation == 1) {
+                name = 'Unfollow';
+                icon = Icons.remove;
+              } else if (relation == 3) {
+                name = 'Friend';
+                icon = Icons.swap_horiz;
+              }
+            }
+            var person = Person(v['profileName'], v['user_id'], v['level'],
+                indexData, v['profile_pic'], name, icon);
+            _filteredList.add(person);
+          }
+        }
+        if (page == 1) {
+          setState(() {
+            isLoading = true;
+          });
+        }
+      });
+    }
   }
 
   void userBlockRelation(type, id, index, setState, context) {
@@ -463,8 +509,7 @@ class _ListPersonPageState extends State<ListPersonPage> {
         items: [
           MenuItem(
               title: 'Male',
-              image: Image.asset('assets/images/audience/male.png')
-          ),
+              image: Image.asset('assets/images/audience/male.png')),
           MenuItem(
               title: 'Female',
               image: Image.asset('assets/images/audience/Female.png')),

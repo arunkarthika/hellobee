@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:honeybee/constant/common.dart';
@@ -22,17 +21,17 @@ class Profile extends StatefulWidget {
 
 class Profilepage extends State<Profile> {
   final color = Colors.pink;
-  var profileName="";
-  var level="";
-  var referenceId="";
-  var userid="";
-  var profilePic="";
-  var diamond="";
-  var bGold="";
-  var gcm_registration_id="";
-  var friends="";
-  var fans="";
-  var followers="";
+  var profileName = "";
+  var level = "";
+  var referenceId = "";
+  var userid = "";
+  var profilePic = "";
+  var diamond = "";
+  var bGold = "";
+  var gcm_registration_id = "";
+  var friends = "";
+  var fans = "";
+  var followers = "";
   bool loader = false;
 
   @override
@@ -70,14 +69,15 @@ class Profilepage extends State<Profile> {
     friends = await CommonFun().getStringData('friends');
     fans = await CommonFun().getStringData('fans');
     followers = await CommonFun().getStringData('followers');
-    gcm_registration_id = await CommonFun().getStringData('gcm_registration_id');
+    gcm_registration_id =
+        await CommonFun().getStringData('gcm_registration_id');
 
     setState(() {
       loader = true;
     });
   }
 
-  Widget buildTop( BuildContext context) {
+  Widget buildTop(BuildContext context) {
     return Container(
       child: Stack(
         children: <Widget>[
@@ -104,7 +104,8 @@ class Profilepage extends State<Profile> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HomeScreen(currentUserId: gcm_registration_id),
+                        builder: (context) =>
+                            HomeScreen(currentUserId: gcm_registration_id),
                       ),
                     );
                   },
@@ -114,11 +115,10 @@ class Profilepage extends State<Profile> {
                   icon: Icons.account_balance_wallet,
                   onTap: () {
                     String textToSend = myprogressNew;
-                    Navigator.of(context).push(
-                        MaterialPageRoute<Null>(
-                            builder: (BuildContext context) {
-                              return new Wallet();
-                            }));
+                    Navigator.of(context).push(MaterialPageRoute<Null>(
+                        builder: (BuildContext context) {
+                      return new Wallet();
+                    }));
                   },
                 ),
                 CircularButton(
@@ -126,24 +126,27 @@ class Profilepage extends State<Profile> {
                   icon: Icons.send,
                   onTap: () {
                     String textToSend = myprogressNew;
-                    Navigator.of(context).push(
-                        MaterialPageRoute<Null>(
-                            builder: (BuildContext context) {
-                              return new Webview(text: textToSend, webViewTitle: "Level",);
-                            }));
+                    Navigator.of(context).push(MaterialPageRoute<Null>(
+                        builder: (BuildContext context) {
+                      return new Webview(
+                        text: textToSend,
+                        webViewTitle: "Level",
+                      );
+                    }));
                   },
                 ),
-
                 CircularButton(
                   title: "History",
                   icon: Icons.attach_money,
                   onTap: () {
-                    String textToSend = myprogressNew ;
-                    Navigator.of(context).push(
-                        MaterialPageRoute<Null>(
-                            builder: (BuildContext context) {
-                              return new Webview(text: textToSend, webViewTitle: "History",);
-                            }));
+                    String textToSend = myprogressNew;
+                    Navigator.of(context).push(MaterialPageRoute<Null>(
+                        builder: (BuildContext context) {
+                      return new Webview(
+                        text: textToSend,
+                        webViewTitle: "History",
+                      );
+                    }));
                   },
                 ),
               ],
@@ -159,12 +162,37 @@ class Profilepage extends State<Profile> {
                   child: new Container(
                     height: 400.0,
                     child: Container(
-                      height:50.0,
-                        margin: EdgeInsets.only(right: 15.0, left: 15.0),
-                        child: new Wrap(
-                          children: <Widget>[
-                            new ListTile(
-                              onTap: () {
+                      height: 50.0,
+                      margin: EdgeInsets.only(right: 15.0, left: 15.0),
+                      child: new Wrap(
+                        children: <Widget>[
+                          new ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SingleImageUpload(),
+                                ),
+                              );
+                            },
+                            leading: Container(
+                              padding: EdgeInsets.all(9.0),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.orange,
+                                      Colors.deepOrangeAccent
+                                    ],
+                                  ),
+                                  color: Color(0xff8d7bef),
+                                  shape: BoxShape.circle),
+                              child:
+                                  Icon(Icons.location_on, color: Colors.white),
+                            ),
+                            title: Text("My Assets"),
+                            trailing: IconButton(
+                              icon: Icon(Icons.chevron_right),
+                              onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -172,130 +200,110 @@ class Profilepage extends State<Profile> {
                                   ),
                                 );
                               },
-                              leading: Container(
-                                padding: EdgeInsets.all(9.0),
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [Colors.orange, Colors.deepOrangeAccent],
-                                    ),
-                                    color: Color(0xff8d7bef),
-                                    shape: BoxShape.circle
-                                ),
-                                child: Icon(Icons.location_on,color: Colors.white),
-                              ),
-                              title: Text("My Assets"),
-                              trailing: IconButton(
-                                icon: Icon(Icons.chevron_right),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SingleImageUpload(),
-                                    ),
-                                  );
-                                },
-                              ),
                             ),
-                            new ListTile(
-                              onTap: () {},
-                              leading: Container(
-                                padding: EdgeInsets.all(9.0),
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [Colors.orange, Colors.deepOrangeAccent],
-                                    ),
-                                    color: Color(0xff8d7bef),
-                                    shape: BoxShape.circle
-                                ),
-                                child: Icon(Icons.store,color: Colors.white),
-                              ),
-                              title: Text("Store"),
-                              trailing: IconButton(
-                                icon: Icon(Icons.chevron_right),
-                                onPressed: () {
-
-                                },
-                              ),
+                          ),
+                          new ListTile(
+                            onTap: () {},
+                            leading: Container(
+                              padding: EdgeInsets.all(9.0),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.orange,
+                                      Colors.deepOrangeAccent
+                                    ],
+                                  ),
+                                  color: Color(0xff8d7bef),
+                                  shape: BoxShape.circle),
+                              child: Icon(Icons.store, color: Colors.white),
                             ),
-                            new ListTile(
-                              onTap: () {},
-                              leading: Container(
-                                padding: EdgeInsets.all(9.0),
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [Colors.orange, Colors.deepOrangeAccent],
-                                    ),
-                                    color: Color(0xff8d7bef),
-                                    shape: BoxShape.circle
-                                ),
-                                child: Icon(Icons.location_on,color: Colors.white),
-                              ),
-                              title: Text("Aristocracy"),
-                              trailing: IconButton(
-                                icon: Icon(Icons.chevron_right),
-                                onPressed: () {
-
-                                },
-                              ),
+                            title: Text("Store"),
+                            trailing: IconButton(
+                              icon: Icon(Icons.chevron_right),
+                              onPressed: () {},
                             ),
-                            new ListTile(
-                              onTap: () {},
-                              leading: Container(
-                                padding: EdgeInsets.all(9.0),
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [Colors.orange, Colors.deepOrangeAccent],
-                                    ),
-                                    color: Color(0xff8d7bef),
-                                    shape: BoxShape.circle
-                                ),
-                                child: Icon(Icons.location_on,color: Colors.white),
-                              ),
-                              title: Text("Medal"),
-                              trailing: IconButton(
-                                icon: Icon(Icons.chevron_right),
-                                onPressed: () {
-
-                                },
-                              ),
+                          ),
+                          new ListTile(
+                            onTap: () {},
+                            leading: Container(
+                              padding: EdgeInsets.all(9.0),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.orange,
+                                      Colors.deepOrangeAccent
+                                    ],
+                                  ),
+                                  color: Color(0xff8d7bef),
+                                  shape: BoxShape.circle),
+                              child:
+                                  Icon(Icons.location_on, color: Colors.white),
                             ),
-                            new ListTile(
-                              onTap: () {
+                            title: Text("Aristocracy"),
+                            trailing: IconButton(
+                              icon: Icon(Icons.chevron_right),
+                              onPressed: () {},
+                            ),
+                          ),
+                          new ListTile(
+                            onTap: () {},
+                            leading: Container(
+                              padding: EdgeInsets.all(9.0),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.orange,
+                                      Colors.deepOrangeAccent
+                                    ],
+                                  ),
+                                  color: Color(0xff8d7bef),
+                                  shape: BoxShape.circle),
+                              child:
+                                  Icon(Icons.location_on, color: Colors.white),
+                            ),
+                            title: Text("Medal"),
+                            trailing: IconButton(
+                              icon: Icon(Icons.chevron_right),
+                              onPressed: () {},
+                            ),
+                          ),
+                          new ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SettingsScreen(),
+                                ),
+                              );
+                            },
+                            leading: Container(
+                              padding: EdgeInsets.all(9.0),
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.orange,
+                                      Colors.deepOrangeAccent
+                                    ],
+                                  ),
+                                  color: Color(0xff8d7bef),
+                                  shape: BoxShape.circle),
+                              child: Icon(Icons.settings, color: Colors.white),
+                            ),
+                            title: Text("Settings"),
+                            trailing: IconButton(
+                              icon: Icon(Icons.chevron_right),
+                              onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => SettingsScreen(
-                                    ),
+                                    builder: (context) => SettingsScreen(),
                                   ),
                                 );
                               },
-                              leading: Container(
-                                padding: EdgeInsets.all(9.0),
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [Colors.orange, Colors.deepOrangeAccent],
-                                    ),
-                                    color: Color(0xff8d7bef),
-                                    shape: BoxShape.circle
-                                ),
-                                child: Icon(Icons.settings,color: Colors.white),
-                              ),
-                              title: Text("Settings"),
-                              trailing: IconButton(
-                                icon: Icon(Icons.chevron_right),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SettingsScreen(
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      ),
                     ),
                     padding: EdgeInsets.only(bottom: 0),
                   ),
@@ -328,26 +336,27 @@ class Profilepage extends State<Profile> {
         children: <Widget>[
           Row(
             children: <Widget>[
-           GestureDetector(
-              child: Container(
-                padding: const EdgeInsets.all(2.3),
-                decoration:
-                BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: CircleAvatar(
-                  maxRadius: 35.0,
-                  backgroundImage: NetworkImage(
+              GestureDetector(
+                child: Container(
+                  padding: const EdgeInsets.all(2.3),
+                  decoration: BoxDecoration(
+                      color: Colors.white, shape: BoxShape.circle),
+                  child: CircleAvatar(
+                    maxRadius: 35.0,
+                    backgroundImage: NetworkImage(
                       (profilePic),
+                    ),
                   ),
                 ),
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                    return new MeProfile(
+                      touserid: userid,
+                    );
+                  }));
+                },
               ),
-             onTap: () {
-               Navigator.of(context).push(
-                   MaterialPageRoute<Null>(
-                       builder: (BuildContext context) {
-                         return new MeProfile(touserid: userid,);
-                       }));
-             },
-           ),
               SizedBox(width: 21),
               Expanded(
                 child: Column(
@@ -358,12 +367,14 @@ class Profilepage extends State<Profile> {
                         profileName == null
                             ? Text("Name")
                             : Text(
-                          profileName,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2
-                              .apply(fontWeightDelta: 2, color: Colors.white),
-                        ),
+                                profileName,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle2
+                                    .apply(
+                                        fontWeightDelta: 2,
+                                        color: Colors.white),
+                              ),
                         SizedBox(width: 15.0),
                         /*GestureDetector(
                           child: Icon(
@@ -378,26 +389,24 @@ class Profilepage extends State<Profile> {
                     Row(
                       children: <Widget>[
                         referenceId == null
-                        ? Text("ID ")
-                        : Text(
-                      "ID: " + referenceId,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.subtitle.
-                        apply(color: Colors.white)
-                    ),
+                            ? Text("ID ")
+                            : Text("ID: " + referenceId,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle
+                                    .apply(color: Colors.white)),
                         SizedBox(width: 15.0),
                         GestureDetector(
                           child: level == null
                               ? Text("ID ")
-                              : Text(
-                              "Lv: " + level,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.subtitle.
-                              apply(color: Colors.white)
-                          ),
-                          onTap: () {
-
-                          },
+                              : Text("Lv: " + level,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle
+                                      .apply(color: Colors.white)),
+                          onTap: () {},
                         )
                       ],
                     ),
@@ -410,109 +419,121 @@ class Profilepage extends State<Profile> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-            GestureDetector(
-              child: Column(
-                children: <Widget>[
+              GestureDetector(
+                child: Column(children: <Widget>[
                   friends == null
                       ? Text("0")
                       : Text(
-                    friends,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle2
-                        .apply(color: Colors.white),
-                  ),
+                          friends,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2
+                              .apply(color: Colors.white),
+                        ),
                   SizedBox(height: 3.0),
                   Text(
                     "Friends",
                     style: TextStyle(color: Colors.grey[300]),
                   ),
                 ]),
-              onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute<Null>(
-                        builder: (BuildContext context) {
-                          return new ListPersonPage(tosearch: "Friends", touserid: userid,);
-                        }));
-              },
-            ),
-            GestureDetector(
-              child: Column(
-                children: <Widget>[
-                  followers == null
-                      ? Text("0")
-                      : Text(
-                    followers,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle2
-                        .apply(color: Colors.white),
-                  ),
-                  SizedBox(height: 3.0),
-                  Text(
-                    "Followers",
-                    style: TextStyle(color: Colors.grey[300]),
-                  ),
-                ],
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                    return new ListPersonPage(
+                      tosearch: "Friends",
+                      touserid: userid,
+                    );
+                  }));
+                },
               ),
-              onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute<Null>(
-                        builder: (BuildContext context) {
-                          return new ListPersonPage(tosearch: "Followers", touserid: userid,);
-                        }));
-              },
-            ),
-           GestureDetector(
-            child: Column(
-                children: <Widget>[
-                  fans == null
-                      ? Text("0")
-                      : Text(
-                    fans,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle2
-                        .apply(color: Colors.white),
-                  ),
-                  SizedBox(height: 3.0),
-                  Text(
-                    "Fans",
-                    style: TextStyle(color: Colors.grey[300]),
-                  ),
-                ],
+              GestureDetector(
+                child: Column(
+                  children: <Widget>[
+                    followers == null
+                        ? Text("0")
+                        : Text(
+                            followers,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle2
+                                .apply(color: Colors.white),
+                          ),
+                    SizedBox(height: 3.0),
+                    Text(
+                      "Followers",
+                      style: TextStyle(color: Colors.grey[300]),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                    return new ListPersonPage(
+                      tosearch: "Followers",
+                      touserid: userid,
+                    );
+                  }));
+                },
               ),
-             onTap: () {
-               Navigator.of(context).push(
-                   MaterialPageRoute<Null>(
-                       builder: (BuildContext context) {
-                         return new ListPersonPage(tosearch: "Fans", touserid: userid,);
-                       }));
-             },
-           ),
-             GestureDetector(
-              child: Column(
-                children: <Widget>[
-                  bGold == null
-                      ? Text("0")
-                      : Text(
-                      bGold,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle2
-                        .apply(color: Colors.white),
-                  ),
-                  SizedBox(height: 3.0),
-                  Text(
-                    "B-Gold",
-                    style: TextStyle(color: Colors.grey[300]),
-                  ),
-                ],
+              GestureDetector(
+                child: Column(
+                  children: <Widget>[
+                    fans == null
+                        ? Text("0")
+                        : Text(
+                            fans,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle2
+                                .apply(color: Colors.white),
+                          ),
+                    SizedBox(height: 3.0),
+                    Text(
+                      "Fans",
+                      style: TextStyle(color: Colors.grey[300]),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                    return new ListPersonPage(
+                      tosearch: "Fans",
+                      touserid: userid,
+                    );
+                  }));
+                },
               ),
-               onTap: () {
-
-               },
-             ),
+              GestureDetector(
+                child: Column(
+                  children: <Widget>[
+                    bGold == null
+                        ? Text("0")
+                        : Text(
+                            bGold,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle2
+                                .apply(color: Colors.white),
+                          ),
+                    SizedBox(height: 3.0),
+                    Text(
+                      "B-Gold",
+                      style: TextStyle(color: Colors.grey[300]),
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  print("userid"+userid);
+                  Navigator.of(context).push(
+                      MaterialPageRoute<Null>(builder: (BuildContext context) {
+                    return new ListPersonPage(
+                      tosearch: "Contribute List",
+                      touserid: userid,
+                    );
+                  }));
+                },
+              ),
             ],
           )
         ],
