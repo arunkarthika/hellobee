@@ -11,6 +11,8 @@ import 'package:path/path.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 
+
+//GET Request
 makeGetRequest(String endPoint, String params, int woutauth, context) async {
   if (await CommonFun().check()) {
   String username = await CommonFun().getStringData('bearer');
@@ -56,6 +58,7 @@ makeGetRequest(String endPoint, String params, int woutauth, context) async {
   }
 }
 
+//POST Request
 makePostRequest(String endPoint, String params, int woutauth, context) async {
   if (await CommonFun().check()) {
   String username = await CommonFun().getStringData('bearer');
@@ -98,6 +101,7 @@ makePostRequest(String endPoint, String params, int woutauth, context) async {
   }
 }
 
+//Upload Image
 Future uploadImage(File file, endPoint, params, woutauth, context) async {
   if (await CommonFun().check()) {
     var username = await CommonFun().getStringData('bearer');

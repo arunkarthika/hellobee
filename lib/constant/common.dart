@@ -69,6 +69,7 @@ class CommonFun {
     return file.exists();
   }
 
+  //store a shared preference
   saveShare(String key, dynamic value) async {
     final SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
     if (value is bool) {
@@ -84,6 +85,7 @@ class CommonFun {
     }
   }
 
+  //Check Internet Connection
   Future<bool> check() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile) {
@@ -104,6 +106,7 @@ class CommonFun {
     return prefs.getStringList(key) ?? [];
   }
 
+  //WEBVIEW
   Widget webView(url, _webViewController) {
     return WebView(
       initialUrl: url,
@@ -119,6 +122,7 @@ class CommonFun {
     return prefs.setString(key, value);
   }
 
+  //Store Image
   static Future<String> getImages(key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key);
@@ -136,7 +140,7 @@ class CommonFun {
     await outFile.writeAsBytes(req.bodyBytes);
   }
 
-
+//Display Gift
   giftDisplay(image) {
     print(image);
     return Column(
